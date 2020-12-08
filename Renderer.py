@@ -250,7 +250,8 @@ class Renderer:
         playerCoors[1] =  cls.numVer - playerCoors[1]
 
         # ! temporary rendering of player crosshair
-        pygame.draw.circle( cls.screen, (255,50,50), playerCoors, 2 )
+        pygame.draw.rect(cls.screen, (255,50,50), pygame.Rect(playerCoors[0], playerCoors[1], TILE_WIDTH, TILE_WIDTH*2))
+        #pygame.draw.circle( cls.screen, (255,50,50), playerCoors, 2 )
 
     @classmethod
     def renderInv( cls ):   # todo THIS FUNCTION HAS A LOT OF MAGIC NUMBERS
