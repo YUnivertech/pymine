@@ -104,7 +104,7 @@ class Chunk:
 
     def draw( self, rect = [0, 0, CHUNK_WIDTH, CHUNK_HEIGHT] ):
 
-        self.surface.fill( ( 30, 150, 240 ), [rect[0] * TILE_WIDTH, TILE_WIDTH* (CHUNK_HEIGHT - 1 - rect[1]), TILE_WIDTH * (rect[2] - rect[0]), TILE_WIDTH * (rect[3] - rect[1])])
+        self.surface.fill( ( 30, 150, 240 ), [rect[0] * TILE_WIDTH, TILE_WIDTH* (CHUNK_HEIGHT - rect[3]), TILE_WIDTH * (rect[2] - rect[0]), TILE_WIDTH * (rect[3] - rect[1])])
 
         for i in range( rect[1], rect[3] ):
 
@@ -124,16 +124,16 @@ class Chunk:
                         if(HEALTH in self.TILE_TABLE_LOCAL[ ( j, i, True ) ] ):
 
                             breakState = (self.TILE_TABLE_LOCAL[ ( j, i, True ) ][ HEALTH ] * 8) / 100
-                            self.blit( tiles.TILE_MODIFIERS[ tiles.crack ][ 8 - int(breakState) ], coors )
+                            self.surface.blit( tiles.TILE_MODIFIERS[ tiles.crack ][ 8 - int(breakState) ], coors )
 
                 elif( currWallRef > 0 ):
-                    self.blit( tiles.TILE_TABLE[currWallRef], coors )
+                    self.surface.blit( tiles.TILE_TABLE[currWallRef], coors )
                     if( ( i, j, False ) in self.TILE_TABLE_LOCAL ):
 
                         if(HEALTH in self.TILE_TABLE_LOCAL[ ( j, i, False ) ] ):
 
                             breakState = (self.TILE_TABLE_LOCAL[ ( j, i, False ) ][ HEALTH ] * 8) / 100
-                            self.blit( tiles.TILE_MODIFIERS[ tiles.crack ][ 8 - int(breakState) ], coors )
+                            self.surface.blit( tiles.TILE_MODIFIERS[ tiles.crack ][ 8 - int(breakState) ], coors )
 
     def update( self, dt ):
 
@@ -172,7 +172,6 @@ class ChunkBuffer:
 
         # Create lists of required objects
         self.chunks         =  [ ]
-        self.surfaces       =  [ ]
         self.lightSurfs     =  [ ]
 
         # Load all objects
@@ -191,11 +190,11 @@ class ChunkBuffer:
                 retrieved  =  Chunk( i, li[ 0 ], li[ 1 ], lo )
 
             self.chunks.append( retrieved )
-            self.surfaces.append( pygame.Surface( ( CHUNK_WIDTH_P, CHUNK_HEIGHT_P ) ) )
             self.lightSurfs.append( pygame.Surface( ( CHUNK_WIDTH_P, CHUNK_HEIGHT_P ) ) )
 
         for i in range( 0, self.length ):
             self.formLightMap( i )
+            self.chunks[i].draw()
 
     def shiftBuffer( self, deltaChunk ):
 
@@ -225,7 +224,6 @@ class ChunkBuffer:
         self.positions[dumpIndex]                       += deltaChunk
 
         # Get references to surfaces which must be recycled
-        recycleSurf                                     =  self.surfaces[dumpIndex]
         recycleShade                                    =  self.lightSurfs[dumpIndex]
 
         # Start from last if shifting right otherwise from 0
@@ -236,13 +234,11 @@ class ChunkBuffer:
             nextMoveIndex                 =  moveIndex + deltaChunk
 
             self.chunks[ moveIndex ]      =  self.chunks[ nextMoveIndex ]
-            self.surfaces[ moveIndex ]    =  self.surfaces[ nextMoveIndex ]
             self.lightSurfs[ moveIndex ]  =  self.lightSurfs[ nextMoveIndex ]
 
             moveIndex += deltaChunk
 
         # Recycle surfaces
-        self.surfaces [loadIndex ]                      =  recycleSurf
         self.lightSurfs[ loadIndex ]                    =  recycleShade
 
         # Increment positions of the chunk to be loaded and the middle chunk by deltaChunk

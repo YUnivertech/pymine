@@ -42,7 +42,7 @@ class Renderer:
 
         # Update constants to reflect new References
         cls.updateRefs()
-        cls.renderFulls()
+        cls.renderLightmaps()
 
     @classmethod
     def renderFulls( cls ):
@@ -124,7 +124,6 @@ class Renderer:
         currChunkRef                    =  cls.chunkBuffer[index]
         currSurfRef                     =  cls.chunkBuffer.surfaces[index]
 
-        # cls.chunkBuffer.surfaces[index].fill( ( 30, 150, 240 ), [rect[0] * TILE_WIDTH, TILE_WIDTH* (CHUNK_HEIGHT - 1 - rect[1]), TILE_WIDTH * (rect[2] - rect[0]), TILE_WIDTH * (rect[3] - rect[1])])
         cls.chunkBuffer.surfaces[index].fill( ( 30, 150, 240 ), [rect[0] * TILE_WIDTH, TILE_WIDTH * (CHUNK_HEIGHT - rect[3]), TILE_WIDTH * (rect[2] - rect[0]), (rect[3] - rect[1]) * TILE_WIDTH])
         for i in range( rect[1], rect[3] ):
 
@@ -196,7 +195,7 @@ class Renderer:
                 slicePos        =  [sliceInd * TILE_WIDTH - cls.camera[0] + cls.numHor, 0]             # List containing the coordinates where the slice must be blitted on-screen
 
                 sliceRect       =  [tileWalker * TILE_WIDTH, cls.upIndex, TILE_WIDTH, cls.downIndex]   # Rectangular region containing the "visible" area of the chunk's surface
-                sliceSurf       =  cls.chunkBuffer.surfaces[rightWalker].subsurface( sliceRect )       # Mini-surface containing the visible region of the chunk's surface
+                sliceSurf       =  cls.chunkBuffer[rightWalker].surface.subsurface( sliceRect )       # Mini-surface containing the visible region of the chunk's surface
                 lightSurf       =  cls.chunkBuffer.lightSurfs[rightWalker].subsurface( sliceRect )      # Mini-surface containing the visible region of the chunk's lightmap
 
                 if( slicePos[0] > cls.windowSize[0] ):     # Stop blitting if slice is beyond the right edge od the window
@@ -222,7 +221,7 @@ class Renderer:
                 slicePos        =  [sliceInd * TILE_WIDTH - cls.camera[0] + cls.numHor, 0]              # List containing the coordinates where the slice must be blitted on-screen
 
                 sliceRect       =  [tileWalker * TILE_WIDTH, cls.upIndex, TILE_WIDTH, cls.downIndex]    # Rectangular region containing the "visible" area of the chunk's surface
-                sliceSurf       =  cls.chunkBuffer.surfaces[leftWalker].subsurface( sliceRect )         # Mini-surface containing the visible region of the chunk's surface
+                sliceSurf       =  cls.chunkBuffer[leftWalker].surface.subsurface( sliceRect )         # Mini-surface containing the visible region of the chunk's surface
                 lightSurf       =  cls.chunkBuffer.lightSurfs[leftWalker].subsurface( sliceRect )       # Mini-surface containing the visible region of the chunk's lightmap
 
                 if( slicePos[0] < -TILE_WIDTH ):    # Stop blitting if slice is bryond the left edge of the window

@@ -18,6 +18,15 @@ cameraBound = True
 pygame.init()
 clock = pygame.time.Clock()
 
+# Create and display window
+screen = pygame.display.set_mode(displaySize, pygame.RESIZABLE)
+pygame.display.set_caption("Hello World!")
+pygame.display.set_icon(pygame.image.load("Resources/Default/gameIcon.png"))
+
+# Convert all images to optimized form
+tiles.loadImageTable()
+items.loadImageTable()
+
 # Create chunk buffer and chunk-position buffer
 chunkBuffer = ChunkBuffer(11, 0, "world1")
 
@@ -27,15 +36,6 @@ eventHandler = entity.ClientEventHandler()
 # Player variables
 player = entity.Player([0, 0], chunkBuffer, eventHandler, eventHandler.keyStates, eventHandler.mouseState, eventHandler.cursorPos, DEFAULT_FRICTION)
 currChunk = prevChunk = deltaChunk = 0
-
-# Create and display window
-screen = pygame.display.set_mode(displaySize, pygame.RESIZABLE)
-pygame.display.set_caption("Hello World!")
-pygame.display.set_icon(pygame.image.load("Resources/Default/gameIcon.png"))
-
-# Convert all images to optimized form
-tiles.loadImageTable()
-items.loadImageTable()
 
 # Initialize the renderer
 Renderer.initialize(chunkBuffer, camera, player, displaySize, screen)
@@ -121,7 +121,7 @@ while running:
     player.update( dt )
 
     if eventHandler.tileBreakFlag :
-        Renderer.renderChunk( eventHandler.tileBreakIndex, (eventHandler.tileBreakPos[0], eventHandler.tileBreakPos[1], eventHandler.tileBreakPos[0] + 1, eventHandler.tileBreakPos[1] + 1) )
+        chunkBuffer[eventHandler.tileBreakIndex].draw((eventHandler.tileBreakPos[0], eventHandler.tileBreakPos[1], eventHandler.tileBreakPos[0] + 1, eventHandler.tileBreakPos[1] + 1))
         Renderer.updateScreen()
         eventHandler.tileBreakFlag = False
 
@@ -145,7 +145,7 @@ while running:
 
             #eventHandler.chunkShiftFlag = True # server must be notified
             eventHandler.loadChunkIndex = chunkBuffer.shiftBuffer(deltaChunk)
-            Renderer.renderFull(eventHandler.loadChunkIndex)
+            chunkBuffer[eventHandler.loadChunkIndex].draw()
 
         eventHandler.cameraMovementFlag = False
 
