@@ -42,7 +42,7 @@ for i in range(len(chunkBuffer)):
 eventHandler = entity.ClientEventHandler()
 
 # Player variables
-player = entity.Player([0, 0], chunkBuffer, eventHandler, eventHandler.keyStates, eventHandler.mouseState, eventHandler.cursorPos, DEFAULT_FRICTION)
+player = entity.Player(screen, [0, 0], chunkBuffer, eventHandler, eventHandler.keyStates, eventHandler.mouseState, eventHandler.cursorPos, DEFAULT_FRICTION)
 currChunk = prevChunk = deltaChunk = 0
 
 # Initialize the renderer
@@ -106,7 +106,6 @@ while running:
 
         if cameraBound:
             player.run()
-            #if(player.inventory.isEnabled): Renderer.renderInv()
 
         else:
             if      eventHandler.keyStates[pygame.K_a]  : camera[0] -= SCALE_VEL * dt
@@ -116,6 +115,8 @@ while running:
             elif    eventHandler.keyStates[pygame.K_s]  : camera[1] -= SCALE_VEL * dt
 
             eventHandler.addCameraMotion()
+
+        if(player.inventory.isEnabled): player.inventory.draw()
 
         eventHandler.mouseInFlag, eventHandler.keyinFlag = False, False
 

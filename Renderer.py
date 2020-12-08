@@ -43,65 +43,6 @@ class Renderer:
         # Update constants to reflect new References
         cls.updateRefs()
 
-    # @classmethod
-    # def renderFulls( cls ):
-    #     for _ in range( cls.length ):   cls.renderFull( _ )
-
-    # @classmethod
-    # def renderFull(  cls, index, rect = [ 0, 0, CHUNK_WIDTH, CHUNK_HEIGHT ] ):
-
-    #     """Method to render the chunk (in the active chunk buffer) whose index has been supplied
-    #     Args:
-    #         index (int): Index of the chunk to be rendered
-    #         rect (list): Rectangular region of the chunk which needs to be rendered (optional argument)
-    #     """
-
-    #     #cls.renderChunkOnly( index, rect )
-    #     #cls.renderLightmap( index, rect )
-
-    #     # Create a reference to the chunk currently being rendered (for convenience)
-    #     currChunkRef                    =  cls.chunkBuffer[ index ]
-    #     currSurfRef                     =  cls.chunkBuffer.surfaces[ index ]
-    #     currLightmap                    =  cls.chunkBuffer.lightSurfs[ index ]
-
-    #     lightBox                        =  pygame.Surface( ( TILE_WIDTH, TILE_WIDTH ) )
-
-    #     # Fill the to-be-updated region of the surface to "clear" it
-    #     cls.chunkBuffer.surfaces[ index ].fill( ( 30, 150, 240 ), [0, 0, CHUNK_WIDTH_P, CHUNK_HEIGHT_P] )
-
-    #     for i in range( rect[1], rect[3] ):
-
-    #         coors = [0, ( CHUNK_HEIGHT - i - 1 ) * TILE_WIDTH ]
-
-    #         for j in range( rect[0], rect[2] ):
-
-    #             coors[0] = j * TILE_WIDTH
-
-    #             currTileRef =  currChunkRef[ i ][ j ]
-    #             currWallRef =  currChunkRef.walls[ i ][ j ]
-    #             lightIntensity       =  currChunkRef.lightMap[ i ][ j ]
-
-    #             lightBox.fill( ( lightIntensity, ) * 3 )
-    #             currLightmap.blit( lightBox, coors )
-
-    #             if( currTileRef > 0 ):
-    #                 currSurfRef.blit( tiles.TILE_TABLE[ currTileRef ], coors )
-    #                 if( ( j, i, True ) in currChunkRef.TILE_TABLE_LOCAL ):
-
-    #                     if(HEALTH in currChunkRef.TILE_TABLE_LOCAL[ ( j, i, True ) ] ):
-
-    #                         breakState = (currChunkRef.TILE_TABLE_LOCAL[ ( j, i, True ) ][ HEALTH ] * 8) / 100
-    #                         currSurfRef.blit( tiles.TILE_MODIFIERS[ tiles.crack ][ 8 - int(breakState) ], coors )
-
-    #             elif( currWallRef > 0 ):
-    #                 currSurfRef.blit( tiles.TILE_TABLE[ currWallRef ], coors )
-    #                 if( ( i, j, False ) in currChunkRef.TILE_TABLE_LOCAL ):
-
-    #                     if(HEALTH in currChunkRef.TILE_TABLE_LOCAL[ ( j, i, False ) ] ):
-
-    #                         breakState = (currChunkRef.TILE_TABLE_LOCAL[ ( j, i, False ) ][ HEALTH ] * 8) / 100
-    #                         currSurfRef.blit( tiles.TILE_MODIFIERS[ tiles.crack ][ 8 - int(breakState) ], coors )
-
     @classmethod
     def updateScreen(  cls  ):
 
@@ -163,8 +104,6 @@ class Renderer:
 
             leftWalker      -= 1
 
-        if(cls.player.inventory.isEnabled): Renderer.renderInv()
-
         # Temporary player crosshair rendering
         playerCoors = [cls.player.pos[0], cls.player.pos[1]]
 
@@ -178,23 +117,6 @@ class Renderer:
 
         # ! temporary rendering of player crosshair
         pygame.draw.circle( cls.screen, (255,50,50), playerCoors, 2 )
-
-    # @classmethod
-    # def renderInv( cls ):   # todo THIS FUNCTION HAS A LOT OF MAGIC NUMBERS
-
-    #     inventory = cls.player.inventory
-    #     slot = items.ITEM_TABLE[items.slot]
-    #     coors = [16, 16] # ! MAGIC NUMBERS
-
-    #     for x in range(0, INV_COLS):
-    #         for y in range(0, INV_ROWS):
-    #             cls.screen.blit(slot, coors)
-    #             # get the texture of the item stored in the current slot
-    #             # get the count/durability of the item stored in the current slot
-    #             # get the modifiers of the texture of the item stored in the current slot
-    #             coors[1]+= 40   #! MAGIC NUMBER
-    #         coors[1] = 16
-    #         coors[0] +=40       #! MAGIC NUMBER
 
     @classmethod
     def updateSize(  cls  ):

@@ -194,7 +194,7 @@ class Player(Entity):
     #     # 1 means interacing with blocks
     #     # 2 means interacting with walls
 
-    def __init__( self , pos:list, chunkBuffer:Chunk.ChunkBuffer, eventHandler, keyState, mouseState, cursorPos, friction:float, health:int=100, grounded:bool=True):
+    def __init__( self , screen, pos:list, chunkBuffer:Chunk.ChunkBuffer, eventHandler, keyState, mouseState, cursorPos, friction:float, health:int=100, grounded:bool=True):
         super().__init__(pos, chunkBuffer, PLYR_WIDTH, PLYR_HEIGHT, friction, health, grounded)
 
         self.eventHandler = eventHandler
@@ -203,7 +203,9 @@ class Player(Entity):
         self.mouseState = mouseState
         self.cursorPos = cursorPos
 
-        self.inventory = Inventory(INV_COLS, INV_ROWS)
+        self.screen = screen
+
+        self.inventory = Inventory( screen, INV_COLS, INV_ROWS )
 
         self.tangibility = 0
         # 0 means intangible
@@ -314,7 +316,7 @@ class Player(Entity):
 
 class Inventory:
 
-    def __init__( self, cols, rows ):
+    def __init__( self, screen, cols, rows):
         """[summary]
 
         Args:
@@ -335,7 +337,7 @@ class Inventory:
 
         self.isEnabled = False
 
-        self.screen = None
+        self.screen = screen
 
     def addItem( self, i:int, q:int ):
         pass
