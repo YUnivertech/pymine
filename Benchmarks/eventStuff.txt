@@ -1,0 +1,3 @@
+When an event is triggered, it requires certain other things to be done
+So for that, we will to use decorators.
+For example, when a tile is altered, After the alteration, the chunk surface needs to be updated

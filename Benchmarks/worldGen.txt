@@ -1,0 +1,47 @@
+0-16        Bedrock wastes lower
+
+40% chance of Bedrock
+60% chance of obsidian
+
+16-32       Bedrock wastes upper
+
+70% chance of obsidian
+20% chance of stone
+10% chance of hellstone
+
+32-64       caves lower
+
+30% chance of stone
+20% chance of granite
+20% chance of quartz
+10% chance of unobtanium
+10% chance of unobtanium
+10% chance of unobtanium
+
+64-96       caves middle
+
+35% chance of stone
+15% chance of granite
+15% chance of limestone
+17.5% chance of iron
+17.5% chance of gold
+
+96-128      caves upper
+
+75% chance of stone
+12.5% chance of iron
+12.5% chance of gold
+
+128-160     subterrain
+
+20% chance of gravel
+20% chance of dirt
+20% chance of redclay
+20% chance of coal
+20% chance of copper
+
+160-224     mainland lower
+224-352     mainland upper
+352-416     sky lower
+416-480     sky upper
+480-512     aether

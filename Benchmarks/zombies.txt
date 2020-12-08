@@ -1,0 +1,16 @@
+﻿* Spawn at night/rain
+* Also spawns at least 10 blocks below ground level at any time 
+* Does not spawn in a well lit area even during night or under ground 
+* Completely despawn in the morning or are we using shadows
+* Charges towards you when you are in a 7 block radius
+* Has an inventory of 3 or more where one is always gonna be rotten flesh 
+* Can only drop armor or tools lesser than or equal to iron 
+{tools and armor :anything below iron(30% chance of drop ),soil,sticks,wood,glass}
+* Follows the same friction as the player when going over ice,clay etc….
+* Does 15 damage when in contact with player
+* Has to be in very close proximity to do damage
+* Has a total of 80hp increases if spawned with armor
+* When the zombie is not in a 7 block range of the player it moves around in a specific radius 
+* Spawns In the specific chunk where the player is  once player leaves despawns 
+* Can take fire damage just like the player 
+* Movement speed of zombie is lower by 0.25

@@ -1,0 +1,63 @@
+https://wiki.tiker.net/PyOpenCL/Installation/Windows/
+http://www.minho-kim.com/courses/17sp43.635/pyopencl.html
+https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyopencl
+ignore these links
+
+Threads-
+    1. Main Process (Client-loop ,rendering, querying to and putting back to RAMDB)
+    2. RAMDB Process (Population, renderingchunk, calculating lighttable, rendering lightmap, query, putting back to ROM)
+    3. Server Process
+
+
+Tiles:             Weight    Friction    Luminosity    Breaktime    Burnable
+
+Bedrock:            100        0             0            -
+Obsidian:           99         0             0            10
+Hellstone:          99         1             0            10
+Ores:
+ Unobtanium:        85         0             0            8
+ Diamond:           80         0             0            7
+ Platinum:          75         0             0            7
+ Gold:              70         0             0            5
+ Iron:              65         0             0            3
+ Copper:            65         0             0            2
+Stone:
+ Granite:           60         0             0            2
+ Quartz:            60         0             0            2
+ Limestone:         55         0             0            2
+ Greystone:         55         0             0            2
+ Sandstone:         50         0             0            2
+Gravel:             45         0             0            1
+Coke:               40         0             0            2
+Clay:
+ Brownclay:         35         1             0            2
+ Redclay:           35         1             0            2
+Dirt:
+ Sand:              20         0             0            1
+ Browndirt:         25         0             0            2
+Grass:
+ Grass:             25         0             0            2
+ Snowygrass:        30         0             0            2     
+Snow:               25         0             0            2
+Ice:                20        -2             0            2
+Cosmonium:          90         0             0            8
+Adamantite:         90         0             0            8
+Metal blocks:
+ Unobtaniumblock:   85        -1             0            8
+ Diamondblock:      80        -1             0            7
+ Platinumblock:     75        -1             0            7
+ Goldblock:         70        -1             0            5
+ Ironblock:         65        -1             0            3 
+ Copperblock:       65        -1             0            2
+Glassblock:         30        -1             0            2  
+Wood:
+ Jungle:            35         0             0            2
+ Oak:               35         0             0            2 
+ Boreal:            35         0             0            2
+ Pine:              35         0             0            2
+ Cactus:            35         0             0            2
+ Palm:              35         0             0            2
+Bed:                25         0             0            2
+Torch:              15         -             1            2
+Tools:
+ Bow:
