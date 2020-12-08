@@ -5,7 +5,7 @@ import math
 TILE_WIDTH          =  16
 
 # Width, height of chunk (in tiles)
-CHUNK_WIDTH         =  16
+CHUNK_WIDTH         =  64
 CHUNK_HEIGHT        =  512
 
 # Width, height of chunk (in points)
@@ -34,7 +34,7 @@ LERP_C              =  0.025
 
 ## Constants for entity and physics (time_unit = seconds, length_unit = points)
 GRAVITY_ACC         =  0.98
-JUMP_VEL            =  0.6
+JUMP_VEL            =  0.9
 SCALE_VEL           =  TILE_WIDTH * 9    # 16 is number of tiles to move
 AIR_FRICTION        =  0.2
 UP_ACC              =  0.8

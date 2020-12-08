@@ -116,10 +116,12 @@ class Entity:
         #         t = TILE_WIDTH/self.vel[0]
         #     else:
         #         t = min(TILE_WIDTH/self.vel[1], TILE_WIDTH/self.vel[0])
-        while self.vel != [0,0] and dt2 > 0:
+        while self.vel != [0,0] and dt2 >= t:
             dt2 -= t
             self.update(t)
-            print('hello')
+            # print('hello')
+        else:
+            self.update(dt2)
 
     def update(self, dt:float):
         """[summary]
@@ -142,18 +144,27 @@ class Entity:
                 self.acc[i] = 0
 
             self.acc[i] = MAX_ACC*2 if(self.acc[i] > MAX_ACC*2) else -MAX_ACC*2 if(self.acc[i] < -MAX_ACC*2) else self.acc[i]
+            tempacc = self.acc[i]
 
-            canMove = self.check(i, dt)
-            print(canMove)
-            self.checkGround()
-            if not self.grounded:
-                self.acc[1] = -GRAVITY_ACC
-
-            if canMove: self.vel[i] += self.acc[i] * dt
+            tempvel = self.vel[i]
+            self.vel[i] += self.acc[i] * dt
             if self.vel[i] < -MAX_VEL*(1-self.friction*0.2): self.vel[i] = -MAX_VEL*(1-self.friction*0.2)
             elif self.vel[i] > MAX_VEL*(1-self.friction*0.2): self.vel[i] = MAX_VEL*(1-self.friction*0.2)
-
             self.pos[i] += self.vel[i] * SCALE_VEL * dt
+
+            move = self.check(i, dt)
+            print(move)
+            self.checkGround()
+            if not self.grounded: self.acc[1] = -GRAVITY_ACC
+
+            if not move:
+                self.acc[i] = tempacc
+                self.pos[1] -= self.vel[i] * SCALE_VEL * dt
+                self.vel[i] = tempvel
+            # if self.vel[i] < -MAX_VEL*(1-self.friction*0.2): self.vel[i] = -MAX_VEL*(1-self.friction*0.2)
+            # elif self.vel[i] > MAX_VEL*(1-self.friction*0.2): self.vel[i] = MAX_VEL*(1-self.friction*0.2)
+
+            # self.pos[i] += self.vel[i] * SCALE_VEL * dt
 
     def calcFriction(self):
         # print(tiles.TILE_ATTR[self.tile(self.lB((0,-1)))])
@@ -184,25 +195,25 @@ class Entity:
         self.grounded = False
 
     def checkUp(self):
-        if self.tile(self.lU((0,1))) != 0 or self.tile(self.rU((0,1))) != 0 or self.tile(self.up((0,1))) != 0:
+        if self.tile(self.lU((0,0))) != 0 or self.tile(self.rU((0,0))) != 0 or self.tile(self.up((0,0))) != 0:
             return False
         else:
             return True
 
     def checkLeft(self):
-        if self.tile(self.lU((-1,0))) != 0 or self.tile(self.lB((-1,0))) != 0 or self.tile(self.le((-1,0))) != 0:
+        if self.tile(self.lU((0,0))) != 0 or self.tile(self.lB((0,0))) != 0 or self.tile(self.le((0,0))) != 0:
             return False
         else:
             return True
 
     def checkRight(self):
-        if self.tile(self.rB((1,0))) != 0 or self.tile(self.rU((1,0))) != 0 or self.tile(self.ri((1,0))) != 0:
+        if self.tile(self.rB((0,0))) != 0 or self.tile(self.rU((0,0))) != 0 or self.tile(self.ri((0,0))) != 0:
             return False
         else:
             return True
 
     def checkGround(self):
-        if self.tile(self.lB((0,-1))) != 0 or self.tile(self.rB((0,-1))) != 0 or self.tile(self.bo((0,-1))) != 0:
+        if self.tile(self.lB((0,0))) != 0 or self.tile(self.rB((0,0))) != 0 or self.tile(self.bo((0,0))) != 0:
             self.grounded = True
             return False
         else:
@@ -339,18 +350,28 @@ class Player(Entity):
                 self.acc[i] = 0
 
             self.acc[i] = MAX_ACC*2 if(self.acc[i] > MAX_ACC*2) else -MAX_ACC*2 if(self.acc[i] < -MAX_ACC*2) else self.acc[i]
+            tempacc = self.acc[i]
 
-            canMove = self.check(i, dt)
-            print(canMove)
-            self.checkGround()
-            if not self.grounded:
-                self.acc[1] = -GRAVITY_ACC
-
-            if canMove: self.vel[i] += self.acc[i] * dt
+            tempvel = self.vel[i]
+            self.vel[i] += self.acc[i] * dt
             if self.vel[i] < -MAX_VEL*(1-self.friction*0.2): self.vel[i] = -MAX_VEL*(1-self.friction*0.2)
             elif self.vel[i] > MAX_VEL*(1-self.friction*0.2): self.vel[i] = MAX_VEL*(1-self.friction*0.2)
-
+            temppos = self.pos[i]
             self.pos[i] += self.vel[i] * SCALE_VEL * dt
+
+            move = self.check(i, dt)
+            print(move)
+            self.checkGround()
+            if not self.grounded: self.acc[1] = -GRAVITY_ACC
+
+            if not move:
+                self.acc[i] = tempacc
+                self.pos[1] -= self.vel[i] * SCALE_VEL * dt
+                self.vel[i] = 0
+            # if self.vel[i] < -MAX_VEL*(1-self.friction*0.2): self.vel[i] = -MAX_VEL*(1-self.friction*0.2)
+            # elif self.vel[i] > MAX_VEL*(1-self.friction*0.2): self.vel[i] = MAX_VEL*(1-self.friction*0.2)
+
+            # self.pos[i] += self.vel[i] * SCALE_VEL * dt
 
         if  self.hitting and not self.placing :
             chunk = math.floor(self.cursorPos[0] / CHUNK_WIDTH_P)

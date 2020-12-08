@@ -121,7 +121,7 @@ while running:
         if  int(prevCamera[0] - camera[0]) or int(prevCamera[1] - camera[1])    : eventHandler.addCameraMotion()
 
     now = time.time()
-    player.update( now-prev )
+    player.driveUpdate( now-prev )
     prev = now
 
     if eventHandler.tileBreakFlag :
