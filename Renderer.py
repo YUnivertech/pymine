@@ -112,49 +112,6 @@ class Renderer:
                             currSurfRef.blit( tiles.TILE_MODIFIERS[ tiles.crack ][ 8 - int(breakState) ], coors )
 
     @classmethod
-    def renderChunk(  cls, index, rect = [0, 0, CHUNK_WIDTH, CHUNK_HEIGHT] ):
-
-        """Method to render the chunk (in the active chunk buffer) whose index has been supplied
-        Args:
-            index (int): Index of the chunk to be rendered
-            rect (list): Rectangular region of the chunk which needs to be rendered (optional argument)
-        """
-
-        # Create a reference to the chunk currently being rendered (for convenience)
-        currChunkRef                    =  cls.chunkBuffer[index]
-        currSurfRef                     =  cls.chunkBuffer.surfaces[index]
-
-        cls.chunkBuffer.surfaces[index].fill( ( 30, 150, 240 ), [rect[0] * TILE_WIDTH, TILE_WIDTH * (CHUNK_HEIGHT - rect[3]), TILE_WIDTH * (rect[2] - rect[0]), (rect[3] - rect[1]) * TILE_WIDTH])
-        for i in range( rect[1], rect[3] ):
-
-            coors  =  [ 0, ( CHUNK_HEIGHT - i - 1 ) * TILE_WIDTH ]
-
-            for j in range( rect[0], rect[2] ):
-
-                coors[0] = j * TILE_WIDTH
-
-                currTileRef =  currChunkRef[i][j]
-                currWallRef =  currChunkRef.walls[i][j]
-
-                if( currTileRef > 0 ):
-                    currSurfRef.blit( tiles.TILE_TABLE[currTileRef], coors )
-                    if( ( j, i, True ) in currChunkRef.TILE_TABLE_LOCAL ):
-
-                        if(HEALTH in currChunkRef.TILE_TABLE_LOCAL[ ( j, i, True ) ] ):
-
-                            breakState = (currChunkRef.TILE_TABLE_LOCAL[ ( j, i, True ) ][ HEALTH ] * 8) / 100
-                            currSurfRef.blit( tiles.TILE_MODIFIERS[ tiles.crack ][ 8 - int(breakState) ], coors )
-
-                elif( currWallRef > 0 ):
-                    currSurfRef.blit( tiles.TILE_TABLE[currWallRef], coors )
-                    if( ( i, j, False ) in currChunkRef.TILE_TABLE_LOCAL ):
-
-                        if(HEALTH in currChunkRef.TILE_TABLE_LOCAL[ ( j, i, False ) ] ):
-
-                            breakState = (currChunkRef.TILE_TABLE_LOCAL[ ( j, i, False ) ][ HEALTH ] * 8) / 100
-                            currSurfRef.blit( tiles.TILE_MODIFIERS[ tiles.crack ][ 8 - int(breakState) ], coors )
-
-    @classmethod
     def renderLightmap(  cls, index, rect = [0, 0, CHUNK_WIDTH, CHUNK_HEIGHT] ):
 
         currChunkRef                    =  cls.chunkBuffer[index]

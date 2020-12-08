@@ -18,6 +18,13 @@ cameraBound = True
 pygame.init()
 clock = pygame.time.Clock()
 
+# Create chunk buffer and chunk-position buffer
+bufferWidth = 1 + (pygame.display.Info().current_w//CHUNK_WIDTH_P) + 1
+if(bufferWidth % 2 == 0): bufferWidth += 1
+chunkBuffer = ChunkBuffer(bufferWidth, 0, "world1")
+print(bufferWidth)
+del bufferWidth
+
 # Create and display window
 screen = pygame.display.set_mode(displaySize, pygame.RESIZABLE)
 pygame.display.set_caption("Hello World!")
@@ -27,8 +34,7 @@ pygame.display.set_icon(pygame.image.load("Resources/Default/gameIcon.png"))
 tiles.loadImageTable()
 items.loadImageTable()
 
-# Create chunk buffer and chunk-position buffer
-chunkBuffer = ChunkBuffer(11, 0, "world1")
+for i in range(len(chunkBuffer)): chunkBuffer[i].draw()
 
 # Input handling containers
 eventHandler = entity.ClientEventHandler()

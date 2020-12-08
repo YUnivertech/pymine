@@ -194,7 +194,6 @@ class ChunkBuffer:
 
         for i in range( 0, self.length ):
             self.formLightMap( i )
-            self.chunks[i].draw()
 
     def shiftBuffer( self, deltaChunk ):
 
