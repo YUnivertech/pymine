@@ -43,32 +43,34 @@ class Projectile:
 
 class Entity:
 
-    def __init__(self, pos:list, chunkBuffer:Chunk.ChunkBuffer, width, height, friction:float, health:int=100, grounded:bool=True):
+    def __init__(self, pos:list, chunkBuffer:Chunk.ChunkBuffer, width:float, height:float, friction:float, health:int=100, grounded:bool=True):
         """[summary]
 
         Args:
-            p (list): [description]
-            cb (Chunk.ChunkBuffer): [description]
-            f (float): [description]
-            h (int, optional): [description]. Defaults to 100.
-            g (bool, optional): [description]. Defaults to True.
+            pos (list): [description]
+            chunkBuffer (Chunk.ChunkBuffer): [description]
+            width (float): [description]
+            height (float): [description]
+            friction (float): [description]
+            health (int, optional): [description]. Defaults to 100.
+            grounded (bool, optional): [description]. Defaults to True.
         """
 
-        self.pos         = pos
-        self.chunkBuffer = chunkBuffer
-        self.friction    = friction
-        self.health      = health
-        self.grounded    = grounded
+        self.pos          = pos
+        self.chunkBuffer  = chunkBuffer
+        self.friction     = friction
+        self.health       = health
+        self.grounded     = grounded
 
-        # self.itemHeld    = None
-        self.vel         = [0.0, 0.0]
-        self.acc         = [0.0, 0.0]
+        # self.itemHeld     = None
+        self.vel          = [0.0, 0.0]
+        self.acc          = [0.0, 0.0]
 
-        self.width       = width
-        self.height      = height
+        self.width        = width
+        self.height       = height
 
-        self.hitting     = False
-        self.placing     = False
+        self.hitting      = False
+        self.placing      = False
 
         # ! these formulas are used in a lot of places(THEY MAY ALSO CHANGE!)
         self.le           = lambda off: (self.pos[0] - (self.width * 0.5) + off[0], self.pos[1] + off[1])    # Left
@@ -103,15 +105,30 @@ class Entity:
         # self.tileRightBot = self.chunkBuffer[self.currChunkInd( self.rB((-1,0)) )][self.yPosChunk( self.rB((-1,0)) )][self.xPosChunk( self.rB((-1,0)) )]
         # self.tileRightUp  = self.chunkBuffer[self.currChunkInd( self.rU((-1,0)) )][self.yPosChunk( self.rU((-1,0)) )][self.xPosChunk( self.rU((-1,0)) )]
 
-    def update(self, dt):
+    def driveUpdate(self, dt:float):
+        dt2 = dt
+        t = TILE_WIDTH / (MAX_VEL*SCALE_VEL)
+        # t = 1 / (MAX_VEL * SCALE_VEL)
+        # if self.vel != [0,0]:
+        #     if self.vel[0] == 0:
+        #         t = TILE_WIDTH/MAX_VEL*SCALE_VEL
+        #     elif self.vel[1] == 0:
+        #         t = TILE_WIDTH/self.vel[0]
+        #     else:
+        #         t = min(TILE_WIDTH/self.vel[1], TILE_WIDTH/self.vel[0])
+        while self.vel != [0,0] and dt2 > 0:
+            dt2 -= t
+            self.update(t)
+            print('hello')
+
+    def update(self, dt:float):
         """[summary]
 
         Args:
-            dt ([type]): [description]
+            dt (float): [description]
         """
 
         self.calcFriction()
-        self.checkGround()
         for i in range(0, 2):
             nextVel = self.vel[i] + self.acc[i]*dt
 
@@ -126,11 +143,26 @@ class Entity:
 
             self.acc[i] = MAX_ACC*2 if(self.acc[i] > MAX_ACC*2) else -MAX_ACC*2 if(self.acc[i] < -MAX_ACC*2) else self.acc[i]
 
-            self.vel[i] += self.acc[i] * dt
+            canMove = self.check(i, dt)
+            print(canMove)
+            self.checkGround()
+            if not self.grounded:
+                self.acc[1] = -GRAVITY_ACC
+
+            if canMove: self.vel[i] += self.acc[i] * dt
             if self.vel[i] < -MAX_VEL*(1-self.friction*0.2): self.vel[i] = -MAX_VEL*(1-self.friction*0.2)
             elif self.vel[i] > MAX_VEL*(1-self.friction*0.2): self.vel[i] = MAX_VEL*(1-self.friction*0.2)
 
             self.pos[i] += self.vel[i] * SCALE_VEL * dt
+
+    def calcFriction(self):
+        # print(tiles.TILE_ATTR[self.tile(self.lB((0,-1)))])
+        # print(self.acc)
+        # print()
+        if self.tile(self.lB((0,-1))) == 0:
+            self.friction = DEFAULT_FRICTION
+        else:
+            self.friction = tiles.TILE_ATTR[self.tile(self.lB((0,-1)))][FRICTION]
 
     def moveLeft(self):
         self.acc[0] = -self.friction * 2
@@ -151,27 +183,64 @@ class Entity:
         self.acc[1] = -GRAVITY_ACC
         self.grounded = False
 
-    def calcFriction(self):
-        # print(tiles.TILE_ATTR[self.tile(self.lB((0,-1)))])
-        # print(self.acc)
-        # print()
-        if self.tile(self.lB((0,-1))) == 0:
-            self.friction = DEFAULT_FRICTION
+    def checkUp(self):
+        if self.tile(self.lU((0,1))) != 0 or self.tile(self.rU((0,1))) != 0 or self.tile(self.up((0,1))) != 0:
+            return False
         else:
-            self.friction = tiles.TILE_ATTR[self.tile(self.lB((0,-1)))][FRICTION]
+            return True
+
+    def checkLeft(self):
+        if self.tile(self.lU((-1,0))) != 0 or self.tile(self.lB((-1,0))) != 0 or self.tile(self.le((-1,0))) != 0:
+            return False
+        else:
+            return True
+
+    def checkRight(self):
+        if self.tile(self.rB((1,0))) != 0 or self.tile(self.rU((1,0))) != 0 or self.tile(self.ri((1,0))) != 0:
+            return False
+        else:
+            return True
 
     def checkGround(self):
-        if self.tile(self.lB((0,-1))) == 0:
-            self.grounded = False
-            # return False
-        else:
+        if self.tile(self.lB((0,-1))) != 0 or self.tile(self.rB((0,-1))) != 0 or self.tile(self.bo((0,-1))) != 0:
             self.grounded = True
-            # return True
+            return False
+        else:
+            self.grounded = False
+            return True
 
-    def damage(self):
+    def hit(self):
         pass
 
-    def notObstacle(self, c):
+    def check(self, i:int, dt:float):
+        if i == 0:
+            if self.vel[0]+self.acc[0]*dt > 0:
+                res = self.checkRight()
+            else:
+                res = self.checkLeft()
+        else:
+            if self.vel[1]+self.acc[1]*dt > 0:
+                res = self.checkUp()
+            else:
+                res = self.checkGround()
+        return res
+
+
+class Slime(Entity):
+    def __init__(self, pos: list, chunkBuffer: Chunk.ChunkBuffer, eventHandler, keyState, mouseState, cursorPos, friction: float, health: int = 100, grounded: bool = True):
+        super().__init__(pos, chunkBuffer, PLYR_WIDTH, PLYR_HEIGHT, friction, health, grounded)
+        self.inventory = Inventory(1, 1)
+
+    def runAI(self):
+        pass
+
+
+class Zombie(Entity):
+    def __init__(self, pos:list, chunkBuffer:Chunk.ChunkBuffer, eventHandler, keyState, mouseState, cursorPos, friction:float, health:int=100, grounded:bool=True):
+        super().__init__(pos, chunkBuffer, PLYR_WIDTH, PLYR_HEIGHT, friction, health, grounded)
+        self.inventory = Inventory(1, 1)
+
+    def runAI(self):
         pass
 
 
@@ -229,7 +298,7 @@ class Player(Entity):
 
         if( self.keyState[pygame.K_s] and not self.keyState[pygame.K_w] ):
             self.moveDown()
-        elif( self.keyState[pygame.K_w] and not self.keyState[pygame.K_s] ):
+        elif( self.grounded and self.keyState[pygame.K_w] and not self.keyState[pygame.K_s] ):
             self.jump()
 
         if(self.keyState[pygame.K_e]):
@@ -271,7 +340,13 @@ class Player(Entity):
 
             self.acc[i] = MAX_ACC*2 if(self.acc[i] > MAX_ACC*2) else -MAX_ACC*2 if(self.acc[i] < -MAX_ACC*2) else self.acc[i]
 
-            self.vel[i] += self.acc[i] * dt
+            canMove = self.check(i, dt)
+            print(canMove)
+            self.checkGround()
+            if not self.grounded:
+                self.acc[1] = -GRAVITY_ACC
+
+            if canMove: self.vel[i] += self.acc[i] * dt
             if self.vel[i] < -MAX_VEL*(1-self.friction*0.2): self.vel[i] = -MAX_VEL*(1-self.friction*0.2)
             elif self.vel[i] > MAX_VEL*(1-self.friction*0.2): self.vel[i] = MAX_VEL*(1-self.friction*0.2)
 
@@ -283,9 +358,10 @@ class Player(Entity):
 
             x = (self.cursorPos[0] // TILE_WIDTH) - chunk * CHUNK_WIDTH
             y = (self.cursorPos[1] // TILE_WIDTH)
+            print('hitting')
 
-            self.chunkBuffer[ chunkInd ].breakBlockAt( x, y, 20, dt)
-            self.chunkBuffer[ chunkInd ].breakWallAt( x, y, 20, dt)
+            self.chunkBuffer[ chunkInd ].breakBlockAt( x, y, 10, dt)
+            self.chunkBuffer[ chunkInd ].breakWallAt( x, y, 10, dt)
             # self.chunkBuffer[ chunkInd ][y][x] = tiles.air
             # self.chunkBuffer[ chunkInd ].walls[y][x] = tiles.air
 
@@ -311,6 +387,7 @@ class Player(Entity):
 
             if((x, y, True) in self.chunkBuffer[ chunkInd ].TILE_TABLE_LOCAL): print("True")
             else: print("False")
+
 
 class Inventory:
 
@@ -353,12 +430,12 @@ class Inventory:
             self.items[pos[1]][pos[0]] = item
             self.items[pos[1]][pos[0]] = item
 
-            if( self.quantities[pos[1]][pos[0]] + quantity > items.ITEM_ATTR[i][MAX_STACK] ):
+            if( self.quantities[pos[1]][pos[0]] + quantity > items.ITEM_ATTR[item][MAX_STACK] ):
 
                 self.selItem[0] = item
-                self.selItem[1] = self.quantities[pos[1]][pos[0]] + quantity - items.ITEM_ATTR[i][MAX_STACK]
+                self.selItem[1] = self.quantities[pos[1]][pos[0]] + quantity - items.ITEM_ATTR[item][MAX_STACK]
 
-                self.quantities[pos[1]][pos[0]] = items.ITEM_ATTR[i][MAX_STACK]
+                self.quantities[pos[1]][pos[0]] = items.ITEM_ATTR[item][MAX_STACK]
 
             else:
 
@@ -378,6 +455,7 @@ class Inventory:
 
     def remItemLast( self, i, q ):
         pass
+
 
 class ClientEventHandler:
     """ Class to abstract recording, management and processing of client-side events

@@ -35,14 +35,14 @@ LERP_C              =  0.025
 ## Constants for entity and physics (time_unit = seconds, length_unit = points)
 GRAVITY_ACC         =  0.98
 JUMP_VEL            =  0.6
-SCALE_VEL           =  TILE_WIDTH * 16    # 16 is number of tiles to move
+SCALE_VEL           =  TILE_WIDTH * 9    # 16 is number of tiles to move
 AIR_FRICTION        =  0.2
 UP_ACC              =  0.8
 DOWN_ACC            =  0.8
-DEFAULT_FRICTION    =  1
+DEFAULT_FRICTION    =  0.3
 MAX_ACC             =  1
 MAX_VEL             =  1
-PLYR_WIDTH          =  TILE_WIDTH       # 36
+PLYR_WIDTH          =  TILE_WIDTH + 2      # 36
 PLYR_HEIGHT         =  TILE_WIDTH<<1    # 54
 INV_COLS            =  10
 INV_ROWS            =  3

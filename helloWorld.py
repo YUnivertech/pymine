@@ -25,7 +25,7 @@ chunkBuffer = ChunkBuffer(11, 0, "world1")
 eventHandler = entity.ClientEventHandler()
 
 # Player variables
-player = entity.Player([0, 0], chunkBuffer, eventHandler, eventHandler.keyStates, eventHandler.mouseState, eventHandler.cursorPos, DEFAULT_FRICTION)
+player = entity.Player([0, 3000], chunkBuffer, eventHandler, eventHandler.keyStates, eventHandler.mouseState, eventHandler.cursorPos, DEFAULT_FRICTION)
 currChunk = prevChunk = deltaChunk = 0
 
 # Create and display window
@@ -40,6 +40,8 @@ items.loadImageTable()
 # Initialize the renderer
 Renderer.initialize(chunkBuffer, camera, player, displaySize, screen)
 dt = 0
+now = time.time()
+prev = time.time()
 
 def takeCommand( ):
     global cameraBound
@@ -118,7 +120,9 @@ while running:
 
         if  int(prevCamera[0] - camera[0]) or int(prevCamera[1] - camera[1])    : eventHandler.addCameraMotion()
 
-    player.update( dt )
+    now = time.time()
+    player.update( now-prev )
+    prev = now
 
     if eventHandler.tileBreakFlag :
         Renderer.renderChunk( eventHandler.tileBreakIndex, (eventHandler.tileBreakPos[0], eventHandler.tileBreakPos[1], eventHandler.tileBreakPos[0] + 1, eventHandler.tileBreakPos[1] + 1) )
