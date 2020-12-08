@@ -47,9 +47,6 @@ class Chunk:
             [type]: [description]
         """
 
-        #print(self.index)
-
-
         if( ( x, y, False ) not in self.TILE_TABLE_LOCAL ):
             self.TILE_TABLE_LOCAL[ ( x, y, False ) ] = { }
 
@@ -343,6 +340,28 @@ class ChunkBuffer:
                 if(rightVal > self[index+1].lightMap[y][0]):
                     self[index+1].lightMap[y][0]   =  rightVal
                     self.propagate(index+1, 0, y, left=False)
+
+    def renderLightmaps( self ):
+        for _ in range( cls.length ):   cls.renderLightmap( _ )
+
+    def renderLightmap(  self, index, rect = [0, 0, CHUNK_WIDTH, CHUNK_HEIGHT] ):
+
+        currChunkRef                    =  self.chunks[index]
+        currLightmap                    =  self.lightSurfs[index]
+
+        lightBox                        =  pygame.Surface( ( TILE_WIDTH, TILE_WIDTH ) )
+
+        for i in range( rect[1], rect[3] ):
+
+            coors   =   [0, ( CHUNK_HEIGHT - i - 1 ) * TILE_WIDTH]
+
+            for j in range( rect[0], rect[2] ):
+
+                coors[0] = j * TILE_WIDTH
+
+                lightIntensity = currChunkRef.lightMap[ i ][ j ]
+                lightBox.fill( ( lightIntensity, ) * 3 )
+                currLightmap.blit( lightBox, coors )
 
     def update( self, dt ):
         for _ in range( 0, self.length ):   self.chunks[_].update()

@@ -34,7 +34,9 @@ pygame.display.set_icon(pygame.image.load("Resources/Default/gameIcon.png"))
 tiles.loadImageTable()
 items.loadImageTable()
 
-for i in range(len(chunkBuffer)): chunkBuffer[i].draw()
+for i in range(len(chunkBuffer)):
+    chunkBuffer[i].draw()
+    chunkBuffer.renderLightmap(i)
 
 # Input handling containers
 eventHandler = entity.ClientEventHandler()
@@ -132,7 +134,7 @@ while running:
         eventHandler.tileBreakFlag = False
 
     elif eventHandler.tilePlaceFlag :
-        Renderer.renderChunk( eventHandler.tilePlaceIndex, (eventHandler.tilePlacePos[0] - 2, eventHandler.tilePlacePos[1] - 2, eventHandler.tileBreakPos[0]  + 2, eventHandler.tilePlacePos[1] + 2) )
+        chunkBuffer[eventHandler.tileBreakIndex].draw((eventHandler.tileBreakPos[0], eventHandler.tileBreakPos[1], eventHandler.tileBreakPos[0] + 1, eventHandler.tileBreakPos[1] + 1))
         Renderer.updateScreen()
         eventHandler.tilePlaceFlag = False
 
@@ -152,6 +154,7 @@ while running:
             #eventHandler.chunkShiftFlag = True # server must be notified
             eventHandler.loadChunkIndex = chunkBuffer.shiftBuffer(deltaChunk)
             chunkBuffer[eventHandler.loadChunkIndex].draw()
+            chunkBuffer.renderLightmap(eventHandler.loadChunkIndex)
 
         eventHandler.cameraMovementFlag = False
 
