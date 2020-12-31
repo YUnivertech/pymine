@@ -102,8 +102,7 @@ while running:
         elif    event.type == pygame.VIDEORESIZE :         eventHandler.addWindowResize( )
 
     # Player movement handling
-    if  eventHandler.keyInFlag or eventHandler.mouseInFlag :
-
+    if eventHandler.keyInFlag:
         if cameraBound:
             player.run()
 
@@ -117,8 +116,29 @@ while running:
             eventHandler.addCameraMotion()
 
         if(player.inventory.isEnabled): player.inventory.draw()
+        eventHandler.keyInFlag = False
 
-        eventHandler.mouseInFlag, eventHandler.keyinFlag = False, False
+    if eventHandler.mouseInFlag:
+        player.run()
+        eventHandler.mouseInFlag = False
+
+    # if  eventHandler.keyInFlag or eventHandler.mouseInFlag :
+
+    #     if cameraBound:
+    #         player.run()
+
+    #     else:
+    #         if      eventHandler.keyStates[pygame.K_a]  : camera[0] -= SCALE_VEL * dt
+    #         elif    eventHandler.keyStates[pygame.K_d]  : camera[0] += SCALE_VEL * dt
+
+    #         if      eventHandler.keyStates[pygame.K_w]  : camera[1] += SCALE_VEL * dt
+    #         elif    eventHandler.keyStates[pygame.K_s]  : camera[1] -= SCALE_VEL * dt
+
+    #         eventHandler.addCameraMotion()
+
+    #     if(player.inventory.isEnabled): player.inventory.draw()
+
+    #     eventHandler.mouseInFlag, eventHandler.keyinFlag = False, False
 
     # camera movement handling
     if  cameraBound :
