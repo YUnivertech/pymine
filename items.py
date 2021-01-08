@@ -306,6 +306,7 @@ ITEM_ATTR = {
     apple            :{ID:2,  WEIGHT:2,  DAMAGE:10}
 }
 
+
 def loadImageTable():
     for key in ITEM_TABLE:
         ITEM_TABLE[key] = ITEM_TABLE[key].convert_alpha()

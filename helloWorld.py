@@ -9,7 +9,7 @@ displaySize = [400, 300]
 framerate = 0
 
 # Camera variables
-#camera = pygame.math.Vector2([0, CHUNK_HEIGHT_P//2])
+# camera = pygame.math.Vector2([0, CHUNK_HEIGHT_P//2])
 camera = [0, CHUNK_HEIGHT_P//2]
 prevCamera = [0, 0]
 cameraBound = True
@@ -43,6 +43,7 @@ dt = 0
 now = time.time()
 prev = time.time()
 
+
 def takeCommand( ):
     global cameraBound
     command = input(">> ")
@@ -51,38 +52,43 @@ def takeCommand( ):
     cntr = 4
     for i in command[4::]:
         cntr += 1
-        if(i == ' '): break
+        if i == ' ': break
         what = what + i
 
-    if(what == "shader"):
-        if(command[0] == 's'):
+    if what == "shader":
+        if command[0] == 's':
             Renderer.isShader = exec(command[cntr::])
-        elif(command[0] == 'g'):
+        elif command[0] == 'g':
             print(Renderer.isShader)
-    elif(what == "cameraRoam"):
-        if(command[0] == 's'):
+    elif what == "cameraRoam":
+        if command[0] == 's':
             cameraBound = exec(command[cntr::])
-        elif(command[0] == 'g'):
+        elif command[0] == 'g':
             print(not cameraBound)
 
-# game loop
 
+def takeCommand2():
+    comm = input(">>> ")
+    return comm
+
+
+# game loop
 running = True
 while running:
 
-#!------------------------------------------------------------------------------------------------------------------------------------------------------
+    # !------------------------------------------------------------------------------------------------------------------------------------------------------
 
     # event handling loop
     for event in pygame.event.get():
 
-        if(event.type == pygame.QUIT):
+        if event.type == pygame.QUIT:
             running = False
 
-        elif(event.type == pygame.KEYDOWN):
+        elif event.type == pygame.KEYDOWN:
 
             if      event.key == pygame.K_c :              Renderer.setShaders()
             elif    event.key == pygame.K_n :              cameraBound = not cameraBound # This should free the camera from being fixed to the player
-            elif    event.key == pygame.K_SLASH :          takeCommand()
+            elif    event.key == pygame.K_SLASH :          exec(takeCommand2())
             else :                                         eventHandler.addKey( event.key )
 
         elif    event.type == pygame.KEYUP :               eventHandler.remKey( event.key )
@@ -100,7 +106,7 @@ while running:
 
         if cameraBound:
             player.run()
-            #if(player.inventory.isEnabled): Renderer.renderInv()
+            # if(player.inventory.isEnabled): Renderer.renderInv()
 
         else:
             if      eventHandler.keyStates[pygame.K_a]  : camera[0] -= SCALE_VEL * dt
@@ -122,6 +128,10 @@ while running:
 
     now = time.time()
     player.driveUpdate( now-prev )
+    test = time.time()
+    # print((test-now)*1000)
+    # print('')
+    # print((now-prev)*1000)
     prev = now
 
     if eventHandler.tileBreakFlag :
@@ -134,7 +144,7 @@ while running:
         Renderer.updateScreen()
         eventHandler.tilePlaceFlag = False
 
-    if(eventHandler.cameraMovementFlag):
+    if eventHandler.cameraMovementFlag:
 
         Renderer.updateCam()
         Renderer.updateScreen()
@@ -145,15 +155,15 @@ while running:
         deltaChunk = currChunk - prevChunk
         prevChunk = currChunk
 
-        if(deltaChunk != 0):
+        if deltaChunk != 0:
 
-            #eventHandler.chunkShiftFlag = True # server must be notified
+            # eventHandler.chunkShiftFlag = True # server must be notified
             eventHandler.loadChunkIndex = chunkBuffer.shiftBuffer(deltaChunk)
             Renderer.renderFull(eventHandler.loadChunkIndex)
 
         eventHandler.cameraMovementFlag = False
 
-    if(eventHandler.windowResizeFlag):
+    if eventHandler.windowResizeFlag:
 
         displaySize[0] = screen.get_width()
         displaySize[1] = screen.get_height()
@@ -167,8 +177,8 @@ while running:
 
     # Framerate calculation
     dt = clock.tick(0) / 1000
-    #framerate = 1 / max(dt, 0.001)
-    #print(framerate)
+    # framerate = 1 / max(dt, 0.001)
+    # print(framerate)
 
 
 chunkBuffer.saveComplete()

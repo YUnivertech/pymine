@@ -5,7 +5,7 @@ import math
 TILE_WIDTH          =  16
 
 # Width, height of chunk (in tiles)
-CHUNK_WIDTH         =  64
+CHUNK_WIDTH         =  16
 CHUNK_HEIGHT        =  512
 
 # Width, height of chunk (in points)
@@ -26,24 +26,24 @@ UNDERGROUND_X       =  0.05
 UNDERGROUND_Y       =  0.1
 
 # Infinity
-#generateBigNum = lambda numBits : 1<<(numBits-1)|generateBigNum(numBits-1) if(numBits >= 1) else 1
-INF = math.inf #generateBigNum(64)
+# generateBigNum = lambda numBits : 1<<(numBits-1)|generateBigNum(numBits-1) if(numBits >= 1) else 1
+INF = math.inf  # generateBigNum(64)
 
 ## Constants for camera
 LERP_C              =  0.025
 
 ## Constants for entity and physics (time_unit = seconds, length_unit = points)
 GRAVITY_ACC         =  0.98
-JUMP_VEL            =  0.9
-SCALE_VEL           =  TILE_WIDTH * 9    # 16 is number of tiles to move
+JUMP_VEL            =  1
+SCALE_VEL           =  TILE_WIDTH * 12    # 16 is number of tiles to move
 AIR_FRICTION        =  0.2
-UP_ACC              =  0.8
-DOWN_ACC            =  0.8
-DEFAULT_FRICTION    =  0.3
+# UP_ACC              =  0.8
+# DOWN_ACC            =  0.8
+DEFAULT_FRICTION    =  0.5
 MAX_ACC             =  1
 MAX_VEL             =  1
-PLYR_WIDTH          =  TILE_WIDTH + 2      # 36
-PLYR_HEIGHT         =  TILE_WIDTH<<1    # 54
+PLYR_WIDTH          =  TILE_WIDTH      # 36
+PLYR_HEIGHT         =  TILE_WIDTH+10    # 54
 INV_COLS            =  10
 INV_ROWS            =  3
 

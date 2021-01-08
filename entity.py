@@ -3,11 +3,11 @@ import tiles, items
 import math, Chunk
 import gameUtilities
 
-#!----------------------------------------------------------------------------------------------------
+# !----------------------------------------------------------------------------------------------------
 # todo  Please add all the entities for the various items
 # todo  Please make sure that they are named appropriately
 # todo  Please make sure that they are numbered properly
-#!----------------------------------------------------------------------------------------------------
+# !----------------------------------------------------------------------------------------------------
 
 player = 0
 zombie = 1
@@ -73,14 +73,14 @@ class Entity:
         self.placing      = False
 
         # ! these formulas are used in a lot of places(THEY MAY ALSO CHANGE!)
-        self.le           = lambda off: (self.pos[0] - (self.width * 0.5) + off[0], self.pos[1] + off[1])    # Left
-        self.ri           = lambda off: (self.pos[0] + (self.width * 0.5) + off[0], self.pos[1] + off[1])    # Right
-        self.bo           = lambda off: (self.pos[0] + off[0], self.pos[1] - (self.height * 0.5) + off[1])    # Bottom
-        self.up           = lambda off: (self.pos[0] + off[0], self.pos[1] + (self.height * 0.5) + off[1])    # Top
-        self.lB           = lambda off: (self.pos[0] - (self.width * 0.5) + off[0], self.pos[1] - (self.height * 0.5) + off[1])    # Left bottom
-        self.lU           = lambda off: (self.pos[0] - (self.width * 0.5) + off[0], self.pos[1] + (self.height * 0.5) + off[1])    # Left top
-        self.rB           = lambda off: (self.pos[0] + (self.width * 0.5) + off[0], self.pos[1] - (self.height * 0.5) + off[1])    # Right bottom
-        self.rU           = lambda off: (self.pos[0] + (self.width * 0.5) + off[0], self.pos[1] + (self.height * 0.5) + off[1])    # Right top
+        # self.le           = lambda off, pos=self.pos: (pos[0] - (self.width * 0.5) + off[0], pos[1] + off[1])    # Left
+        # self.ri           = lambda off, pos=self.pos: (pos[0] + (self.width * 0.5) + off[0], pos[1] + off[1])    # Right
+        # self.bo           = lambda off, pos=self.pos: (pos[0] + off[0], pos[1] - (self.height * 0.5) + off[1])    # Bottom
+        # self.up           = lambda off, pos=self.pos: (pos[0] + off[0], pos[1] + (self.height * 0.5) + off[1])    # Top
+        # self.lB           = lambda off, pos=self.pos: (pos[0] - (self.width * 0.5) + off[0], pos[1] - (self.height * 0.5) + off[1])    # Left bottom
+        # self.lU           = lambda off, pos=self.pos: (pos[0] - (self.width * 0.5) + off[0], pos[1] + (self.height * 0.5) + off[1])    # Left top
+        # self.rB           = lambda off, pos=self.pos: (pos[0] + (self.width * 0.5) + off[0], pos[1] - (self.height * 0.5) + off[1])    # Right bottom
+        # self.rU           = lambda off, pos=self.pos: (pos[0] + (self.width * 0.5) + off[0], pos[1] + (self.height * 0.5) + off[1])    # Right top
         # These are the rects of the player
         self.left         = self.le((0,0))
         self.right        = self.ri((0,0))
@@ -105,9 +105,49 @@ class Entity:
         # self.tileRightBot = self.chunkBuffer[self.currChunkInd( self.rB((-1,0)) )][self.yPosChunk( self.rB((-1,0)) )][self.xPosChunk( self.rB((-1,0)) )]
         # self.tileRightUp  = self.chunkBuffer[self.currChunkInd( self.rU((-1,0)) )][self.yPosChunk( self.rU((-1,0)) )][self.xPosChunk( self.rU((-1,0)) )]
 
+    def le(self, off, pos=None):
+        if not pos:
+            pos = self.pos
+        return pos[0] - (self.width * 0.5) + off[0], pos[1] + off[1]
+
+    def ri(self, off, pos=None):
+        if not pos:
+            pos = self.pos
+        return pos[0] + (self.width * 0.5) + off[0], pos[1] + off[1]
+
+    def bo(self, off, pos=None):
+        if not pos:
+            pos = self.pos
+        return pos[0] + off[0], pos[1] - (self.height * 0.5) + off[1]
+
+    def up(self, off, pos=None):
+        if not pos:
+            pos = self.pos
+        return pos[0] + off[0], pos[1] + (self.height * 0.5) + off[1]
+
+    def lB(self, off, pos=None):
+        if not pos:
+            pos = self.pos
+        return pos[0] - (self.width * 0.5) + off[0], pos[1] - (self.height * 0.5) + off[1]
+
+    def lU(self, off, pos=None):
+        if not pos:
+            pos = self.pos
+        return pos[0] - (self.width * 0.5) + off[0], pos[1] + (self.height * 0.5) + off[1]
+
+    def rB(self, off, pos=None):
+        if not pos:
+            pos = self.pos
+        return pos[0] + (self.width * 0.5) + off[0], pos[1] - (self.height * 0.5) + off[1]
+
+    def rU(self, off, pos=None):
+        if not pos:
+            pos = self.pos
+        return pos[0] + (self.width * 0.5) + off[0], pos[1] + (self.height * 0.5) + off[1]
+
     def driveUpdate(self, dt:float):
         dt2 = dt
-        t = TILE_WIDTH / (MAX_VEL*SCALE_VEL)
+        t = 1 / (MAX_VEL*SCALE_VEL)
         # t = 1 / (MAX_VEL * SCALE_VEL)
         # if self.vel != [0,0]:
         #     if self.vel[0] == 0:
@@ -130,7 +170,10 @@ class Entity:
             dt (float): [description]
         """
 
+        nextPos = self.pos.copy()
         self.calcFriction()
+        self.checkGround( self.pos )
+        if not self.grounded: self.acc[1] = -GRAVITY_ACC
         for i in range(0, 2):
             nextVel = self.vel[i] + self.acc[i]*dt
 
@@ -138,40 +181,32 @@ class Entity:
                 self.vel[i] -= self.friction*dt
             elif nextVel <= -abs(self.friction*dt):
                 self.vel[i] += self.friction*dt
-
             else:
                 self.vel[i] = 0
                 self.acc[i] = 0
 
             self.acc[i] = MAX_ACC*2 if(self.acc[i] > MAX_ACC*2) else -MAX_ACC*2 if(self.acc[i] < -MAX_ACC*2) else self.acc[i]
-            tempacc = self.acc[i]
 
-            tempvel = self.vel[i]
             self.vel[i] += self.acc[i] * dt
             if self.vel[i] < -MAX_VEL*(1-self.friction*0.2): self.vel[i] = -MAX_VEL*(1-self.friction*0.2)
             elif self.vel[i] > MAX_VEL*(1-self.friction*0.2): self.vel[i] = MAX_VEL*(1-self.friction*0.2)
-            self.pos[i] += self.vel[i] * SCALE_VEL * dt
-
-            move = self.check(i, dt)
-            print(move)
-            self.checkGround()
-            if not self.grounded: self.acc[1] = -GRAVITY_ACC
-
-            if not move:
-                self.acc[i] = tempacc
-                self.pos[1] -= self.vel[i] * SCALE_VEL * dt
-                self.vel[i] = tempvel
+            nextPos[i] += self.vel[i] * SCALE_VEL * dt
             # if self.vel[i] < -MAX_VEL*(1-self.friction*0.2): self.vel[i] = -MAX_VEL*(1-self.friction*0.2)
             # elif self.vel[i] > MAX_VEL*(1-self.friction*0.2): self.vel[i] = MAX_VEL*(1-self.friction*0.2)
-
             # self.pos[i] += self.vel[i] * SCALE_VEL * dt
+
+            move = self.check( i, dt , nextPos)
+            nextPos = self.pos.copy()
+            # print(move)
+            if move: self.pos[i] += self.vel[i] * SCALE_VEL * dt
+            else: self.vel[i] = 0
 
     def calcFriction(self):
         # print(tiles.TILE_ATTR[self.tile(self.lB((0,-1)))])
         # print(self.acc)
         # print()
         if self.tile(self.lB((0,-1))) == 0:
-            self.friction = DEFAULT_FRICTION
+            self.friction = AIR_FRICTION
         else:
             self.friction = tiles.TILE_ATTR[self.tile(self.lB((0,-1)))][FRICTION]
 
@@ -194,26 +229,26 @@ class Entity:
         self.acc[1] = -GRAVITY_ACC
         self.grounded = False
 
-    def checkUp(self):
-        if self.tile(self.lU((0,0))) != 0 or self.tile(self.rU((0,0))) != 0 or self.tile(self.up((0,0))) != 0:
+    def checkUp(self, pos):
+        if self.tile(self.lU((0,0), pos)) != 0 or self.tile(self.rU((0,0), pos)) != 0 or self.tile(self.up((0,0), pos)) != 0:
             return False
         else:
             return True
 
-    def checkLeft(self):
-        if self.tile(self.lU((0,0))) != 0 or self.tile(self.lB((0,0))) != 0 or self.tile(self.le((0,0))) != 0:
+    def checkLeft(self, pos):
+        if self.tile(self.lU((0,0), pos)) != 0 or self.tile(self.lB((0,0), pos)) != 0 or self.tile(self.le((0,0), pos)) != 0:
             return False
         else:
             return True
 
-    def checkRight(self):
-        if self.tile(self.rB((0,0))) != 0 or self.tile(self.rU((0,0))) != 0 or self.tile(self.ri((0,0))) != 0:
+    def checkRight(self, pos):
+        if self.tile(self.rB((0,0), pos)) != 0 or self.tile(self.rU((0,0), pos)) != 0 or self.tile(self.ri((0,0), pos)) != 0:
             return False
         else:
             return True
 
-    def checkGround(self):
-        if self.tile(self.lB((0,0))) != 0 or self.tile(self.rB((0,0))) != 0 or self.tile(self.bo((0,0))) != 0:
+    def checkGround(self, pos):
+        if self.tile(self.lB((0,0), pos)) != 0 or self.tile(self.rB((0,0), pos)) != 0 or self.tile(self.bo((0,0), pos)) != 0:
             self.grounded = True
             return False
         else:
@@ -223,17 +258,17 @@ class Entity:
     def hit(self):
         pass
 
-    def check(self, i:int, dt:float):
+    def check(self, i:int, dt:float, pos:list):
         if i == 0:
             if self.vel[0]+self.acc[0]*dt > 0:
-                res = self.checkRight()
+                res = self.checkRight(pos)
             else:
-                res = self.checkLeft()
+                res = self.checkLeft(pos)
         else:
             if self.vel[1]+self.acc[1]*dt > 0:
-                res = self.checkUp()
+                res = self.checkUp(pos)
             else:
-                res = self.checkGround()
+                res = self.checkGround(pos)
         return res
 
 
@@ -271,7 +306,7 @@ class Player(Entity):
 
     #     self.tangibility = 0
     #     # 0 means intangible
-    #     # 1 means interacing with blocks
+    #     # 1 means interacting with blocks
     #     # 2 means interacting with walls
 
     def __init__( self , pos:list, chunkBuffer:Chunk.ChunkBuffer, eventHandler, keyState, mouseState, cursorPos, friction:float, health:int=100, grounded:bool=True):
@@ -291,42 +326,38 @@ class Player(Entity):
         # 2 means interacting with walls
 
     def run( self ):
-        """[summary]
 
-        Args:
-            key ([type]): [description]
-        """
         self.acc[0] = 0
         self.acc[1] = 0
 
         self.hitting = False
         self.placing = False
 
-        if( self.keyState[pygame.K_a] and not self.keyState[pygame.K_d] ):
+        if self.keyState[pygame.K_a] and not self.keyState[pygame.K_d]:
             self.moveLeft()
-        elif( self.keyState[pygame.K_d] and not self.keyState[pygame.K_a] ):
+        elif self.keyState[pygame.K_d] and not self.keyState[pygame.K_a]:
             self.moveRight()
 
-        if( self.keyState[pygame.K_s] and not self.keyState[pygame.K_w] ):
+        if self.keyState[pygame.K_s] and not self.keyState[pygame.K_w]:
             self.moveDown()
-        elif( self.grounded and self.keyState[pygame.K_w] and not self.keyState[pygame.K_s] ):
+        elif self.grounded and self.keyState[pygame.K_w] and not self.keyState[pygame.K_s]:
             self.jump()
 
-        if(self.keyState[pygame.K_e]):
+        if self.keyState[pygame.K_e]:
             self.inventory.isEnabled = not self.inventory.isEnabled
             self.keyState[pygame.K_e] = False
 
-        if(self.mouseState[1]): # left is there
+        if self.mouseState[1]:  # left is there
             self.hitting = True
 
-        if(self.mouseState[2]): # middle is there
+        if self.mouseState[2]:  # middle is there
             self.placing = True
 
-        if(self.mouseState[3]): # right is there
+        if self.mouseState[3]:  # right is there
             pass
-        if(self.mouseState[4]): # scroll up
+        if self.mouseState[4]:  # scroll up
             pass
-        if(self.mouseState[5]): # scroll down
+        if self.mouseState[5]:  # scroll down
             pass
 
     def update( self, dt ):
@@ -336,50 +367,48 @@ class Player(Entity):
             dt (float): [description]
         """
 
-        self.calcFriction()
-        for i in range(0, 2):
-            nextVel = self.vel[i] + self.acc[i]*dt
+        nextPos = self.pos.copy( )
+        self.calcFriction( )
+        self.checkGround( self.pos )
+        if not self.grounded: self.acc[1] = -GRAVITY_ACC
+        for i in range( 0, 2 ):
+            nextVel = self.vel[i] + self.acc[i] * dt
 
-            if nextVel >= abs(self.friction*dt):
-                self.vel[i] -= self.friction*dt
-            elif nextVel <= -abs(self.friction*dt):
-                self.vel[i] += self.friction*dt
-
+            if nextVel >= abs( self.friction * dt ):
+                self.vel[i] -= self.friction * dt
+            elif nextVel <= -abs( self.friction * dt ):
+                self.vel[i] += self.friction * dt
             else:
                 self.vel[i] = 0
                 self.acc[i] = 0
 
-            self.acc[i] = MAX_ACC*2 if(self.acc[i] > MAX_ACC*2) else -MAX_ACC*2 if(self.acc[i] < -MAX_ACC*2) else self.acc[i]
-            tempacc = self.acc[i]
+            self.acc[i] = MAX_ACC * 2 if (self.acc[i] > MAX_ACC * 2) else -MAX_ACC * 2 if (self.acc[i] < -MAX_ACC * 2) else self.acc[i]
 
-            tempvel = self.vel[i]
             self.vel[i] += self.acc[i] * dt
-            if self.vel[i] < -MAX_VEL*(1-self.friction*0.2): self.vel[i] = -MAX_VEL*(1-self.friction*0.2)
-            elif self.vel[i] > MAX_VEL*(1-self.friction*0.2): self.vel[i] = MAX_VEL*(1-self.friction*0.2)
-            temppos = self.pos[i]
-            self.pos[i] += self.vel[i] * SCALE_VEL * dt
-
-            move = self.check(i, dt)
-            print(move)
-            self.checkGround()
-            if not self.grounded: self.acc[1] = -GRAVITY_ACC
-
-            if not move:
-                self.acc[i] = tempacc
-                self.pos[1] -= self.vel[i] * SCALE_VEL * dt
-                self.vel[i] = 0
+            if self.vel[i] < -MAX_VEL * (1 - self.friction * 0.2):
+                self.vel[i] = -MAX_VEL * (1 - self.friction * 0.2)
+            elif self.vel[i] > MAX_VEL * (1 - self.friction * 0.2):
+                self.vel[i] = MAX_VEL * (1 - self.friction * 0.2)
+            nextPos[i] += self.vel[i] * SCALE_VEL * dt
             # if self.vel[i] < -MAX_VEL*(1-self.friction*0.2): self.vel[i] = -MAX_VEL*(1-self.friction*0.2)
             # elif self.vel[i] > MAX_VEL*(1-self.friction*0.2): self.vel[i] = MAX_VEL*(1-self.friction*0.2)
-
             # self.pos[i] += self.vel[i] * SCALE_VEL * dt
 
-        if  self.hitting and not self.placing :
+            move = self.check( i, dt, nextPos )
+            nextPos = self.pos.copy( )
+            # print(move)
+            if move:
+                self.pos[i] += self.vel[i] * SCALE_VEL * dt
+            else:
+                self.vel[i] = 0
+
+        if self.hitting and not self.placing :
             chunk = math.floor(self.cursorPos[0] / CHUNK_WIDTH_P)
             chunkInd = chunk - self.chunkBuffer.positions[0]
 
             x = (self.cursorPos[0] // TILE_WIDTH) - chunk * CHUNK_WIDTH
             y = (self.cursorPos[1] // TILE_WIDTH)
-            print('hitting')
+            # print('hitting')
 
             self.chunkBuffer[ chunkInd ].breakBlockAt( x, y, 10, dt)
             self.chunkBuffer[ chunkInd ].breakWallAt( x, y, 10, dt)
@@ -391,9 +420,9 @@ class Player(Entity):
             self.eventHandler.tileBreakIndex = chunkInd
             self.eventHandler.tileBreakPos[0] = x
             self.eventHandler.tileBreakPos[1] = y
-            #print(chunk, chunkInd, x, y, sep='\t')
+            # print(chunk, chunkInd, x, y, sep='\t')
 
-        elif  self.placing:
+        elif self.placing:
             chunk = math.floor(self.cursorPos[0] / CHUNK_WIDTH_P)
             chunkInd = chunk - self.chunkBuffer.positions[0]
 
@@ -406,7 +435,7 @@ class Player(Entity):
             self.eventHandler.tilePlacePos[0] = x
             self.eventHandler.tilePlacePos[1] = y
 
-            if((x, y, True) in self.chunkBuffer[ chunkInd ].TILE_TABLE_LOCAL): print("True")
+            if (x, y, True) in self.chunkBuffer[ chunkInd].TILE_TABLE_LOCAL: print("True")
             else: print("False")
 
 
@@ -438,7 +467,7 @@ class Inventory:
 
     def addItemPos( self, item, quantity:int, pos ):
 
-        if( self.items[pos[1]][pos[0]] != item ):
+        if self.items[pos[1]][pos[0]] != item:
 
             self.selItem[0] = self.items[ pos[1] ][ pos[0] ]
             self.selItem[1] = self.quantities[ pos[1] ][ pos[0] ]
@@ -451,7 +480,7 @@ class Inventory:
             self.items[pos[1]][pos[0]] = item
             self.items[pos[1]][pos[0]] = item
 
-            if( self.quantities[pos[1]][pos[0]] + quantity > items.ITEM_ATTR[item][MAX_STACK] ):
+            if self.quantities[pos[1]][pos[0]] + quantity > items.ITEM_ATTR[item][MAX_STACK]:
 
                 self.selItem[0] = item
                 self.selItem[1] = self.quantities[pos[1]][pos[0]] + quantity - items.ITEM_ATTR[item][MAX_STACK]
@@ -643,19 +672,19 @@ class ClientEventHandler:
         self.tileAlterPos = [-1, -1]
 
     def addKey( self, key ):
-        #print("KEY RELEASE")
-        if(key in self.keyStates):
+        # print("KEY RELEASE")
+        if key in self.keyStates:
             self.keyInFlag = True
             self.keyStates[key] = True
 
     def remKey( self, key ):
-        #print("KEY PRESS")
-        if(key in self.keyStates):
+        # print("KEY PRESS")
+        if key in self.keyStates:
             self.keyInFlag = True
             self.keyStates[key] = False
 
     def addMouseMotion( self, event, camera, displaySize ):
-        #print("MOUSE MOTION")
+        # print("MOUSE MOTION")
         self.mouseInFlag = True
         self.mousePos[0] = event.pos[0]
         self.mousePos[1] = event.pos[1]
@@ -663,22 +692,22 @@ class ClientEventHandler:
         self.cursorPos[1] = int(camera[1]) + displaySize[1]//2 - self.mousePos[1]
 
     def addMouseButton( self, button ):
-        #print("MOUSE PRESS")
+        # print("MOUSE PRESS")
         # 1 for left, 2 for middle, 3 for right, 4 for scroll up and 5 for scroll down
         mouseInFlag = True
         self.mouseState[ button ] = True
 
     def remMouseButton( self, button ):
-        #print("MOUSE RELEASE")
+        # print("MOUSE RELEASE")
         mouseInFlag = True
         self.mouseState[ button ] = False
 
     def addWindowResize( self ):
-        #print("WINDOW RESIZE")
+        # print("WINDOW RESIZE")
         self.windowResizeFlag = True
 
     def addCameraMotion( self ):
-        #print("CAMERA MOVED")
+        # print("CAMERA MOVED")
         self.cameraMovementFlag = True
 
 
