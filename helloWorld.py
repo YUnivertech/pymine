@@ -44,6 +44,7 @@ eventHandler = entity.ClientEventHandler()
 # Player variables
 player = entity.Player(screen, [0, 3000], chunkBuffer, eventHandler, eventHandler.keyStates, eventHandler.mouseState, eventHandler.cursorPos, DEFAULT_FRICTION)
 currChunk = prevChunk = deltaChunk = 0
+inventoryVisible = False
 
 # Initialize the renderer
 Renderer.initialize(chunkBuffer, camera, player, displaySize, screen)
@@ -52,7 +53,13 @@ dt = 0
 def takeCommand( ):
     global cameraBound
     command = input(">> ")
+    command = command.split()
 
+    if(command[0] == 'add'):
+        player.inventory.addItem(eval(command[1], globals(), locals()), eval(command[2]))
+        player.inventory.draw()
+
+    return None
     what = ""
     cntr = 4
     for i in command[4::]:
@@ -74,9 +81,6 @@ def takeCommand( ):
 # game loop
 
 running = True
-player.inventory.addItemPos( items.wood_axe, 63, [0, 1])
-player.inventory.addItemPos( items.wood_axe, 63, [0, 0])
-player.inventory.addItemPos( items.wood_axe, 63, [1, 0])
 
 while running:
 #!------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -90,11 +94,9 @@ while running:
         elif(event.type == pygame.KEYDOWN):
 
             if      event.key == pygame.K_c :              Renderer.setShaders()
-            if      event.key == pygame.K_b :
-                player.inventory.addItem( items.wood_axe, 18 )
-                player.inventory.draw()
             elif    event.key == pygame.K_n :              cameraBound = not cameraBound # This should free the camera from being fixed to the player
             elif    event.key == pygame.K_SLASH :          takeCommand()
+            elif    event.key == pygame.K_e :              inventoryVisible = not inventoryVisible
             else :                                         eventHandler.addKey( event.key )
 
         elif    event.type == pygame.KEYUP :               eventHandler.remKey( event.key )
@@ -173,6 +175,7 @@ while running:
 
         eventHandler.windowResizeFlag = False
 
+    if(inventoryVisible): player.inventory.draw()
     pygame.display.update()     # Updating the screen
 
     # Framerate calculation
