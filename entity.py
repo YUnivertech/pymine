@@ -309,7 +309,7 @@ class Player(Entity):
     #     # 1 means interacting with blocks
     #     # 2 means interacting with walls
 
-    def __init__( self , pos:list, chunkBuffer:Chunk.ChunkBuffer, eventHandler, keyState, mouseState, cursorPos, friction:float, health:int=100, grounded:bool=True):
+    def __init__( self , screen , pos:list, chunkBuffer:Chunk.ChunkBuffer, eventHandler, keyState, mouseState, cursorPos, friction:float, health:int=100, grounded:bool=True):
         super().__init__(pos, chunkBuffer, PLYR_WIDTH, PLYR_HEIGHT, friction, health, grounded)
 
         self.eventHandler = eventHandler

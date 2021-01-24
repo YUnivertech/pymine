@@ -42,7 +42,7 @@ for i in range(len(chunkBuffer)):
 eventHandler = entity.ClientEventHandler()
 
 # Player variables
-player = entity.Player(screen, [0, 0], chunkBuffer, eventHandler, eventHandler.keyStates, eventHandler.mouseState, eventHandler.cursorPos, DEFAULT_FRICTION)
+player = entity.Player(screen, [0, 3000], chunkBuffer, eventHandler, eventHandler.keyStates, eventHandler.mouseState, eventHandler.cursorPos, DEFAULT_FRICTION)
 currChunk = prevChunk = deltaChunk = 0
 
 # Initialize the renderer
