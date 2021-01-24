@@ -74,6 +74,10 @@ def takeCommand( ):
 # game loop
 
 running = True
+player.inventory.addItemPos( items.wood_axe, 63, [0, 1])
+player.inventory.addItemPos( items.wood_axe, 63, [0, 0])
+player.inventory.addItemPos( items.wood_axe, 63, [1, 0])
+
 while running:
 #!------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -86,6 +90,9 @@ while running:
         elif(event.type == pygame.KEYDOWN):
 
             if      event.key == pygame.K_c :              Renderer.setShaders()
+            if      event.key == pygame.K_b :
+                player.inventory.addItem( items.wood_axe, 18 )
+                player.inventory.draw()
             elif    event.key == pygame.K_n :              cameraBound = not cameraBound # This should free the camera from being fixed to the player
             elif    event.key == pygame.K_SLASH :          takeCommand()
             else :                                         eventHandler.addKey( event.key )
@@ -100,22 +107,19 @@ while running:
 
         elif    event.type == pygame.VIDEORESIZE :         eventHandler.addWindowResize( )
 
-    # Player movement handling
-    if eventHandler.keyInFlag:
-        if cameraBound:
+
+    if cameraBound:
+        if eventHandler.keyInFlag:
             player.run()
+            eventHandler.keyInFlag = False
 
-        else:
-            if      eventHandler.keyStates[pygame.K_a]  : camera[0] -= SCALE_VEL * dt
-            elif    eventHandler.keyStates[pygame.K_d]  : camera[0] += SCALE_VEL * dt
+    else:
+        if      eventHandler.keyStates[pygame.K_a]  : camera[0] -= SCALE_VEL * dt
+        elif    eventHandler.keyStates[pygame.K_d]  : camera[0] += SCALE_VEL * dt
 
-            if      eventHandler.keyStates[pygame.K_w]  : camera[1] += SCALE_VEL * dt
-            elif    eventHandler.keyStates[pygame.K_s]  : camera[1] -= SCALE_VEL * dt
-
-            eventHandler.addCameraMotion()
-
-        # if(player.inventory.isEnabled): player.inventory.draw()
-        eventHandler.keyInFlag = False
+        if      eventHandler.keyStates[pygame.K_w]  : camera[1] += SCALE_VEL * dt
+        elif    eventHandler.keyStates[pygame.K_s]  : camera[1] -= SCALE_VEL * dt
+        eventHandler.addCameraMotion()
 
     if eventHandler.mouseInFlag:
         player.run()
@@ -126,8 +130,7 @@ while running:
         camera[0] += ( player.pos[0] - camera[0] ) * LERP_C
         camera[1] += ( player.pos[1] - camera[1] ) * LERP_C
 
-        if  int(prevCamera[0] - camera[0]) or int(prevCamera[1] - camera[1])    :
-            eventHandler.addCameraMotion()
+        if  int(prevCamera[0] - camera[0]) or int(prevCamera[1] - camera[1])    : eventHandler.addCameraMotion()
 
     player.update( dt )
 

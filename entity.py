@@ -461,8 +461,19 @@ class Inventory:
 
         self.isEnabled = False
 
-    def addItem( self, i:int, q:int ):
-        pass
+    def addItem( self, i, q ):
+        firstEmpty = None
+        for x in range(INV_COLS):
+            for y in range(INV_ROWS):
+                if( firstEmpty == None and self.quantities[y][x] == 0): firstEmpty = [x, y]
+                if( self.items[y][x] == i and self.quantities[y][x] < 64):
+                    maxFit = min(q, 64 - self.quantities[y][x])
+                    self.quantities[y][x] += maxFit
+                    q -= maxFit
+                    if(q == 0): return None
+        if(q > 0 and firstEmpty != None):
+            self.items[firstEmpty[1]][firstEmpty[0]] = i
+            self.quantities[firstEmpty[1]][firstEmpty[0]] = q
 
     def addItemPos( self, item:int, quantity:int, pos:list ):
 
@@ -506,10 +517,11 @@ class Inventory:
         pass
 
     def draw( self ):
-        # for i in range(len(self.items)):
-        #     for j in range(len(self.items[i])):
-        #         print(self.items[i][j], self.quantities[i][j], end = '\t')
-        # print('\n\n\n')
+        for i in range(len(self.items)):
+            for j in range(len(self.items[i])):
+                print(self.items[i][j], self.quantities[i][j], end = '\t')
+            print()
+        print('\n\n\n')
 
         slot = items.ITEM_TABLE[items.slot]
         coors = [16, 16] # ! MAGIC NUMBERS
