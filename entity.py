@@ -500,6 +500,11 @@ class Inventory:
     def remItemLast( self, i, q ):
         pass
 
+    def draw( self ):
+        for i in range(len(self.items)):
+            for j in range(len(self.items[i])):
+                print(self.items[i][j], self.quantities[i][j], end = '\t')
+        print('\n\n\n')
 
 class ClientEventHandler:
     """ Class to abstract recording, management and processing of client-side events
