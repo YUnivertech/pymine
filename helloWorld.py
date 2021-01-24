@@ -115,7 +115,7 @@ while running:
 
             eventHandler.addCameraMotion()
 
-        if(player.inventory.isEnabled): player.inventory.draw()
+        # if(player.inventory.isEnabled): player.inventory.draw()
         eventHandler.keyInFlag = False
 
     if eventHandler.mouseInFlag:
@@ -155,7 +155,7 @@ while running:
         eventHandler.tileBreakFlag = False
 
     elif eventHandler.tilePlaceFlag :
-        chunkBuffer[eventHandler.tileBreakIndex].draw((eventHandler.tileBreakPos[0], eventHandler.tileBreakPos[1], eventHandler.tileBreakPos[0] + 1, eventHandler.tileBreakPos[1] + 1))
+        chunkBuffer[eventHandler.tilePlaceIndex].draw((eventHandler.tilePlacePos[0], eventHandler.tilePlacePos[1], eventHandler.tilePlacePos[0] + 1, eventHandler.tilePlacePos[1] + 1))
         Renderer.updateScreen()
         eventHandler.tilePlaceFlag = False
 

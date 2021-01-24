@@ -275,7 +275,7 @@ class Entity:
 class Slime(Entity):
     def __init__(self, pos: list, chunkBuffer: Chunk.ChunkBuffer, eventHandler, keyState, mouseState, cursorPos, friction: float, health: int = 100, grounded: bool = True):
         super().__init__(pos, chunkBuffer, PLYR_WIDTH, PLYR_HEIGHT, friction, health, grounded)
-        self.inventory = Inventory(1, 1)
+        self.inventory = Inventory(screen, 1, 1)
 
     def runAI(self):
         pass
@@ -284,7 +284,7 @@ class Slime(Entity):
 class Zombie(Entity):
     def __init__(self, pos:list, chunkBuffer:Chunk.ChunkBuffer, eventHandler, keyState, mouseState, cursorPos, friction:float, health:int=100, grounded:bool=True):
         super().__init__(pos, chunkBuffer, PLYR_WIDTH, PLYR_HEIGHT, friction, health, grounded)
-        self.inventory = Inventory(1, 1)
+        self.inventory = Inventory(screen, 1, 1)
 
     def runAI(self):
         pass
@@ -302,7 +302,7 @@ class Player(Entity):
 
     #     self.eventHandler = eventHandler
 
-    #     self.inventory = Inventory(INV_COLS, INV_ROWS)
+    #     self.inventory = Inventory(screen, INV_COLS, INV_ROWS)
 
     #     self.tangibility = 0
     #     # 0 means intangible
@@ -318,7 +318,7 @@ class Player(Entity):
         self.mouseState = mouseState
         self.cursorPos = cursorPos
 
-        self.inventory = Inventory(INV_COLS, INV_ROWS)
+        self.inventory = Inventory(screen, INV_COLS, INV_ROWS)
 
         self.tangibility = 0
         # 0 means intangible
@@ -429,19 +429,24 @@ class Player(Entity):
             x = (self.cursorPos[0] // TILE_WIDTH) - chunk * CHUNK_WIDTH
             y = (self.cursorPos[1] // TILE_WIDTH)
 
+            res = self.chunkBuffer[chunkInd].placeBlockAt( x, y, tiles.bedrock)
+            # print(res)
+
             self.eventHandler.tilePlaceFlag = True
 
-            self.eventHandler.tilePlaceFlag = chunkInd
+            self.eventHandler.tilePlaceIndex = chunkInd
             self.eventHandler.tilePlacePos[0] = x
             self.eventHandler.tilePlacePos[1] = y
 
-            if (x, y, True) in self.chunkBuffer[ chunkInd].TILE_TABLE_LOCAL: print("True")
-            else: print("False")
+            # if (x, y, True) in self.chunkBuffer[ chunkInd].TILE_TABLE_LOCAL: print("True")
+            # else: print("False")
 
 
 class Inventory:
 
-    def __init__( self, cols:int, rows:int ):
+    def __init__( self, screen, cols:int, rows:int ):
+
+        self.screen = screen
 
         self.items      = [ [ None for j in range( 0, cols ) ] for i in range( 0, rows ) ]
         self.quantities = [ [ 0 for j in range( 0, cols ) ] for i in range( 0, rows ) ]
@@ -501,10 +506,23 @@ class Inventory:
         pass
 
     def draw( self ):
-        for i in range(len(self.items)):
-            for j in range(len(self.items[i])):
-                print(self.items[i][j], self.quantities[i][j], end = '\t')
-        print('\n\n\n')
+        # for i in range(len(self.items)):
+        #     for j in range(len(self.items[i])):
+        #         print(self.items[i][j], self.quantities[i][j], end = '\t')
+        # print('\n\n\n')
+
+        slot = items.ITEM_TABLE[items.slot]
+        coors = [16, 16] # ! MAGIC NUMBERS
+
+        for x in range(0, INV_COLS):
+            for y in range(0, INV_ROWS):
+                self.screen.blit(slot, coors)
+                # get the texture of the item stored in the current slot
+                # get the count/durability of the item stored in the current slot
+                # get the modifiers of the texture of the item stored in the current slot
+                coors[1]+= 40   #! MAGIC NUMBER
+            coors[1] = 16
+            coors[0] +=40       #! MAGIC NUMBER
 
 class ClientEventHandler:
     """ Class to abstract recording, management and processing of client-side events
