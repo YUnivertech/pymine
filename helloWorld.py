@@ -75,7 +75,6 @@ def takeCommand( ):
 
 running = True
 while running:
-
 #!------------------------------------------------------------------------------------------------------------------------------------------------------
 
     # event handling loop
@@ -122,30 +121,13 @@ while running:
         player.run()
         eventHandler.mouseInFlag = False
 
-    # if  eventHandler.keyInFlag or eventHandler.mouseInFlag :
-
-    #     if cameraBound:
-    #         player.run()
-
-    #     else:
-    #         if      eventHandler.keyStates[pygame.K_a]  : camera[0] -= SCALE_VEL * dt
-    #         elif    eventHandler.keyStates[pygame.K_d]  : camera[0] += SCALE_VEL * dt
-
-    #         if      eventHandler.keyStates[pygame.K_w]  : camera[1] += SCALE_VEL * dt
-    #         elif    eventHandler.keyStates[pygame.K_s]  : camera[1] -= SCALE_VEL * dt
-
-    #         eventHandler.addCameraMotion()
-
-    #     if(player.inventory.isEnabled): player.inventory.draw()
-
-    #     eventHandler.mouseInFlag, eventHandler.keyinFlag = False, False
-
     # camera movement handling
     if  cameraBound :
         camera[0] += ( player.pos[0] - camera[0] ) * LERP_C
         camera[1] += ( player.pos[1] - camera[1] ) * LERP_C
 
-        if  int(prevCamera[0] - camera[0]) or int(prevCamera[1] - camera[1])    : eventHandler.addCameraMotion()
+        if  int(prevCamera[0] - camera[0]) or int(prevCamera[1] - camera[1])    :
+            eventHandler.addCameraMotion()
 
     player.update( dt )
 
@@ -160,7 +142,6 @@ while running:
         eventHandler.tilePlaceFlag = False
 
     if(eventHandler.cameraMovementFlag):
-
         Renderer.updateCam()
         Renderer.updateScreen()
 
