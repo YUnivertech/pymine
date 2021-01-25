@@ -163,6 +163,7 @@ glasswindow     =  40
 torch           =  41
 
 ITEM_NAMES = {
+    None            : 'X',
     door           : "door",
     bed            : "bed",
     bucket         : "bucket",
