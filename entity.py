@@ -9,6 +9,7 @@ import gameUtilities
 # todo  Please make sure that they are numbered properly
 # !----------------------------------------------------------------------------------------------------
 
+
 player = 0
 zombie = 1
 
@@ -532,9 +533,7 @@ class Inventory:
         for x in range(0, INV_COLS):
             for y in range(0, INV_ROWS):
                 self.screen.blit(slot, coors)
-                # get the texture of the item stored in the current slot
-                # get the count/durability of the item stored in the current slot
-                # get the modifiers of the texture of the item stored in the current slot
+                self.screen.blit(INV_FONT.render(str(self.quantities[y][x]), (0, 0, 0))[0], coors)
                 coors[1]+= 40   #! MAGIC NUMBER
             coors[1] = 16
             coors[0] +=40       #! MAGIC NUMBER

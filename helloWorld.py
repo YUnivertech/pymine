@@ -15,13 +15,13 @@ prevCamera = [0, 0]
 cameraBound = True
 
 # Initialize pygame and start clock
-pygame.init()
+# pygame.init()
 clock = pygame.time.Clock()
 
 # Create chunk buffer and chunk-position buffer
 bufferWidth = 1 + (pygame.display.Info().current_w//CHUNK_WIDTH_P) + 1
 if(bufferWidth % 2 == 0): bufferWidth += 1
-chunkBuffer = ChunkBuffer(bufferWidth, 0, "world1")
+chunkBuffer = ChunkBuffer(bufferWidth, 0, "world69")
 print(bufferWidth)
 del bufferWidth
 
@@ -175,7 +175,9 @@ while running:
 
         eventHandler.windowResizeFlag = False
 
-    if(inventoryVisible): player.inventory.draw()
+    if(inventoryVisible):
+        Renderer.updateScreen()
+        player.inventory.draw()
     pygame.display.update()     # Updating the screen
 
     # Framerate calculation

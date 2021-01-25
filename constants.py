@@ -1,5 +1,9 @@
 import pygame
 import math
+import pygame.freetype
+
+
+pygame.init()
 
 # Width of an individual tile unit (in points)
 TILE_WIDTH          =  16
@@ -69,3 +73,5 @@ MAX_STACK           = 11
 
 # entities
 WEIGHT              = 12
+
+INV_FONT            = pygame.freetype.SysFont('Consolas', size = 16, bold = True)
