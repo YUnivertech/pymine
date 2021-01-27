@@ -78,8 +78,9 @@ def takeCommand( ):
         elif(command[0] == 'g'):
             print(not cameraBound)
 
-# game loop
 
+# game loop
+prev = time.time()
 running = True
 
 while running:
@@ -111,8 +112,8 @@ while running:
 
 
     if cameraBound:
+        player.run()
         if eventHandler.keyInFlag:
-            player.run()
             eventHandler.keyInFlag = False
 
     else:
@@ -134,7 +135,13 @@ while running:
 
         if  int(prevCamera[0] - camera[0]) or int(prevCamera[1] - camera[1])    : eventHandler.addCameraMotion()
 
-    player.update( dt )
+    now = time.time( )
+    player.driveUpdate( now - prev )
+    # test = time.time( )
+    # print((test-now)*1000)
+    # print('')
+    # print((now-prev)*1000)
+    prev = now
 
     if eventHandler.tileBreakFlag :
         chunkBuffer[eventHandler.tileBreakIndex].draw((eventHandler.tileBreakPos[0], eventHandler.tileBreakPos[1], eventHandler.tileBreakPos[0] + 1, eventHandler.tileBreakPos[1] + 1))
