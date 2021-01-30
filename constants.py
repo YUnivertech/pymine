@@ -2,8 +2,9 @@ import pygame
 import math
 import pygame.freetype
 
-
+# Initalize pygame and start the clock
 pygame.init()
+clock = pygame.time.Clock()
 
 # Width of an individual tile unit (in points)
 TILE_WIDTH          =  16

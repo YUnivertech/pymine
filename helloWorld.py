@@ -1,5 +1,6 @@
 import sys
-from pygame.locals import *
+# from pygame.locals import *
+# import pygame.locals
 from Renderer import *
 import time
 import entity
@@ -14,14 +15,10 @@ camera = [0, CHUNK_HEIGHT_P//2]
 prevCamera = [0, 0]
 cameraBound = True
 
-# Initialize pygame and start clock
-# pygame.init()
-clock = pygame.time.Clock()
-
 # Create chunk buffer and chunk-position buffer
 bufferWidth = 1 + (pygame.display.Info().current_w//CHUNK_WIDTH_P) + 1
 if(bufferWidth % 2 == 0): bufferWidth += 1
-chunkBuffer = ChunkBuffer(bufferWidth, 0, "world69")
+chunkBuffer = ChunkBuffer(bufferWidth, 0, "world1")
 print(bufferWidth)
 del bufferWidth
 
@@ -48,7 +45,6 @@ inventoryVisible = False
 
 # Initialize the renderer
 Renderer.initialize(chunkBuffer, camera, player, displaySize, screen)
-dt = 0
 
 def takeCommand( ):
     global cameraBound
@@ -59,28 +55,10 @@ def takeCommand( ):
         player.inventory.addItem(eval(command[1], globals(), locals()), eval(command[2]))
         player.inventory.draw()
 
-    return None
-    what = ""
-    cntr = 4
-    for i in command[4::]:
-        cntr += 1
-        if(i == ' '): break
-        what = what + i
-
-    if(what == "shader"):
-        if(command[0] == 's'):
-            Renderer.isShader = exec(command[cntr::])
-        elif(command[0] == 'g'):
-            print(Renderer.isShader)
-    elif(what == "cameraRoam"):
-        if(command[0] == 's'):
-            cameraBound = exec(command[cntr::])
-        elif(command[0] == 'g'):
-            print(not cameraBound)
-
 
 # game loop
 prev = time.time()
+dt = 0
 running = True
 
 while running:
@@ -113,8 +91,9 @@ while running:
 
     if cameraBound:
         player.run()
-        if eventHandler.keyInFlag:
-            eventHandler.keyInFlag = False
+        camera[0] += ( player.pos[0] - camera[0] ) * LERP_C
+        camera[1] += ( player.pos[1] - camera[1] ) * LERP_C
+
 
     else:
         if      eventHandler.keyStates[pygame.K_a]  : camera[0] -= SCALE_VEL * dt
@@ -122,55 +101,31 @@ while running:
 
         if      eventHandler.keyStates[pygame.K_w]  : camera[1] += SCALE_VEL * dt
         elif    eventHandler.keyStates[pygame.K_s]  : camera[1] -= SCALE_VEL * dt
-        eventHandler.addCameraMotion()
-
-    if eventHandler.mouseInFlag:
-        player.run()
-        eventHandler.mouseInFlag = False
-
-    # camera movement handling
-    if  cameraBound :
-        camera[0] += ( player.pos[0] - camera[0] ) * LERP_C
-        camera[1] += ( player.pos[1] - camera[1] ) * LERP_C
-
-        if  int(prevCamera[0] - camera[0]) or int(prevCamera[1] - camera[1])    : eventHandler.addCameraMotion()
 
     now = time.time( )
-    player.driveUpdate( now - prev )
-    # test = time.time( )
-    # print((test-now)*1000)
-    # print('')
-    # print((now-prev)*1000)
+    dt = now - prev
     prev = now
+    player.driveUpdate( dt )
+
+    Renderer.updateCam()
+
+    currChunk = math.floor(camera[0]/CHUNK_WIDTH_P)
+    deltaChunk = currChunk - prevChunk
+    prevChunk = currChunk
+
+    if(deltaChunk != 0):
+        #eventHandler.chunkShiftFlag = True # server must be notified
+        eventHandler.loadChunkIndex = chunkBuffer.shiftBuffer(deltaChunk)
+        chunkBuffer[eventHandler.loadChunkIndex].draw()
+        chunkBuffer.renderLightmap(eventHandler.loadChunkIndex)
 
     if eventHandler.tileBreakFlag :
         chunkBuffer[eventHandler.tileBreakIndex].draw((eventHandler.tileBreakPos[0], eventHandler.tileBreakPos[1], eventHandler.tileBreakPos[0] + 1, eventHandler.tileBreakPos[1] + 1))
-        Renderer.updateScreen()
         eventHandler.tileBreakFlag = False
 
-    elif eventHandler.tilePlaceFlag :
+    if eventHandler.tilePlaceFlag :
         chunkBuffer[eventHandler.tilePlaceIndex].draw((eventHandler.tilePlacePos[0], eventHandler.tilePlacePos[1], eventHandler.tilePlacePos[0] + 1, eventHandler.tilePlacePos[1] + 1))
-        Renderer.updateScreen()
         eventHandler.tilePlaceFlag = False
-
-    if(eventHandler.cameraMovementFlag):
-        Renderer.updateCam()
-        Renderer.updateScreen()
-
-        prevCamera[0], prevCamera[1] = camera[0], camera[1]
-
-        currChunk = math.floor(camera[0]/CHUNK_WIDTH_P)
-        deltaChunk = currChunk - prevChunk
-        prevChunk = currChunk
-
-        if(deltaChunk != 0):
-
-            #eventHandler.chunkShiftFlag = True # server must be notified
-            eventHandler.loadChunkIndex = chunkBuffer.shiftBuffer(deltaChunk)
-            chunkBuffer[eventHandler.loadChunkIndex].draw()
-            chunkBuffer.renderLightmap(eventHandler.loadChunkIndex)
-
-        eventHandler.cameraMovementFlag = False
 
     if(eventHandler.windowResizeFlag):
 
@@ -178,17 +133,17 @@ while running:
         displaySize[1] = screen.get_height()
 
         Renderer.updateRefs()
-        Renderer.updateScreen()
 
         eventHandler.windowResizeFlag = False
 
-    if(inventoryVisible):
-        Renderer.updateScreen()
-        player.inventory.draw()
+    Renderer.updateScreen()
+
+    if(inventoryVisible):   player.inventory.draw()
+
     pygame.display.update()     # Updating the screen
 
     # Framerate calculation
-    dt = clock.tick(0) / 1000
+
     #framerate = 1 / max(dt, 0.001)
     #print(framerate)
 
