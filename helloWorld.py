@@ -1,6 +1,4 @@
 import sys
-# from pygame.locals import *
-# import pygame.locals
 from Renderer import *
 import time
 import entity
@@ -93,6 +91,7 @@ while running:
         player.run()
         camera[0] += ( player.pos[0] - camera[0] ) * LERP_C
         camera[1] += ( player.pos[1] - camera[1] ) * LERP_C
+        eventHandler.cameraMovementFlag = True
 
 
     else:
@@ -101,6 +100,7 @@ while running:
 
         if      eventHandler.keyStates[pygame.K_w]  : camera[1] += SCALE_VEL * dt
         elif    eventHandler.keyStates[pygame.K_s]  : camera[1] -= SCALE_VEL * dt
+        eventHandler.cameraMovementFlag = True
 
     now = time.time( )
     dt = now - prev
@@ -117,7 +117,7 @@ while running:
         #eventHandler.chunkShiftFlag = True # server must be notified
         eventHandler.loadChunkIndex = chunkBuffer.shiftBuffer(deltaChunk)
         chunkBuffer[eventHandler.loadChunkIndex].draw()
-        chunkBuffer.renderLightmap(eventHandler.loadChunkIndex)
+        # chunkBuffer.renderLightmap(eventHandler.loadChunkIndex)
 
     if eventHandler.tileBreakFlag :
         chunkBuffer[eventHandler.tileBreakIndex].draw((eventHandler.tileBreakPos[0], eventHandler.tileBreakPos[1], eventHandler.tileBreakPos[0] + 1, eventHandler.tileBreakPos[1] + 1))
@@ -136,7 +136,7 @@ while running:
 
         eventHandler.windowResizeFlag = False
 
-    Renderer.updateScreen()
+    if(eventHandler.cameraMovementFlag): Renderer.updateScreen()
 
     if(inventoryVisible):   player.inventory.draw()
 
