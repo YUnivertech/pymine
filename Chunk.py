@@ -1,6 +1,6 @@
 import pickle
 
-import tiles, items
+import tiles, items, time
 from constants import *
 from opensimplex import OpenSimplex
 from gameUtilities import *
@@ -201,8 +201,8 @@ class ChunkBuffer:
             callback (function): Reference to the renderer to render the newly loaded chunks
         """
 
-        #rep = lambda num : ( num-1 )//2
-        #rep = lambda num : 0 if num is 1 else -1
+        # rep = lambda num : ( num-1 )//2
+        # rep = lambda num : 0 if num is 1 else -1
         rep = lambda num : 0 if num == 1 else -1
 
         # Index of the chunk to be dumped (-1 while shifting left, 0 while shifting right) and the extremity needing to be changed
@@ -211,11 +211,14 @@ class ChunkBuffer:
         # Index of the chunk to be loaded (0 while shifting left, -1 while shifting right) and the extremity needing to be changed
         loadIndex = rep( -deltaChunk )
 
+
         # Ready the tiles, walls and local table to be serialized and dump
         li                                              =  [ self.chunks[ dumpIndex ].blocks, self.chunks[ dumpIndex ].walls ]
         lo                                              =  self.chunks[ dumpIndex ].TILE_TABLE_LOCAL
+        chk_b = time.time()
         self.serializer[ self.positions[ dumpIndex ] ]  =  pickle.dumps( li ), pickle.dumps( lo )
 
+        print('random stuff time:', (time.time()-chk_b)*1000)
         # After dumping, increment the position of the dumped tile by deltaChunk
         self.positions[dumpIndex]                       += deltaChunk
 
@@ -225,6 +228,8 @@ class ChunkBuffer:
         # Start from last if shifting right otherwise from 0
         moveIndex                                       =  self.len * -dumpIndex
 
+        chk_b = time.time()
+
         for i in range( 0, self.len ):
 
             nextMoveIndex                 =  moveIndex + deltaChunk
@@ -233,6 +238,10 @@ class ChunkBuffer:
             self.lightSurfs[ moveIndex ]  =  self.lightSurfs[ nextMoveIndex ]
 
             moveIndex += deltaChunk
+
+        print('in shift buffer for loop time:', (time.time()-chk_b)*1000)
+
+        chk_b = time.time()
 
         # Recycle surfaces
         self.lightSurfs[ loadIndex ]                    =  recycleShade
@@ -244,20 +253,28 @@ class ChunkBuffer:
         # Load new chunk and populate if not generated
         self.chunks[ loadIndex ]                        =  self.serializer[ self.positions[ loadIndex ] ]
 
+        print("Random stuff time:", (time.time()-chk_b)*1000)
+
         if( self.chunks[ loadIndex ] is None ):
+            chk_b = time.time()
             self.chunks[ loadIndex ]      =  Chunk( self.positions[ loadIndex ] )
             self.populateChunk( self.chunks[ loadIndex ] )
+            print('in shift buffer populate chunk time:', (time.time()-chk_b)*1000)
 
         else:
+            chk_b = time.time()
             li                      =  pickle.loads( self.chunks[ loadIndex ][ 0 ] )
             lo                      =  pickle.loads( self.chunks[ loadIndex ][ 1 ] )
             self.chunks[loadIndex]  =  Chunk( self.positions[loadIndex], li[ 0 ], li[ 1 ], lo )
+            print("in shift buffer serialization:", (time.time()-chk_b)*1000)
 
         # Form light map for newly loaded chunk and the chunk before it
         # In case of left shift, i=-1,-2 are generated
         # In case of right shift, i=0, 1 are generated
-        self.formLightMap( loadIndex )
-        self.formLightMap( loadIndex - deltaChunk )
+        chk_b = time.time()
+        # self.formLightMap( loadIndex )
+        # self.formLightMap( loadIndex - deltaChunk )
+        print('in shift buffer form light map time:', (time.time()-chk_b)*1000)
 
         return loadIndex
 

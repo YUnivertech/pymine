@@ -105,6 +105,7 @@ while running:
     now = time.time( )
     dt = now - prev
     prev = now
+    if dt >= 0.15: print('dt:', dt)
     player.driveUpdate( dt )
 
     Renderer.updateCam()
@@ -115,9 +116,15 @@ while running:
 
     if(deltaChunk != 0):
         #eventHandler.chunkShiftFlag = True # server must be notified
+        chk_a = time.time()
         eventHandler.loadChunkIndex = chunkBuffer.shiftBuffer(deltaChunk)
+        print('shift buffer time:', (time.time()-chk_a)*1000)
+        chk_a = time.time()
         chunkBuffer[eventHandler.loadChunkIndex].draw()
+        print('draw time:', (time.time()-chk_a)*1000)
+        chk_a = time.time()
         chunkBuffer.renderLightmap(eventHandler.loadChunkIndex)
+        print('render light time:', (time.time()-chk_a)*1000)
 
     if eventHandler.tileBreakFlag :
         chunkBuffer[eventHandler.tileBreakIndex].draw((eventHandler.tileBreakPos[0], eventHandler.tileBreakPos[1], eventHandler.tileBreakPos[0] + 1, eventHandler.tileBreakPos[1] + 1))

@@ -47,8 +47,11 @@ AIR_FRICTION        =  0.2
 DEFAULT_FRICTION    =  0.5
 MAX_ACC             =  1
 MAX_VEL             =  1
-PLYR_WIDTH          =  TILE_WIDTH      # 36
-PLYR_HEIGHT         =  TILE_WIDTH+10    # 54
+HITBOX_WIDTH        =  TILE_WIDTH-2
+HITBOX_HEIGHT       =  TILE_WIDTH+6
+PLYR_WIDTH          =  TILE_WIDTH+2      # 36
+PLYR_HEIGHT         =  TILE_WIDTH+14    # 54
+PLYR_RANGE          =  5*TILE_WIDTH
 INV_COLS            =  10
 INV_ROWS            =  3
 

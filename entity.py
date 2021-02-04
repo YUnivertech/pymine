@@ -30,8 +30,12 @@ class PassiveNPC:
 
 
 class ItemEntity:
-    def __init__(self):
-        pass
+    def __init__(self, pos, width, height, surf):
+        self.pos = pos
+        self.width = width
+        self.height = height
+        self.surf = surf
+        self.surfPos = lambda : [ self.pos[0] - (self.width*0.5), self.pos[1] - (self.height*0.5) ]
 
 
 class Projectile:
@@ -57,21 +61,27 @@ class Entity:
             grounded (bool, optional): [description]. Defaults to True.
         """
 
-        self.pos          = pos
-        self.chunkBuffer  = chunkBuffer
-        self.friction     = friction
-        self.health       = health
-        self.grounded     = grounded
+        self.pos         = pos
+        self.chunkBuffer = chunkBuffer
+        # self.manager     = entityBuffer
+        self.friction    = friction
+        self.health      = health
+        self.grounded    = grounded
+
+        # self.manager.addEntity(self)
 
         # self.itemHeld     = None
-        self.vel          = [0.0, 0.0]
-        self.acc          = [0.0, 0.0]
+        self.vel         = [0.0, 0.0]
+        self.acc         = [0.0, 0.0]
 
-        self.width        = width
-        self.height       = height
+        self.width       = width
+        self.height      = height
 
-        self.hitting      = False
-        self.placing      = False
+        self.surf        = pygame.surface.Surface( (self.height, self.width) )
+        self.surfPos     = lambda: [ self.pos[0] - (PLYR_WIDTH*0.5), self.pos[1] + (PLYR_HEIGHT*0.5) ]
+
+        self.hitting     = False
+        self.placing     = False
 
         # ! these formulas are used in a lot of places(THEY MAY ALSO CHANGE!)
         # self.le           = lambda off, pos=self.pos: (pos[0] - (self.width * 0.5) + off[0], pos[1] + off[1])    # Left
@@ -442,6 +452,11 @@ class Player(Entity):
             # if (x, y, True) in self.chunkBuffer[ chunkInd].TILE_TABLE_LOCAL: print("True")
             # else: print("False")
 
+    def pick( self ):
+        if None in self.inventory:
+            pass
+
+
 
 class Inventory:
 
@@ -539,6 +554,7 @@ class Inventory:
                 coors[1]+= 40   #! MAGIC NUMBER
             coors[1] = 16
             coors[0] +=40       #! MAGIC NUMBER
+
 
 class ClientEventHandler:
     """ Class to abstract recording, management and processing of client-side events
@@ -777,7 +793,11 @@ class EntityBuffer:
         # self.entities = { }
         # self.mousePos       =   [0, 0]
 
-    def add(self, e:Entity):
+    def addItem(self, pos):
+        ie = ItemEntity([10, 3000],16, 16, pygame.surface.Surface((16, 16)))
+        self.entities[0].append(ie)
+
+    def addEntity(self, e:Entity):
         self.entities[e.currChunkInd(e.pos)].append(e)
 
     def shift( self, d):
@@ -802,6 +822,9 @@ class EntityBuffer:
         for i in self.entities:
             for j in i:
                 j.update()
+
+    def pickItem( self, e ):
+        pass
 
     def saveComplete( self ):
         pass
