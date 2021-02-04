@@ -15,7 +15,7 @@ import math
 class Renderer:
 
     @classmethod
-    def initialize(cls, chunkBuffer, camera, player, windowSize, screen):
+    def initialize(cls, chunkBuffer, entityBuffer, camera, player, windowSize, screen):
 
         """Initializes the class with references to global objects
 
@@ -29,6 +29,8 @@ class Renderer:
 
         # Create references to global objects
         cls.chunkBuffer     =  chunkBuffer
+        cls.entityBuffer    =  entityBuffer
+
         cls.player          =  player
         cls.camera          =  camera
         cls.windowSize      =  windowSize
@@ -117,6 +119,14 @@ class Renderer:
 
         # ! temporary rendering of player crosshair
         pygame.draw.rect(cls.screen, (255,50,50), pygame.Rect(playerCoors[0]-PLYR_WIDTH//2, playerCoors[1]-PLYR_HEIGHT//2, PLYR_WIDTH, PLYR_HEIGHT))
+        cls.entityBuffer.draw()
+        for group in cls.entityBuffer.entities:
+            for entity in group:
+                coors = entity.surfPos()
+                coors[1] -= cls.camera[1]
+                coors[1] = cls.numVer - coors[1]
+                coors[0] += cls.numHor - cls.camera[0]
+                cls.screen.blit( entity.surf, coors)
 
     @classmethod
     def updateSize(  cls  ):

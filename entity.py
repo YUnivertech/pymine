@@ -30,12 +30,17 @@ class PassiveNPC:
 
 
 class ItemEntity:
-    def __init__(self, pos, width, height, surf):
+    def __init__(self, id, pos, width, height):
+        self.id = id
         self.pos = pos
         self.width = width
         self.height = height
-        self.surf = surf
-        self.surfPos = lambda : [ self.pos[0] - (self.width*0.5), self.pos[1] - (self.height*0.5) ]
+        self.surf = pygame.Surface((self.width, self.height))
+        self.surfPos = lambda : [ int(self.pos[0] - self.width//2), int(self.pos[1] + self.height//2) ]
+
+    def draw( self ):
+        self.surf.blit(tiles.TILE_TABLE[self.id], [0, 0])
+        # puts the texture of the block itself onto my surface
 
 
 class Projectile:
@@ -48,7 +53,7 @@ class Projectile:
 
 class Entity:
 
-    def __init__(self, pos:list, chunkBuffer:Chunk.ChunkBuffer, width:float, height:float, friction:float, health:int=100, grounded:bool=True):
+    def __init__(self, pos:list, chunkBuffer:Chunk.ChunkBuffer, entityBuffer, width:int, height, friction:float, health:int=100, grounded:bool=True):
         """[summary]
 
         Args:
@@ -63,12 +68,12 @@ class Entity:
 
         self.pos         = pos
         self.chunkBuffer = chunkBuffer
-        # self.manager     = entityBuffer
+        self.entityBuffer     = entityBuffer
         self.friction    = friction
         self.health      = health
         self.grounded    = grounded
 
-        # self.manager.addEntity(self)
+#        self.manager.addEntity(self)
 
         # self.itemHeld     = None
         self.vel         = [0.0, 0.0]
@@ -77,7 +82,7 @@ class Entity:
         self.width       = width
         self.height      = height
 
-        self.surf        = pygame.surface.Surface( (self.height, self.width) )
+        self.surf        = pygame.Surface((self.width, self.height))
         self.surfPos     = lambda: [ self.pos[0] - (PLYR_WIDTH*0.5), self.pos[1] + (PLYR_HEIGHT*0.5) ]
 
         self.hitting     = False
@@ -320,8 +325,8 @@ class Player(Entity):
     #     # 1 means interacting with blocks
     #     # 2 means interacting with walls
 
-    def __init__( self , screen , pos:list, chunkBuffer:Chunk.ChunkBuffer, eventHandler, keyState, mouseState, cursorPos, friction:float, health:int=100, grounded:bool=True):
-        super().__init__(pos, chunkBuffer, PLYR_WIDTH, PLYR_HEIGHT, friction, health, grounded)
+    def __init__( self , screen , pos:list, chunkBuffer:Chunk.ChunkBuffer, entityBuffer, eventHandler, keyState, mouseState, cursorPos, friction:float, health:int=100, grounded:bool=True):
+        super().__init__(pos, chunkBuffer, entityBuffer, PLYR_WIDTH, PLYR_HEIGHT, friction, health, grounded)
 
         self.eventHandler = eventHandler
 
@@ -358,6 +363,10 @@ class Player(Entity):
             self.inventory.isEnabled = not self.inventory.isEnabled
             self.keyState[pygame.K_e] = False
 
+        if(self.keyState[pygame.K_q]):
+            self.drop()
+            print('DROPPING')
+
         if self.mouseState[1]:  # left is there
             self.hitting = True
 
@@ -370,6 +379,11 @@ class Player(Entity):
             pass
         if self.mouseState[5]:  # scroll down
             pass
+
+        self.pick()
+
+    def drop(self):
+        pass
 
     def update( self, dt:float ):
         """[summary]
@@ -421,8 +435,10 @@ class Player(Entity):
             y = (self.cursorPos[1] // TILE_WIDTH)
             # print('hitting')
 
-            self.chunkBuffer[ chunkInd ].breakBlockAt( x, y, 10, dt)
+            block = self.chunkBuffer[ chunkInd ][ y ][ x ]
+            state = self.chunkBuffer[ chunkInd ].breakBlockAt( x, y, 10, dt)
             self.chunkBuffer[ chunkInd ].breakWallAt( x, y, 10, dt)
+
             # self.chunkBuffer[ chunkInd ][y][x] = tiles.air
             # self.chunkBuffer[ chunkInd ].walls[y][x] = tiles.air
 
@@ -431,6 +447,12 @@ class Player(Entity):
             self.eventHandler.tileBreakIndex = chunkInd
             self.eventHandler.tileBreakPos[0] = x
             self.eventHandler.tileBreakPos[1] = y
+
+            if(state): # The block was broken
+                print(block)
+                # self.entityBuffer.addItem( block, [self.cursorPos[0], self.cursorPos[1]], chunkInd)
+                self.entityBuffer.addItem( block, self.cursorPos.copy(), chunkInd)
+
             # print(chunk, chunkInd, x, y, sep='\t')
 
         elif self.placing:
@@ -440,8 +462,14 @@ class Player(Entity):
             x = (self.cursorPos[0] // TILE_WIDTH) - chunk * CHUNK_WIDTH
             y = (self.cursorPos[1] // TILE_WIDTH)
 
-            res = self.chunkBuffer[chunkInd].placeBlockAt( x, y, tiles.bedrock)
-            # print(res)
+            # i need to get the first item from the inventory and just simply place that
+            toPlace = self.inventory.getSelectedItem()
+
+            dist = math.sqrt( pow( self.pos[0] - self.cursorPos[0], 2 ) + pow( self.pos[1] - self.cursorPos[1], 2 ) )
+            if(toPlace and dist > PLYR_HEIGHT):
+                print('PLACING!', tiles.TILE_NAMES[toPlace])
+                res = self.chunkBuffer[chunkInd].placeBlockAt( x, y, toPlace)
+                if(res): self.inventory.remItemPos(1, self.inventory.itemHeld)
 
             self.eventHandler.tilePlaceFlag = True
 
@@ -453,9 +481,8 @@ class Player(Entity):
             # else: print("False")
 
     def pick( self ):
-        if None in self.inventory:
-            pass
-
+        l = self.entityBuffer.pickItem()
+        for item in l: self.inventory.addItem(item, 1)
 
 
 class Inventory:
@@ -473,7 +500,7 @@ class Inventory:
         self.selPos     = 0
         self.selItem    = [None, 0]
 
-        self.itemHeld   = None
+        self.itemHeld   = [0, 0]
 
         self.isEnabled = False
 
@@ -527,18 +554,23 @@ class Inventory:
         for x in range(INV_COLS):
             for y in range(INV_ROWS):
                 if(self.items[y][x] == item):
-                    toRemove = max(self.quantities[y][x], quantity)
+                    toRemove = min(self.quantities[y][x], quantity)
+                    print(toRemove)
                     self.quantities[y][x] -= toRemove
                     quantity -= toRemove
-                    if(self.quantities[y][x] == 0): self.items[y][x] = None
-                    if(quantity == 0): return True
+                    if(self.quantities[y][x] <= 0): self.items[y][x] = None
+                    if(quantity <= 0): return True
 
         if(quantity != 0): return False
         return True
 
     def remItemPos( self, quantity:int, pos:list):
-        toRemove = min(self.quantities[pos[1]][[pos[0]]], quantity)
-        self.quantities[pos[1]][pos[pos[0]]] -= toRemove
+        toRemove = min(self.quantities[pos[1]][pos[0]], quantity)
+        self.quantities[pos[1]][pos[0]] -= toRemove
+        if(self.quantities[pos[1]][pos[0]] <= 0): self.items[pos[1]][pos[0]] = None
+
+    def getSelectedItem( self ):
+        return self.items[self.itemHeld[1]][self.itemHeld[0]]
 
     def draw( self ):
         # for i in range(len(self.items)):
@@ -697,7 +729,7 @@ class ClientEventHandler:
         self.windowResizeFlag = False
 
         self.keyInFlag = False
-        self.keyStates      =   { pygame.K_w : False, pygame.K_a : False, pygame.K_s : False, pygame.K_d : False, pygame.K_e : False }
+        self.keyStates      =   { pygame.K_w : False, pygame.K_a : False, pygame.K_s : False, pygame.K_d : False, pygame.K_e : False, pygame.K_q : False }
 
         self.mouseInFlag = False
         self.mouseState     =   { 1 : False, 2 : False, 3 : False, 4 : False, 5 : False }
@@ -787,7 +819,7 @@ class Menu:
 
 
 class EntityBuffer:
-    def __init__( self, cB:Chunk.ChunkBuffer, s:gameUtilities.Serializer):
+    def __init__( self, cB:Chunk.ChunkBuffer, s:gameUtilities.Serializer, player):
         self.chunkBuffer = cB
         self.serializer  = s
         self.length = self.chunkBuffer.length
@@ -795,29 +827,33 @@ class EntityBuffer:
 
         self.entities = [[] for i in range(self.length)]
         self.mousePos       =   [0, 0]
+        self.plyr = player
         # self.entities = { }
         # self.mousePos       =   [0, 0]
 
-    def addItem(self, pos):
-        ie = ItemEntity([10, 3000],16, 16, pygame.surface.Surface((16, 16)))
-        self.entities[0].append(ie)
+    def addItem(self, item, pos, index):
+        ie = ItemEntity(item, pos,16, 16,)
+        self.entities[index].append(ie)
+        # 0 is the index of the chunk in the chunk buffer in which it was broken
 
     def addEntity(self, e:Entity):
         self.entities[e.currChunkInd(e.pos)].append(e)
 
     def shift( self, d):
         if d < 0:       # Player has moved left
-            self.serializer.setEntity(self.chunkBuffer.positions[-1]+1, self.entities[-1])
+            # self.serializer.setEntity(self.chunkBuffer.positions[-1]+1, self.entities[-1])
             del self.entities[-1]
-            li = self.serializer.getEntity(self.chunkBuffer.positions[0])
+            # li = self.serializer.getEntity(self.chunkBuffer.positions[0])
+            li = None
             if li is None:
                 self.entities.insert(0, [])
             else:
                 self.entities.insert(0, li)
         elif d > 0:     # Player has moved right
-            self.serializer.setEntity(self.chunkBuffer.positions[0]-1, self.entities[0])
+            # self.serializer.setEntity(self.chunkBuffer.positions[0]-1, self.entities[0])
             del self.entities[0]
-            li = self.serializer.getEntity(self.chunkBuffer.positions[-1])
+            # li = self.serializer.getEntity(self.chunkBuffer.positions[-1])
+            li = None
             if li is None:
                 self.entities.insert(len(self.entities), [])
             else:
@@ -828,8 +864,24 @@ class EntityBuffer:
             for j in i:
                 j.update()
 
-    def pickItem( self, e ):
-        pass
+    def pickItem( self ):
+        l = []
+        toDel = []
+        for group in self.entities:
+            for e in range(len(group)):
+                entity = group[e]
+                dist = math.sqrt( pow( self.plyr.pos[0] - entity.pos[0], 2 ) + pow( self.plyr.pos[1] - entity.pos[1], 2 ) )
+                if(dist <= PLYR_RANGE):
+                    l.append(entity.id)
+                    toDel.append(e)
 
+            for i in toDel: del group[i]
+            toDel = []
+        return l
     def saveComplete( self ):
         pass
+
+    def draw( self ):
+        for group in self.entities:
+            for entity in group:
+                entity.draw()

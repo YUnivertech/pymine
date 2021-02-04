@@ -20,6 +20,11 @@ chunkBuffer = ChunkBuffer(bufferWidth, 0, "world1")
 print(bufferWidth)
 del bufferWidth
 
+entityBuffer = entity.EntityBuffer(chunkBuffer, chunkBuffer.serializer, None)
+chunkBuffer.entityBuffer = entityBuffer
+
+# Create and display window
+
 # Create and display window
 screen = pygame.display.set_mode(displaySize, pygame.RESIZABLE)
 pygame.display.set_caption("Hello World!")
@@ -37,12 +42,14 @@ for i in range(len(chunkBuffer)):
 eventHandler = entity.ClientEventHandler()
 
 # Player variables
-player = entity.Player(screen, [0, 3000], chunkBuffer, eventHandler, eventHandler.keyStates, eventHandler.mouseState, eventHandler.cursorPos, DEFAULT_FRICTION)
+player = entity.Player(screen, [0, 3000], chunkBuffer, entityBuffer, eventHandler, eventHandler.keyStates, eventHandler.mouseState, eventHandler.cursorPos, DEFAULT_FRICTION)
 currChunk = prevChunk = deltaChunk = 0
 inventoryVisible = False
 
+entityBuffer.plyr = player
+
 # Initialize the renderer
-Renderer.initialize(chunkBuffer, camera, player, displaySize, screen)
+Renderer.initialize(chunkBuffer, entityBuffer, camera, player, displaySize, screen)
 
 def takeCommand( ):
     global cameraBound
@@ -51,8 +58,9 @@ def takeCommand( ):
 
     if(command[0] == 'add'):
         player.inventory.addItem(eval(command[1], globals(), locals()), eval(command[2]))
-        player.inventory.draw()
 
+    elif(command[0] == 'rem'):
+        player.inventory.remItemStack(eval(command[1], globals(), locals()), eval(command[2]))
 
 # game loop
 prev = time.time()
@@ -74,6 +82,19 @@ while running:
             elif    event.key == pygame.K_n :              cameraBound = not cameraBound # This should free the camera from being fixed to the player
             elif    event.key == pygame.K_SLASH :          takeCommand()
             elif    event.key == pygame.K_e :              inventoryVisible = not inventoryVisible
+            elif    event.key == pygame.K_DOWN:
+                player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] + 1) % INV_ROWS
+                print(player.inventory.itemHeld)
+            elif    event.key == pygame.K_UP:
+                player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] - 1 + INV_ROWS) % INV_ROWS
+                print(player.inventory.itemHeld)
+            elif    event.key == pygame.K_RIGHT:
+                player.inventory.itemHeld[0] = (player.inventory.itemHeld[0] + 1) % INV_COLS
+                print(player.inventory.itemHeld)
+            elif    event.key == pygame.K_LEFT:
+                player.inventory.itemHeld[0] = (player.inventory.itemHeld[0] - 1 + INV_COLS) % INV_COLS
+                print(player.inventory.itemHeld)
+
             else :                                         eventHandler.addKey( event.key )
 
         elif    event.type == pygame.KEYUP :               eventHandler.remKey( event.key )
@@ -118,6 +139,9 @@ while running:
         #eventHandler.chunkShiftFlag = True # server must be notified
         chk_a = time.time()
         eventHandler.loadChunkIndex = chunkBuffer.shiftBuffer(deltaChunk)
+        print(entityBuffer.entities)
+        entityBuffer.shift(deltaChunk)
+        print(entityBuffer.entities)
         print('shift buffer time:', (time.time()-chk_a)*1000)
         chk_a = time.time()
         chunkBuffer[eventHandler.loadChunkIndex].draw()

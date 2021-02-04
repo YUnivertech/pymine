@@ -86,8 +86,9 @@ class Chunk:
         if(self.TILE_TABLE_LOCAL[ ( x, y, True ) ][ HEALTH ] <= 0):
             del self.TILE_TABLE_LOCAL[ ( x, y, True ) ]
             self.blocks[y][x] = tiles.air
+            return True
 
-        return True
+        return False
 
     def placeWallAt( self, x, y, val):
         if(self.walls[y][x] != tiles.air): return False
@@ -97,6 +98,7 @@ class Chunk:
     def placeBlockAt( self, x, y, val):
         if(self.blocks[y][x] != tiles.air): return False
         self.blocks[y][x] = val
+        print(tiles.TILE_NAMES[val])
         return True
 
     def draw( self, rect = [0, 0, CHUNK_WIDTH, CHUNK_HEIGHT] ):
@@ -170,6 +172,8 @@ class ChunkBuffer:
         # Create lists of required objects
         self.chunks         =  [ ]
         self.lightSurfs     =  [ ]
+
+        self.entityBuffer = None
 
         # Load all objects
         for i in range( self.positions[ 0 ],  self.positions[ 2 ] + 1 ):
