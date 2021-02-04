@@ -523,17 +523,22 @@ class Inventory:
 
                 self.quantities[pos[1]][pos[0]] += quantity
 
-    def addItemLast( self, i, q ):
-        pass
+    def remItemStack( self, item:int, quantity:int ):
+        for x in range(INV_COLS):
+            for y in range(INV_ROWS):
+                if(self.items[y][x] == item):
+                    toRemove = max(self.quantities[y][x], quantity)
+                    self.quantities[y][x] -= toRemove
+                    quantity -= toRemove
+                    if(self.quantities[y][x] == 0): self.items[y][x] = None
+                    if(quantity == 0): return True
 
-    def remItemStack( self, i, q ):
-        pass
+        if(quantity != 0): return False
+        return True
 
-    def remItemPos( self, p, q ):
-        pass
-
-    def remItemLast( self, i, q ):
-        pass
+    def remItemPos( self, quantity:int, pos:list):
+        toRemove = min(self.quantities[pos[1]][[pos[0]]], quantity)
+        self.quantities[pos[1]][pos[pos[0]]] -= toRemove
 
     def draw( self ):
         # for i in range(len(self.items)):
