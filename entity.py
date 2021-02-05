@@ -39,7 +39,7 @@ class ItemEntity:
         self.surfPos = lambda : [ int(self.pos[0] - self.width//2), int(self.pos[1] + self.height//2) ]
 
     def draw( self ):
-        self.surf.blit(tiles.TILE_TABLE[self.id], [0, 0])
+        self.surf.blit(tiles.TILE_TABLE.get(self.id, tiles.bedrock), [0, 0])
         # puts the texture of the block itself onto my surface
 
 
