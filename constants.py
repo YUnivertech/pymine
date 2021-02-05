@@ -79,3 +79,4 @@ MAX_STACK           = 11
 WEIGHT              = 12
 
 INV_FONT            = pygame.freetype.SysFont('Consolas', size = 16, bold = True)
+SC_DISPLAY_FONT     = pygame.freetype.SysFont('Consolas', size = 20, bold = True)

@@ -117,6 +117,18 @@ class Renderer:
         playerCoors[0] += cls.numHor
         playerCoors[1] =  cls.numVer - playerCoors[1]
 
+        item = cls.player.inventory.getSelectedItem()
+        name, quantity = 'Nothing', cls.player.inventory.getSelectedQuantity()
+        if(tiles.TILE_NAMES.get(item, None)):
+            name = tiles.TILE_NAMES[item]
+        elif(items.ITEM_NAMES.get(item, None)):
+            name = items.ITEM_NAMES[item]
+
+        if(name != 'Nothing'): name += '  ' + str(quantity)
+        toShow, rect = SC_DISPLAY_FONT.render( name , (0, 0, 0) )
+        xVal = cls.screen.get_width() - toShow.get_width() - 8
+        cls.screen.blit(toShow, [xVal, 16])
+
         # ! temporary rendering of player crosshair
         pygame.draw.rect(cls.screen, (255,50,50), pygame.Rect(playerCoors[0]-PLYR_WIDTH//2, playerCoors[1]-PLYR_HEIGHT//2, PLYR_WIDTH, PLYR_HEIGHT))
         cls.entityBuffer.draw()
@@ -126,7 +138,7 @@ class Renderer:
                 coors[1] -= cls.camera[1]
                 coors[1] = cls.numVer - coors[1]
                 coors[0] += cls.numHor - cls.camera[0]
-                cls.screen.blit( entity.surf, coors)
+                cls.screen.blit( entity.surf, coors )
 
     @classmethod
     def updateSize(  cls  ):

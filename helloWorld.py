@@ -82,18 +82,10 @@ while running:
             elif    event.key == pygame.K_n :              cameraBound = not cameraBound # This should free the camera from being fixed to the player
             elif    event.key == pygame.K_SLASH :          takeCommand()
             elif    event.key == pygame.K_e :              inventoryVisible = not inventoryVisible
-            elif    event.key == pygame.K_DOWN:
-                player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] + 1) % INV_ROWS
-                print(player.inventory.itemHeld)
-            elif    event.key == pygame.K_UP:
-                player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] - 1 + INV_ROWS) % INV_ROWS
-                print(player.inventory.itemHeld)
-            elif    event.key == pygame.K_RIGHT:
-                player.inventory.itemHeld[0] = (player.inventory.itemHeld[0] + 1) % INV_COLS
-                print(player.inventory.itemHeld)
-            elif    event.key == pygame.K_LEFT:
-                player.inventory.itemHeld[0] = (player.inventory.itemHeld[0] - 1 + INV_COLS) % INV_COLS
-                print(player.inventory.itemHeld)
+            elif    event.key == pygame.K_DOWN:            player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] + 1) % INV_ROWS
+            elif    event.key == pygame.K_UP:              player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] - 1 + INV_ROWS) % INV_ROWS
+            elif    event.key == pygame.K_RIGHT:           player.inventory.itemHeld[0] = (player.inventory.itemHeld[0] + 1) % INV_COLS
+            elif    event.key == pygame.K_LEFT:            player.inventory.itemHeld[0] = (player.inventory.itemHeld[0] - 1 + INV_COLS) % INV_COLS
 
             else :                                         eventHandler.addKey( event.key )
 

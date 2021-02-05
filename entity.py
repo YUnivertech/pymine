@@ -572,6 +572,9 @@ class Inventory:
     def getSelectedItem( self ):
         return self.items[self.itemHeld[1]][self.itemHeld[0]]
 
+    def getSelectedQuantity( self ):
+        return self.quantities[self.itemHeld[1]][self.itemHeld[0]]
+
     def draw( self ):
         # for i in range(len(self.items)):
         #     for j in range(len(self.items[i])):
