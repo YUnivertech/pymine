@@ -1,6 +1,6 @@
 from constants import *
 import tiles, items
-import math, Chunk
+import math, Chunk, pickle
 import gameUtilities
 
 # !----------------------------------------------------------------------------------------------------
@@ -172,7 +172,9 @@ class Entity:
         #         t = TILE_WIDTH/self.vel[0]
         #     else:
         #         t = min(TILE_WIDTH/self.vel[1], TILE_WIDTH/self.vel[0])
-        while self.vel != [0,0] and dt2 >= t:
+        while dt2 >= t:
+            if self.vel == [0, 0]:
+                break
             dt2 -= t
             self.update(t)
             # print('hello')
@@ -483,6 +485,18 @@ class Player(Entity):
     def pick( self ):
         l = self.entityBuffer.pickItem()
         for item in l: self.inventory.addItem(item, 1)
+
+    def save( self, serializer ):
+        li = [self.inventory.items, self.inventory.quantities]
+        li = pickle.dumps(li)
+        serializer.savePlayer(1, li)
+
+    def load( self, serializer):
+        li = serializer.loadPlayer(1)
+        if li:
+            li = pickle.loads(li)
+            self.inventory.items = li[0]
+            self.inventory.quantities = li[1]
 
 
 class Inventory:

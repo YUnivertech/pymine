@@ -43,6 +43,7 @@ eventHandler = entity.ClientEventHandler()
 
 # Player variables
 player = entity.Player(screen, [0, 3000], chunkBuffer, entityBuffer, eventHandler, eventHandler.keyStates, eventHandler.mouseState, eventHandler.cursorPos, DEFAULT_FRICTION)
+player.load(chunkBuffer.serializer)
 currChunk = prevChunk = deltaChunk = 0
 inventoryVisible = False
 
@@ -172,5 +173,6 @@ while running:
 
 
 chunkBuffer.saveComplete()
+player.save(chunkBuffer.serializer)
 chunkBuffer.serializer.stop()
 pygame.display.quit()
