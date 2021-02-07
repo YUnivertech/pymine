@@ -3,32 +3,6 @@ import tiles, items
 import math, Chunk
 import gameUtilities
 
-# !----------------------------------------------------------------------------------------------------
-# todo  Please add all the entities for the various items
-# todo  Please make sure that they are named appropriately
-# todo  Please make sure that they are numbered properly
-# !----------------------------------------------------------------------------------------------------
-
-
-player = 0
-zombie = 1
-
-ENTITY_NAMES = {
-    zombie  :   "Zombie"
-}
-ENTITY_TABLE = {}
-
-
-class ActiveNPC:
-    def __init__(self):
-        pass
-
-
-class PassiveNPC:
-    def __init__(self):
-        pass
-
-
 class ItemEntity:
     def __init__(self, id, pos, width, height):
         self.id = id
@@ -41,15 +15,6 @@ class ItemEntity:
     def draw( self ):
         self.surf.blit(tiles.TILE_TABLE.get(self.id, tiles.bedrock), [0, 0])
         # puts the texture of the block itself onto my surface
-
-
-class Projectile:
-    def __init__(self):
-        pass
-
-    def update(self):
-        pass
-
 
 class Entity:
 
@@ -286,25 +251,6 @@ class Entity:
             else:
                 res = self.checkGround(pos)
         return res
-
-
-class Slime(Entity):
-    def __init__(self, pos: list, chunkBuffer: Chunk.ChunkBuffer, eventHandler, keyState, mouseState, cursorPos, friction: float, health: int = 100, grounded: bool = True):
-        super().__init__(pos, chunkBuffer, PLYR_WIDTH, PLYR_HEIGHT, friction, health, grounded)
-        self.inventory = Inventory(screen, 1, 1)
-
-    def runAI(self):
-        pass
-
-
-class Zombie(Entity):
-    def __init__(self, pos:list, chunkBuffer:Chunk.ChunkBuffer, eventHandler, keyState, mouseState, cursorPos, friction:float, health:int=100, grounded:bool=True):
-        super().__init__(pos, chunkBuffer, PLYR_WIDTH, PLYR_HEIGHT, friction, health, grounded)
-        self.inventory = Inventory(screen, 1, 1)
-
-    def runAI(self):
-        pass
-
 
 class Player(Entity):
 
@@ -576,11 +522,6 @@ class Inventory:
         return self.quantities[self.itemHeld[1]][self.itemHeld[0]]
 
     def draw( self ):
-        # for i in range(len(self.items)):
-        #     for j in range(len(self.items[i])):
-        #         print(self.items[i][j], self.quantities[i][j], end = '\t')
-        #     print()
-        # print('\n\n\n')
 
         slot = items.ITEM_TABLE[items.slot]
         coors = [16, 16] # ! MAGIC NUMBERS

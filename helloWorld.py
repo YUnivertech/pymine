@@ -36,7 +36,6 @@ items.loadImageTable()
 
 for i in range(len(chunkBuffer)):
     chunkBuffer[i].draw()
-    chunkBuffer.renderLightmap(i)
 
 # Input handling containers
 eventHandler = entity.ClientEventHandler()
@@ -77,9 +76,7 @@ while running:
             running = False
 
         elif(event.type == pygame.KEYDOWN):
-
-            if      event.key == pygame.K_c :              Renderer.setShaders()
-            elif    event.key == pygame.K_n :              cameraBound = not cameraBound # This should free the camera from being fixed to the player
+            if      event.key == pygame.K_n :              cameraBound = not cameraBound # This should free the camera from being fixed to the player
             elif    event.key == pygame.K_SLASH :          takeCommand()
             elif    event.key == pygame.K_e :              inventoryVisible = not inventoryVisible
             elif    event.key == pygame.K_DOWN:            player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] + 1) % INV_ROWS
@@ -139,8 +136,6 @@ while running:
         chunkBuffer[eventHandler.loadChunkIndex].draw()
         print('draw time:', (time.time()-chk_a)*1000)
         chk_a = time.time()
-        chunkBuffer.renderLightmap(eventHandler.loadChunkIndex)
-        print('render light time:', (time.time()-chk_a)*1000)
 
     if eventHandler.tileBreakFlag :
         chunkBuffer[eventHandler.tileBreakIndex].draw((eventHandler.tileBreakPos[0], eventHandler.tileBreakPos[1], eventHandler.tileBreakPos[0] + 1, eventHandler.tileBreakPos[1] + 1))
@@ -164,11 +159,6 @@ while running:
     if(inventoryVisible):   player.inventory.draw()
 
     pygame.display.update()     # Updating the screen
-
-    # Framerate calculation
-
-    #framerate = 1 / max(dt, 0.001)
-    #print(framerate)
 
 
 chunkBuffer.saveComplete()

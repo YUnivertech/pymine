@@ -134,12 +134,6 @@ class Chunk:
                             breakState = (self.TILE_TABLE_LOCAL[ ( j, i, False ) ][ HEALTH ] * 8) / 100
                             self.surface.blit( tiles.TILE_MODIFIERS[ tiles.crack ][ 8 - int(breakState) ], coors )
 
-    def update( self, dt ):
-
-        for i in range(0, CHUNK_HEIGHT):
-            for j in range(0, CHUNK_WIDTH):
-                pass
-
     def __getitem__(  self, key  ):
         return self.blocks[key]
 
@@ -192,9 +186,6 @@ class ChunkBuffer:
 
             self.chunks.append( retrieved )
             self.lightSurfs.append( pygame.Surface( ( CHUNK_WIDTH_P, CHUNK_HEIGHT_P ) ) )
-
-        for i in range( 0, self.length ):
-            self.formLightMap( i )
 
     def shiftBuffer( self, deltaChunk ):
 
@@ -288,104 +279,101 @@ class ChunkBuffer:
         for chunk in self.chunks:
             self.serializer[chunk.index] = pickle.dumps( [ chunk.blocks, chunk.walls ] ), pickle.dumps( chunk.TILE_TABLE_LOCAL )
 
-    def formLightMap( self, index, top=True, down=True, left=True, right=True ):
+    # def formLightMap( self, index, top=True, down=True, left=True, right=True ):
 
-        for i in range( 0, CHUNK_HEIGHT ):
-            for j in range( 0, CHUNK_WIDTH ):
+    #     for i in range( 0, CHUNK_HEIGHT ):
+    #         for j in range( 0, CHUNK_WIDTH ):
 
-                currTileRef = self[index][i][j]
-                currWallRef = self[index].walls[i][j]
+    #             currTileRef = self[index][i][j]
+    #             currWallRef = self[index].walls[i][j]
 
-                selfLuminousity  = 0
+    #             selfLuminousity  = 0
 
-                # if(currTileRef > 0 or currWallRef == 0):    # Front tile is present or wall is absent
-                #     selfLuminousity = TILE_ATTR[currTileRef][LUMINOSITY]
-                # elif(currWallRef > 0):                      # Front tile is absent but wall is present
-                #     selfLuminousity = TILE_ATTR[currWallRef][LUMINOSITY]
+    #             # if(currTileRef > 0 or currWallRef == 0):    # Front tile is present or wall is absent
+    #             #     selfLuminousity = TILE_ATTR[currTileRef][LUMINOSITY]
+    #             # elif(currWallRef > 0):                      # Front tile is absent but wall is present
+    #             #     selfLuminousity = TILE_ATTR[currWallRef][LUMINOSITY]
 
-                selfLuminousity = tiles.TILE_ATTR[currTileRef][LUMINOSITY]
-                selfIllumination = self[index].lightMap[i][j]
+    #             selfLuminousity = tiles.TILE_ATTR[currTileRef][LUMINOSITY]
+    #             selfIllumination = self[index].lightMap[i][j]
 
-                if(selfLuminousity is not 0 and selfIllumination < selfLuminousity):
-                    self[index].lightMap[i][j] = selfLuminousity
-                    self.propagate(index, j, i)
+    #             if(selfLuminousity is not 0 and selfIllumination < selfLuminousity):
+    #                 self[index].lightMap[i][j] = selfLuminousity
+    #                 self.propagate(index, j, i)
 
-    def propagate( self, index, x, y, top=True, right=True, bottom=True, left=True ):
+    # def propagate( self, index, x, y, top=True, right=True, bottom=True, left=True ):
 
-        if(index < 0): index = self.length+index
+    #     if(index < 0): index = self.length+index
 
-        topVal      =  self[index].lightMap[y][x]-16
-        rightVal    =  self[index].lightMap[y][x]-16
-        bottomVal   =  self[index].lightMap[y][x]-16
-        leftVal     =  self[index].lightMap[y][x]-16
+    #     topVal      =  self[index].lightMap[y][x]-16
+    #     rightVal    =  self[index].lightMap[y][x]-16
+    #     bottomVal   =  self[index].lightMap[y][x]-16
+    #     leftVal     =  self[index].lightMap[y][x]-16
 
-        if(topVal < 0): top=False
-        if(rightVal < 0): right=False
-        if(bottomVal < 0): bottom=False
-        if(leftVal < 0): left=False
+    #     if(topVal < 0): top=False
+    #     if(rightVal < 0): right=False
+    #     if(bottomVal < 0): bottom=False
+    #     if(leftVal < 0): left=False
 
-        # Top side
-        if(top):
-            if(y+1 < CHUNK_HEIGHT):         #check if the next position (1 above) is valid
-                if(topVal > self[index].lightMap[y+1][x]):
-                    self[index].lightMap[y+1][x]   =  topVal
-                    self.propagate(index, x, y+1, bottom=False)
+    #     # Top side
+    #     if(top):
+    #         if(y+1 < CHUNK_HEIGHT):         #check if the next position (1 above) is valid
+    #             if(topVal > self[index].lightMap[y+1][x]):
+    #                 self[index].lightMap[y+1][x]   =  topVal
+    #                 self.propagate(index, x, y+1, bottom=False)
 
-        # Bottom side
-        if(bottom):
-            if(y-1 >= 0):                   #check if the next position (1 below) is valid
-                if(bottomVal >= self[index].lightMap[y-1][x]):
-                    self[index].lightMap[y-1][x]   =  bottomVal
-                    self.propagate(index, x, y-1, top=False)
+    #     # Bottom side
+    #     if(bottom):
+    #         if(y-1 >= 0):                   #check if the next position (1 below) is valid
+    #             if(bottomVal >= self[index].lightMap[y-1][x]):
+    #                 self[index].lightMap[y-1][x]   =  bottomVal
+    #                 self.propagate(index, x, y-1, top=False)
 
-        # Left side
-        if(left):
-            if(x-1 >= 0):                   #check if the next position (1 to the left) is valid
-                if(leftVal > self[index].lightMap[y][x-1]):
-                    self[index].lightMap[y][x-1]   =  leftVal
-                    self.propagate(index, x-1, y, right=False)
+    #     # Left side
+    #     if(left):
+    #         if(x-1 >= 0):                   #check if the next position (1 to the left) is valid
+    #             if(leftVal > self[index].lightMap[y][x-1]):
+    #                 self[index].lightMap[y][x-1]   =  leftVal
+    #                 self.propagate(index, x-1, y, right=False)
 
-            elif(index-1 >= 0):             #check if previous chunk exists in the chunk buffer
-                if(leftVal > self[index-1].lightMap[y][CHUNK_WIDTH-1]):
-                    self[index-1].lightMap[y][CHUNK_WIDTH-1]   =  leftVal
-                    self.propagate(index-1, CHUNK_WIDTH-1, y, right=False)
+    #         elif(index-1 >= 0):             #check if previous chunk exists in the chunk buffer
+    #             if(leftVal > self[index-1].lightMap[y][CHUNK_WIDTH-1]):
+    #                 self[index-1].lightMap[y][CHUNK_WIDTH-1]   =  leftVal
+    #                 self.propagate(index-1, CHUNK_WIDTH-1, y, right=False)
 
-        # Right side
-        if(right):
-            if(x+1 < CHUNK_WIDTH):          #check if the next position (1 to the right) is valid
-                if(rightVal > self[index].lightMap[y][x+1]):
-                    self[index].lightMap[y][x+1]   =  rightVal
-                    self.propagate(index, x+1, y, left=False)
+    #     # Right side
+    #     if(right):
+    #         if(x+1 < CHUNK_WIDTH):          #check if the next position (1 to the right) is valid
+    #             if(rightVal > self[index].lightMap[y][x+1]):
+    #                 self[index].lightMap[y][x+1]   =  rightVal
+    #                 self.propagate(index, x+1, y, left=False)
 
-            elif(index+1 < self.length):    #check if next chunk exists in the chunk buffer
-                if(rightVal > self[index+1].lightMap[y][0]):
-                    self[index+1].lightMap[y][0]   =  rightVal
-                    self.propagate(index+1, 0, y, left=False)
+    #         elif(index+1 < self.length):    #check if next chunk exists in the chunk buffer
+    #             if(rightVal > self[index+1].lightMap[y][0]):
+    #                 self[index+1].lightMap[y][0]   =  rightVal
+    #                 self.propagate(index+1, 0, y, left=False)
 
-    def renderLightmaps( self ):
-        for _ in range( cls.length ):   cls.renderLightmap( _ )
+    # def renderLightmaps( self ):
+    #     for _ in range( cls.length ):   cls.renderLightmap( _ )
 
-    def renderLightmap(  self, index, rect = [0, 0, CHUNK_WIDTH, CHUNK_HEIGHT] ):
+    # def renderLightmap(  self, index, rect = [0, 0, CHUNK_WIDTH, CHUNK_HEIGHT] ):
 
-        currChunkRef                    =  self.chunks[index]
-        currLightmap                    =  self.lightSurfs[index]
+    #     currChunkRef                    =  self.chunks[index]
+    #     currLightmap                    =  self.lightSurfs[index]
 
-        lightBox                        =  pygame.Surface( ( TILE_WIDTH, TILE_WIDTH ) )
+    #     lightBox                        =  pygame.Surface( ( TILE_WIDTH, TILE_WIDTH ) )
 
-        for i in range( rect[1], rect[3] ):
+    #     for i in range( rect[1], rect[3] ):
 
-            coors   =   [0, ( CHUNK_HEIGHT - i - 1 ) * TILE_WIDTH]
+    #         coors   =   [0, ( CHUNK_HEIGHT - i - 1 ) * TILE_WIDTH]
 
-            for j in range( rect[0], rect[2] ):
+    #         for j in range( rect[0], rect[2] ):
 
-                coors[0] = j * TILE_WIDTH
+    #             coors[0] = j * TILE_WIDTH
 
-                lightIntensity = currChunkRef.lightMap[ i ][ j ]
-                lightBox.fill( ( lightIntensity, ) * 3 )
-                currLightmap.blit( lightBox, coors )
-
-    def update( self, dt ):
-        for _ in range( 0, self.length ):   self.chunks[_].update()
+    #             lightIntensity = currChunkRef.lightMap[ i ][ j ]
+    #             lightBox.fill( ( lightIntensity, ) * 3 )
+    #             currLightmap.blit( lightBox, coors )
 
     def __getitem__( self, key ):
         return self.chunks[key]
