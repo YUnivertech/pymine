@@ -53,15 +53,6 @@ class Entity:
         self.hitting     = False
         self.placing     = False
 
-        # ! these formulas are used in a lot of places(THEY MAY ALSO CHANGE!)
-        # self.le           = lambda off, pos=self.pos: (pos[0] - (self.width * 0.5) + off[0], pos[1] + off[1])    # Left
-        # self.ri           = lambda off, pos=self.pos: (pos[0] + (self.width * 0.5) + off[0], pos[1] + off[1])    # Right
-        # self.bo           = lambda off, pos=self.pos: (pos[0] + off[0], pos[1] - (self.height * 0.5) + off[1])    # Bottom
-        # self.up           = lambda off, pos=self.pos: (pos[0] + off[0], pos[1] + (self.height * 0.5) + off[1])    # Top
-        # self.lB           = lambda off, pos=self.pos: (pos[0] - (self.width * 0.5) + off[0], pos[1] - (self.height * 0.5) + off[1])    # Left bottom
-        # self.lU           = lambda off, pos=self.pos: (pos[0] - (self.width * 0.5) + off[0], pos[1] + (self.height * 0.5) + off[1])    # Left top
-        # self.rB           = lambda off, pos=self.pos: (pos[0] + (self.width * 0.5) + off[0], pos[1] - (self.height * 0.5) + off[1])    # Right bottom
-        # self.rU           = lambda off, pos=self.pos: (pos[0] + (self.width * 0.5) + off[0], pos[1] + (self.height * 0.5) + off[1])    # Right top
         # These are the rects of the player
         self.left         = self.le((0,0))
         self.right        = self.ri((0,0))
@@ -77,14 +68,6 @@ class Entity:
         self.xPosChunk    = lambda p: int(p[0] // TILE_WIDTH - self.currChunk(p) * CHUNK_WIDTH)
         self.yPosChunk    = lambda p: int(p[1] // TILE_WIDTH)
         self.tile         = lambda p: self.chunkBuffer[self.currChunkInd(p)][self.yPosChunk(p)][self.xPosChunk(p)]
-        # self.tileLeft     = self.chunkBuffer[self.currChunkInd( self.le((-1,0)) )][self.yPosChunk( self.le((-1,0)) )][self.xPosChunk( self.le((-1,0)) )]
-        # self.tileRight    = self.chunkBuffer[self.currChunkInd( self.ri((1,0)) )][self.yPosChunk( self.ri((1,0)) )][self.xPosChunk( self.ri((1,0)) )]
-        # self.tileBot      = self.chunkBuffer[self.currChunkInd( self.bo((0,0)) )][self.yPosChunk( self.bo((-1,0)) )][self.xPosChunk( self.bo((-1,0)) )]
-        # self.tileUp       = self.chunkBuffer[self.currChunkInd( self.up((-1,0)) )][self.yPosChunk( self.up((-1,0)) )][self.xPosChunk( self.up((-1,0)) )]
-        # self.tileLeftBot  = self.chunkBuffer[self.currChunkInd( self.lB((-1,0)) )][self.yPosChunk( self.lB((-1,0)) )][self.xPosChunk( self.lB((-1,0)) )]
-        # self.tileLeftUp   = self.chunkBuffer[self.currChunkInd( self.lU((-1,0)) )][self.yPosChunk( self.lU((-1,0)) )][self.xPosChunk( self.lU((-1,0)) )]
-        # self.tileRightBot = self.chunkBuffer[self.currChunkInd( self.rB((-1,0)) )][self.yPosChunk( self.rB((-1,0)) )][self.xPosChunk( self.rB((-1,0)) )]
-        # self.tileRightUp  = self.chunkBuffer[self.currChunkInd( self.rU((-1,0)) )][self.yPosChunk( self.rU((-1,0)) )][self.xPosChunk( self.rU((-1,0)) )]
 
     def le(self, off:tuple, pos=None):
         if not pos:
@@ -129,14 +112,6 @@ class Entity:
     def driveUpdate(self, dt:float):
         dt2 = dt
         t = 16 / (MAX_VEL*SCALE_VEL)
-        # t = 1 / (MAX_VEL * SCALE_VEL)
-        # if self.vel != [0,0]:
-        #     if self.vel[0] == 0:
-        #         t = TILE_WIDTH/MAX_VEL*SCALE_VEL
-        #     elif self.vel[1] == 0:
-        #         t = TILE_WIDTH/self.vel[0]
-        #     else:
-        #         t = min(TILE_WIDTH/self.vel[1], TILE_WIDTH/self.vel[0])
         while self.vel != [0,0] and dt2 >= t:
             dt2 -= t
             self.update(t)
@@ -145,11 +120,6 @@ class Entity:
             self.update(dt2)
 
     def update(self, dt:float):
-        """[summary]
-
-        Args:
-            dt (float): [description]
-        """
 
         nextPos = self.pos.copy()
         self.calcFriction()
@@ -172,9 +142,6 @@ class Entity:
             if self.vel[i] < -MAX_VEL*(1-self.friction*0.2): self.vel[i] = -MAX_VEL*(1-self.friction*0.2)
             elif self.vel[i] > MAX_VEL*(1-self.friction*0.2): self.vel[i] = MAX_VEL*(1-self.friction*0.2)
             nextPos[i] += self.vel[i] * SCALE_VEL * dt
-            # if self.vel[i] < -MAX_VEL*(1-self.friction*0.2): self.vel[i] = -MAX_VEL*(1-self.friction*0.2)
-            # elif self.vel[i] > MAX_VEL*(1-self.friction*0.2): self.vel[i] = MAX_VEL*(1-self.friction*0.2)
-            # self.pos[i] += self.vel[i] * SCALE_VEL * dt
 
             move = self.check( i, dt , nextPos)
             nextPos = self.pos.copy()
@@ -183,9 +150,6 @@ class Entity:
             else: self.vel[i] = 0
 
     def calcFriction(self):
-        # print(tiles.TILE_ATTR[self.tile(self.lB((0,-1)))])
-        # print(self.acc)
-        # print()
         if self.tile(self.lB((0,-1))) == 0:
             self.friction = AIR_FRICTION
         else:
@@ -199,11 +163,6 @@ class Entity:
 
     def moveDown(self):  # only temporary to adjust to current usage. Will be changed/removed
         self.acc[1] = -self.friction * 2
-
-    def moveUp(self):  # only temporary to adjust to current usage. Will be changed to jump
-        # self.vel[1] = JUMP_VEL
-        # self.acc[1] = max(0, self.acc[1] - AIR_FRICTION)
-        self.acc[1] = self.friction * 2
 
     def jump(self):
         self.vel[1] = JUMP_VEL
@@ -236,9 +195,6 @@ class Entity:
             self.grounded = False
             return True
 
-    def hit(self):
-        pass
-
     def check(self, i:int, dt:float, pos:list):
         if i == 0:
             if self.vel[0]+self.acc[0]*dt > 0:
@@ -253,23 +209,6 @@ class Entity:
         return res
 
 class Player(Entity):
-
-    # def __init__( self , pos:list, chunkBuffer:Chunk.ChunkBuffer, eventHandler, friction:float, health:int=100, grounded:bool=True):
-
-    #     super().__init__(pos, chunkBuffer, PLYR_WIDTH, PLYR_HEIGHT, friction, health, grounded)
-
-    #     self.keyState = eventHandler.keyState
-    #     self.mouseState = eventHandler.mouseState
-    #     self.cursorPos = eventHandler.cursorPos
-
-    #     self.eventHandler = eventHandler
-
-    #     self.inventory = Inventory(screen, INV_COLS, INV_ROWS)
-
-    #     self.tangibility = 0
-    #     # 0 means intangible
-    #     # 1 means interacting with blocks
-    #     # 2 means interacting with walls
 
     def __init__( self , screen , pos:list, chunkBuffer:Chunk.ChunkBuffer, entityBuffer, eventHandler, keyState, mouseState, cursorPos, friction:float, health:int=100, grounded:bool=True):
         super().__init__(pos, chunkBuffer, entityBuffer, PLYR_WIDTH, PLYR_HEIGHT, friction, health, grounded)
@@ -327,9 +266,6 @@ class Player(Entity):
             pass
 
         self.pick()
-
-    def drop(self):
-        pass
 
     def update( self, dt:float ):
         """[summary]
@@ -538,132 +474,6 @@ class Inventory:
 
 
 class ClientEventHandler:
-    """ Class to abstract recording, management and processing of client-side events
-
-        Types of events
-
-        1> User Keyboard input event:
-            Description:
-                This event is triggered when the user gives input from the keyboard, i.e. presses or releases keys.
-                It may open the console for issuing text commands, open the chat-box for typing messages or cause
-                the player to perform an action.
-            Associated Data:
-                - The key(s) which were pressed (if any) and the key(s) which were released (if any)
-
-        2> User mouse button input event:
-            Description:
-                This event is triggered when the user gives input from the mouse buttons but does not include the
-                movement of the mouse pointer.
-            Associated Data:
-                - The button(s) which were pressed (if any) and the button(s) which were released (if any)
-
-        3> User mouse pointer input event:
-            Description:
-                This event is triggered when the user moves the mouse pointer on the window.
-                It requires re-calculation of the cursor position.
-            Associated Data:
-                - New position of the mouse pointer
-                - New position of the cursor
-
-        4> Camera movement event:
-            Description:
-                This event is triggered when the camera moved between 2 consecutive frames.
-                It requires the whole screen to be reloaded.
-                It requires re-calculation of the cursor position.
-            Associated Data:
-                - New position of the cursor
-
-        5> Window resize event
-            Description:
-                This event is triggered when the window is resized.
-                It requires the whole screen to be reloaded.
-                It requires re-calculation of the cursor position.
-            Associated Data:
-                - New size of the window
-                - New position of the mouse pointer in the updated window
-                - New position of the cursor
-
-        6> player movement event
-            Description:
-                This event is triggered when the player moves or is moved.
-                It must be sent to the server
-            Associated Data:
-                ?
-
-        7> tile/wall break event
-            Description:
-                This event is triggered when a tile/wall is broken.
-                It requires the light-maps to be reloaded
-                It requires the affected regions of the screen to be reloaded
-                It requires the chunk to be saved (or sent to the server)
-            Associated Data:
-                - Position of the tile being broken
-                - Chunk of the tile being broken
-                - Local-specific information of the tile
-
-        8> tile/wall place event
-            Description:
-                This event is triggered when a tile/wall is placed
-                It requires the light-maps to be reloaded
-                It requires the affected regions of the screen to be reloaded
-                It requires the chunk ot be saved (or sent to the server)
-            Associated Data:
-                - Position of the tile/wall being places
-                - Chunk of the tile/wall being placed
-
-        9> tile/wall alter event
-            Description:
-                This event is triggered when a tile/wall 's local data is altered
-                It may or may not require the light maps to be reloaded
-                It may or may not require the affected regions of the screen to be reloaded
-                It required the chunk to be saved (or sent to the server)
-            Associated Data:
-                - Position of the tile/wall being altered
-                - Nature of the data which was altered
-
-        10> Chunk-shifting event
-            Description:
-                This event is triggered when the client's player switches chunks
-                It requires the chunk buffer to serialize and de-serialize chunks
-                It requires the entity buffer to serialize and de-serialize entities
-                It requires the lightmaps to be reloaded
-            Associated Data:
-                The index of the newly added chunk
-
-        11> Entity spawn event
-                Description:
-                    This event is triggered when an entity is spawned.
-                    It requires the entity buffer to be updated
-                    It requires a part of the screen to be updated
-                    It may or may not require lightmaps to be reloaded
-                    It requires information to be sent to the server
-                Associated Data:
-                    - The position where the entity was spawned
-                    - The description of the entity
-
-        12> Entity despawn event
-                Description:
-                    This event is triggered when an entity is de-spawned
-                    It requires the entity buffer to be updated
-                    It requires a part of the screen to be updated
-                    It may or may not require lightmaps to be reloaded
-                    It requires the information to be sent to the server
-                Associated Data:
-                    - The position where the entity was spawned
-                    - The description of the entity
-
-        13> Entity movement event
-                Description:
-                    This event is triggered when a mobile entity moves or is moved
-                    It requires a part of the screen to be updated
-                    It requires information be sent to the server
-                    It may or may not require the entity buffer to be updated
-                Associated Data:
-                    - The new position of the entity
-                    - The chunk of the entity
-                    - The area of the screen occupied by the entity
-                    - The description of the entity
-    """
 
     def __init__( self ):
 
@@ -741,27 +551,6 @@ class ClientEventHandler:
         self.cameraMovementFlag = True
 
 
-class Menu:
-    def __init__(self, h:int, w:int, bL:list, bG=(130, 102, 68)):
-        self.height  = h
-        self.width   = w
-        self.buttons = bL    # The list of buttons where each button is in the form of a list
-        # Basic structure of each button - ['Text on button', ypos, color, color2, xpos=None, onlyText=False]
-        self.menuSurf = pygame.surface.Surface( (self.height, self.width) )
-
-    def create(self):
-        pygame.font.init()
-        font = pygame.font.SysFont(pygame.font.get_default_font(), 12)
-        for i in self.buttons:
-            buttonSurf = font.render(i[0], True, i[2])
-            w = buttonSurf.get_width()
-            buttonSurf.blit(self.menuSurf, [(self.width-w)//2, i[1]])
-        return self.menuSurf
-
-    def update(self, mP, mS):
-        pass
-
-
 class EntityBuffer:
     def __init__( self, cB:Chunk.ChunkBuffer, s:gameUtilities.Serializer, player):
         self.chunkBuffer = cB
@@ -822,8 +611,6 @@ class EntityBuffer:
             for i in toDel: del group[i]
             toDel = []
         return l
-    def saveComplete( self ):
-        pass
 
     def draw( self ):
         for group in self.entities:
