@@ -38,8 +38,6 @@ class Entity:
         self.health      = health
         self.grounded    = grounded
 
-#        self.manager.addEntity(self)
-
         # self.itemHeld     = None
         self.vel         = [0.0, 0.0]
         self.acc         = [0.0, 0.0]
@@ -53,15 +51,6 @@ class Entity:
         self.hitting     = False
         self.placing     = False
 
-        # These are the rects of the player
-        self.left         = self.le((0,0))
-        self.right        = self.ri((0,0))
-        self.bottom       = self.bo((0,0))
-        self.top          = self.up((0,0))
-        self.leftBot      = self.lB((0,0))
-        self.leftUp       = self.lU((0,0))
-        self.rightBot     = self.rB((0,0))
-        self.rightUp      = self.rU((0,0))
         # In the following lambda functions, 'p' means position which is a tuple
         self.currChunk    = lambda p: int(math.floor(p[0] / CHUNK_WIDTH_P))
         self.currChunkInd = lambda p: int(self.currChunk(p) - self.chunkBuffer.positions[0])
@@ -115,7 +104,6 @@ class Entity:
         while self.vel != [0,0] and dt2 >= t:
             dt2 -= t
             self.update(t)
-            # print('hello')
         else:
             self.update(dt2)
 
@@ -145,7 +133,6 @@ class Entity:
 
             move = self.check( i, dt , nextPos)
             nextPos = self.pos.copy()
-            # print(move)
             if move: self.pos[i] += self.vel[i] * SCALE_VEL * dt
             else: self.vel[i] = 0
 
@@ -160,9 +147,6 @@ class Entity:
 
     def moveRight(self):
         self.acc[0] = self.friction * 2
-
-    def moveDown(self):  # only temporary to adjust to current usage. Will be changed/removed
-        self.acc[1] = -self.friction * 2
 
     def jump(self):
         self.vel[1] = JUMP_VEL
@@ -248,7 +232,7 @@ class Player(Entity):
             self.inventory.isEnabled = not self.inventory.isEnabled
             self.keyState[pygame.K_e] = False
 
-        if(self.keyState[pygame.K_q]):
+        if self.keyState[pygame.K_q]:
             self.drop()
             print('DROPPING')
 
@@ -297,9 +281,6 @@ class Player(Entity):
             elif self.vel[i] > MAX_VEL * (1 - self.friction * 0.2):
                 self.vel[i] = MAX_VEL * (1 - self.friction * 0.2)
             nextPos[i] += self.vel[i] * SCALE_VEL * dt
-            # if self.vel[i] < -MAX_VEL*(1-self.friction*0.2): self.vel[i] = -MAX_VEL*(1-self.friction*0.2)
-            # elif self.vel[i] > MAX_VEL*(1-self.friction*0.2): self.vel[i] = MAX_VEL*(1-self.friction*0.2)
-            # self.pos[i] += self.vel[i] * SCALE_VEL * dt
 
             move = self.check( i, dt, nextPos )
             nextPos = self.pos.copy( )
@@ -315,7 +296,6 @@ class Player(Entity):
 
             x = (self.cursorPos[0] // TILE_WIDTH) - chunk * CHUNK_WIDTH
             y = (self.cursorPos[1] // TILE_WIDTH)
-            # print('hitting')
 
             block = self.chunkBuffer[ chunkInd ][ y ][ x ]
             state = self.chunkBuffer[ chunkInd ].breakBlockAt( x, y, 10, dt)
@@ -330,7 +310,7 @@ class Player(Entity):
             self.eventHandler.tileBreakPos[0] = x
             self.eventHandler.tileBreakPos[1] = y
 
-            if(state): # The block was broken
+            if state: # The block was broken
                 print(block)
                 # self.entityBuffer.addItem( block, [self.cursorPos[0], self.cursorPos[1]], chunkInd)
                 self.entityBuffer.addItem( block, self.cursorPos.copy(), chunkInd)
@@ -348,10 +328,10 @@ class Player(Entity):
             toPlace = self.inventory.getSelectedItem()
 
             dist = math.sqrt( pow( self.pos[0] - self.cursorPos[0], 2 ) + pow( self.pos[1] - self.cursorPos[1], 2 ) )
-            if(toPlace and dist > PLYR_HEIGHT):
+            if toPlace and dist > PLYR_HEIGHT:
                 print('PLACING!', tiles.TILE_NAMES[toPlace])
                 res = self.chunkBuffer[chunkInd].placeBlockAt( x, y, toPlace)
-                if(res): self.inventory.remItemPos(1, self.inventory.itemHeld)
+                if res: self.inventory.remItemPos( 1, self.inventory.itemHeld )
 
             self.eventHandler.tilePlaceFlag = True
 
@@ -390,18 +370,18 @@ class Inventory:
         firstEmpty = None
         for x in range(INV_COLS):
             for y in range(INV_ROWS):
-                if( firstEmpty == None and self.quantities[y][x] == 0): firstEmpty = [x, y]
-                if( self.items[y][x] == i and self.quantities[y][x] < 64):
+                if firstEmpty == None and self.quantities[y][x] == 0: firstEmpty = [x, y]
+                if self.items[y][x] == i and self.quantities[y][x] < 64:
                     maxFit = min([q, 64 - self.quantities[y][x], 64])
                     self.quantities[y][x] += maxFit
                     q -= maxFit
-                    if(q == 0): return None
-        if(q > 0 and firstEmpty != None):
+                    if q == 0: return None
+        if q > 0 and firstEmpty != None:
             maxFit = min(64, q)
             q -= maxFit
             self.items[firstEmpty[1]][firstEmpty[0]] = i
             self.quantities[firstEmpty[1]][firstEmpty[0]] = maxFit
-            if(q > 0): self.addItem( i, q )
+            if q > 0: self.addItem( i, q )
 
     def addItemPos( self, item:int, quantity:int, pos:list ):
 
@@ -435,21 +415,21 @@ class Inventory:
     def remItemStack( self, item:int, quantity:int ):
         for x in range(INV_COLS):
             for y in range(INV_ROWS):
-                if(self.items[y][x] == item):
+                if self.items[y][x] == item:
                     toRemove = min(self.quantities[y][x], quantity)
                     print(toRemove)
                     self.quantities[y][x] -= toRemove
                     quantity -= toRemove
-                    if(self.quantities[y][x] <= 0): self.items[y][x] = None
-                    if(quantity <= 0): return True
+                    if self.quantities[y][x] <= 0: self.items[y][x] = None
+                    if quantity <= 0: return True
 
-        if(quantity != 0): return False
+        if quantity != 0: return False
         return True
 
     def remItemPos( self, quantity:int, pos:list):
         toRemove = min(self.quantities[pos[1]][pos[0]], quantity)
         self.quantities[pos[1]][pos[0]] -= toRemove
-        if(self.quantities[pos[1]][pos[0]] <= 0): self.items[pos[1]][pos[0]] = None
+        if self.quantities[pos[1]][pos[0]] <= 0: self.items[pos[1]][pos[0]] = None
 
     def getSelectedItem( self ):
         return self.items[self.itemHeld[1]][self.itemHeld[0]]
@@ -512,19 +492,16 @@ class ClientEventHandler:
         self.tileAlterPos = [-1, -1]
 
     def addKey( self, key ):
-        # print("KEY RELEASE")
         if key in self.keyStates:
             self.keyInFlag = True
             self.keyStates[key] = True
 
     def remKey( self, key ):
-        # print("KEY PRESS")
         if key in self.keyStates:
             self.keyInFlag = True
             self.keyStates[key] = False
 
     def addMouseMotion( self, event, camera, displaySize ):
-        # print("MOUSE MOTION")
         self.mouseInFlag = True
         self.mousePos[0] = event.pos[0]
         self.mousePos[1] = event.pos[1]
@@ -532,22 +509,18 @@ class ClientEventHandler:
         self.cursorPos[1] = int(camera[1]) + displaySize[1]//2 - self.mousePos[1]
 
     def addMouseButton( self, button ):
-        # print("MOUSE PRESS")
         # 1 for left, 2 for middle, 3 for right, 4 for scroll up and 5 for scroll down
         mouseInFlag = True
         self.mouseState[ button ] = True
 
     def remMouseButton( self, button ):
-        # print("MOUSE RELEASE")
         mouseInFlag = True
         self.mouseState[ button ] = False
 
     def addWindowResize( self ):
-        # print("WINDOW RESIZE")
         self.windowResizeFlag = True
 
     def addCameraMotion( self ):
-        # print("CAMERA MOVED")
         self.cameraMovementFlag = True
 
 
@@ -604,7 +577,7 @@ class EntityBuffer:
             for e in range(len(group)):
                 entity = group[e]
                 dist = math.sqrt( pow( self.plyr.pos[0] - entity.pos[0], 2 ) + pow( self.plyr.pos[1] - entity.pos[1], 2 ) )
-                if(dist <= PLYR_RANGE):
+                if dist <= PLYR_RANGE:
                     l.append(entity.id)
                     toDel.append(e)
 

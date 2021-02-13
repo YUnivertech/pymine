@@ -264,4 +264,3 @@ def loadImageTable():
         for i in range(0, len(TILE_MODIFIERS[key])):
             TILE_MODIFIERS[key][i] = pygame.transform.smoothscale( TILE_MODIFIERS[key][i], ( TILE_WIDTH, TILE_WIDTH ) )
             TILE_MODIFIERS[key][i] = TILE_MODIFIERS[key][i].convert_alpha()
-

@@ -8,14 +8,14 @@ displaySize = [400, 300]
 framerate = 0
 
 # Camera variables
-#camera = pygame.math.Vector2([0, CHUNK_HEIGHT_P//2])
+# camera = pygame.math.Vector2([0, CHUNK_HEIGHT_P//2])
 camera = [0, CHUNK_HEIGHT_P//2]
 prevCamera = [0, 0]
 cameraBound = True
 
 # Create chunk buffer and chunk-position buffer
 bufferWidth = 1 + (pygame.display.Info().current_w//CHUNK_WIDTH_P) + 1
-if(bufferWidth % 2 == 0): bufferWidth += 1
+if bufferWidth % 2 == 0: bufferWidth += 1
 chunkBuffer = ChunkBuffer(bufferWidth, 0, "world1")
 print(bufferWidth)
 del bufferWidth
@@ -55,10 +55,10 @@ def takeCommand( ):
     command = input(">> ")
     command = command.split()
 
-    if(command[0] == 'add'):
+    if command[0] == 'add':
         player.inventory.addItem(eval(command[1], globals(), locals()), eval(command[2]))
 
-    elif(command[0] == 'rem'):
+    elif command[0] == 'rem':
         player.inventory.remItemStack(eval(command[1], globals(), locals()), eval(command[2]))
 
 # game loop
@@ -67,15 +67,15 @@ dt = 0
 running = True
 
 while running:
-#!------------------------------------------------------------------------------------------------------------------------------------------------------
+    # !------------------------------------------------------------------------------------------------------------------------------------------------------
 
     # event handling loop
     for event in pygame.event.get():
 
-        if(event.type == pygame.QUIT):
+        if event.type == pygame.QUIT:
             running = False
 
-        elif(event.type == pygame.KEYDOWN):
+        elif event.type == pygame.KEYDOWN:
             if      event.key == pygame.K_n :              cameraBound = not cameraBound # This should free the camera from being fixed to the player
             elif    event.key == pygame.K_SLASH :          takeCommand()
             elif    event.key == pygame.K_e :              inventoryVisible = not inventoryVisible
@@ -124,8 +124,8 @@ while running:
     deltaChunk = currChunk - prevChunk
     prevChunk = currChunk
 
-    if(deltaChunk != 0):
-        #eventHandler.chunkShiftFlag = True # server must be notified
+    if deltaChunk != 0:
+        # eventHandler.chunkShiftFlag = True # server must be notified
         chk_a = time.time()
         eventHandler.loadChunkIndex = chunkBuffer.shiftBuffer(deltaChunk)
         print(entityBuffer.entities)
@@ -145,7 +145,7 @@ while running:
         chunkBuffer[eventHandler.tilePlaceIndex].draw((eventHandler.tilePlacePos[0], eventHandler.tilePlacePos[1], eventHandler.tilePlacePos[0] + 1, eventHandler.tilePlacePos[1] + 1))
         eventHandler.tilePlaceFlag = False
 
-    if(eventHandler.windowResizeFlag):
+    if eventHandler.windowResizeFlag:
 
         displaySize[0] = screen.get_width()
         displaySize[1] = screen.get_height()
@@ -154,9 +154,9 @@ while running:
 
         eventHandler.windowResizeFlag = False
 
-    if(eventHandler.cameraMovementFlag): Renderer.updateScreen()
+    if eventHandler.cameraMovementFlag: Renderer.updateScreen( )
 
-    if(inventoryVisible):   player.inventory.draw()
+    if inventoryVisible:   player.inventory.draw( )
 
     pygame.display.update()     # Updating the screen
 

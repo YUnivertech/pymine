@@ -1,4 +1,4 @@
-import sqlite3,  bz2, math
+import sqlite3,  bz2
 
 class Serializer:
 
@@ -14,7 +14,6 @@ class Serializer:
             self.conn.commit()
 
         except Exception as e:
-            # print(e)
             pass
 
     ## Save method
@@ -32,7 +31,6 @@ class Serializer:
             self.conn.commit()
 
         except Exception as e:
-            # print(e)
             ## Update string at existing key
             c.execute( 'UPDATE terrain SET list =?, local =?  WHERE keys=?', ( bz2.compress( t[0] ), bz2.compress( t[1] ), key ) )
             self.conn.commit()
@@ -56,7 +54,6 @@ class Serializer:
             lo = bz2.decompress( lo[0] )
             return li, lo
         except Exception as e:
-            # print(e)
             return None
 
     def setEntity(self, key, li):
@@ -73,7 +70,6 @@ class Serializer:
             li = bz2.decompress( li )
             return li
         except Exception as e:
-            # print(e)
             return None
 
     def savePlayer( self, name, pickled ):
@@ -89,7 +85,6 @@ class Serializer:
             self.conn.commit()
 
         except Exception as e:
-            # print(e)
             ## Update pickledplayer at existing playername
             c.execute( 'UPDATE player SET pickledplayer =?  WHERE playername=?', ( bz2.compress( pickled ), name ) )
             self.conn.commit()
@@ -109,7 +104,6 @@ class Serializer:
         try:
             return bz2.decompress( res[0] )
         except Exception as e:
-            # print(e)
             return res
 
     def stop( self ):

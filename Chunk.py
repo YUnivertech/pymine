@@ -21,11 +21,11 @@ class Chunk:
         """
 
         self.index            =  index
-        self.TILE_TABLE_LOCAL =  localTable if (localTable) else {}
+        self.TILE_TABLE_LOCAL =  localTable if localTable else {}
 
         self.surface = pygame.Surface( ( CHUNK_WIDTH_P, CHUNK_HEIGHT_P ) )
 
-        if(blocks is None):
+        if blocks is None:
             self.blocks         =  [[tiles.air for i in range(0,   CHUNK_WIDTH)] for i in range(0, CHUNK_HEIGHT)]
             self.walls          =  [[tiles.air for i in range(0,   CHUNK_WIDTH)] for i in range(0, CHUNK_HEIGHT)]
         else:
@@ -47,15 +47,15 @@ class Chunk:
             [type]: [description]
         """
 
-        if( ( x, y, False ) not in self.TILE_TABLE_LOCAL ):
+        if (x, y, False) not in self.TILE_TABLE_LOCAL:
             self.TILE_TABLE_LOCAL[ ( x, y, False ) ] = { }
 
-        if( HEALTH not in self.TILE_TABLE_LOCAL[ ( x, y, False ) ] ):
+        if HEALTH not in self.TILE_TABLE_LOCAL[ (x, y, False)]:
             self.TILE_TABLE_LOCAL[ ( x, y, False ) ][ HEALTH ] = 100
 
         self.TILE_TABLE_LOCAL[ ( x, y, False ) ][ HEALTH ] -= (25 * dt)
 
-        if(self.TILE_TABLE_LOCAL[ ( x, y, False ) ][ HEALTH ] <= 0):
+        if self.TILE_TABLE_LOCAL[ (x, y, False)][ HEALTH] <= 0:
             del self.TILE_TABLE_LOCAL[ ( x, y, False ) ]
             self.walls[y][x] = tiles.air
 
@@ -75,15 +75,15 @@ class Chunk:
         """
         #print(self.index)
 
-        if( ( x, y, True ) not in self.TILE_TABLE_LOCAL ):
+        if (x, y, True) not in self.TILE_TABLE_LOCAL:
             self.TILE_TABLE_LOCAL[ ( x, y, True ) ] = { }
 
-        if( HEALTH not in self.TILE_TABLE_LOCAL[ ( x, y, True) ] ):
+        if HEALTH not in self.TILE_TABLE_LOCAL[ (x, y, True)]:
             self.TILE_TABLE_LOCAL[ ( x, y, True ) ][ HEALTH ] = 100
 
         self.TILE_TABLE_LOCAL[ ( x, y, True ) ][ HEALTH ] -= (25 * dt)
 
-        if(self.TILE_TABLE_LOCAL[ ( x, y, True ) ][ HEALTH ] <= 0):
+        if self.TILE_TABLE_LOCAL[ (x, y, True)][ HEALTH] <= 0:
             del self.TILE_TABLE_LOCAL[ ( x, y, True ) ]
             self.blocks[y][x] = tiles.air
             return True
@@ -91,12 +91,12 @@ class Chunk:
         return False
 
     def placeWallAt( self, x, y, val):
-        if(self.walls[y][x] != tiles.air): return False
+        if self.walls[y][x] != tiles.air: return False
         self.walls[y][x] = val
         return True
 
     def placeBlockAt( self, x, y, val):
-        if(self.blocks[y][x] != tiles.air): return False
+        if self.blocks[y][x] != tiles.air: return False
         self.blocks[y][x] = val
         print(tiles.TILE_NAMES[val])
         return True
@@ -116,20 +116,20 @@ class Chunk:
                 currTileRef =  self.blocks[i][j]
                 currWallRef =  self.walls[i][j]
 
-                if( currTileRef > 0 ):
+                if currTileRef > 0:
                     self.surface.blit( tiles.TILE_TABLE[currTileRef], coors )
-                    if( ( j, i, True ) in self.TILE_TABLE_LOCAL ):
+                    if (j, i, True) in self.TILE_TABLE_LOCAL:
 
-                        if(HEALTH in self.TILE_TABLE_LOCAL[ ( j, i, True ) ] ):
+                        if HEALTH in self.TILE_TABLE_LOCAL[ (j, i, True)]:
 
                             breakState = (self.TILE_TABLE_LOCAL[ ( j, i, True ) ][ HEALTH ] * 8) / 100
                             self.surface.blit( tiles.TILE_MODIFIERS[ tiles.crack ][ 8 - int(breakState) ], coors )
 
-                elif( currWallRef > 0 ):
+                elif currWallRef > 0:
                     self.surface.blit( tiles.TILE_TABLE[currWallRef], coors )
-                    if( ( i, j, False ) in self.TILE_TABLE_LOCAL ):
+                    if (i, j, False) in self.TILE_TABLE_LOCAL:
 
-                        if(HEALTH in self.TILE_TABLE_LOCAL[ ( j, i, False ) ] ):
+                        if HEALTH in self.TILE_TABLE_LOCAL[ (j, i, False)]:
 
                             breakState = (self.TILE_TABLE_LOCAL[ ( j, i, False ) ][ HEALTH ] * 8) / 100
                             self.surface.blit( tiles.TILE_MODIFIERS[ tiles.crack ][ 8 - int(breakState) ], coors )
@@ -174,7 +174,7 @@ class ChunkBuffer:
 
             retrieved           =   self.serializer[ i ]
 
-            if( retrieved is None ):
+            if retrieved is None:
                 retrieved  =  Chunk( i )
                 self.populateChunk( retrieved )
 
@@ -250,7 +250,7 @@ class ChunkBuffer:
 
         print("Random stuff time:", (time.time()-chk_b)*1000)
 
-        if( self.chunks[ loadIndex ] is None ):
+        if self.chunks[ loadIndex] is None:
             chk_b = time.time()
             self.chunks[ loadIndex ]      =  Chunk( self.positions[ loadIndex ] )
             self.populateChunk( self.chunks[ loadIndex ] )
@@ -399,7 +399,7 @@ class chunkGenerator:
 
     def getLowerBedrockWastes(self, x, y):
 
-        if(y == 0):
+        if y == 0:
             return tiles.bedrock, tiles.bedrock
 
         else:
@@ -409,11 +409,11 @@ class chunkGenerator:
             bedrockProbability = 50
 
             front = tiles.obsidian
-            if( front <= bedrockProbability ):
+            if front <= bedrockProbability:
                 front = tiles.bedrock
 
             back = tiles.obsidian
-            if( back <= bedrockProbability ):
+            if back <= bedrockProbability:
                 back = tiles.bedrock
 
             return front, back
@@ -427,14 +427,14 @@ class chunkGenerator:
         stoneProbability = 20 + obsidianProbability
         hellStoneProbability = 12.5 + stoneProbability
 
-        if(front <= obsidianProbability):
+        if front <= obsidianProbability:
             front = tiles.obsidian
-        elif(front <= stoneProbability):
+        elif front <= stoneProbability:
             front = tiles.greystone
         else:
             front = tiles.hellstone
 
-        if(back <= obsidianProbability):
+        if back <= obsidianProbability:
             back = tiles.obsidian
         else:
             back = tiles.greystone
@@ -455,22 +455,22 @@ class chunkGenerator:
         diamondProbability    =  unobtaniumProbability + 7.5
         platinumProbability   =  diamondProbability + 7.5
 
-        if(front <= obsidianProbability):
+        if front <= obsidianProbability:
             front = tiles.obsidian
 
-        elif(front <= stoneProbability):
+        elif front <= stoneProbability:
             front = tiles.greystone
 
-        elif(front <= graniteProbability):
+        elif front <= graniteProbability:
             front = tiles.granite
 
-        elif(front <= limestoneProbability):
+        elif front <= limestoneProbability:
             front = tiles.limestone
 
-        elif(front <= unobtaniumProbability):
+        elif front <= unobtaniumProbability:
             front = tiles.unobtaniumOre
 
-        elif(front <= diamondProbability):
+        elif front <= diamondProbability:
             front = tiles.diamondOre
 
         else:
@@ -490,24 +490,24 @@ class chunkGenerator:
         diamondProbability = 10 + unobtaniumProbability
         platinumProbability = 10 + diamondProbability
 
-        if(front <= stoneProbability):
+        if front <= stoneProbability:
             front = tiles.greystone
-        elif(front <= graniteProbability):
+        elif front <= graniteProbability:
             front = tiles.granite
-        elif(front <= quartzProbability):
+        elif front <= quartzProbability:
             front = tiles.quartz
-        elif(front <= unobtaniumProbability):
+        elif front <= unobtaniumProbability:
             front = tiles.unobtaniumOre
-        elif(front <= diamondProbability):
+        elif front <= diamondProbability:
             front = tiles.diamondOre
-        elif(front <= platinumProbability):
+        elif front <= platinumProbability:
             front = tiles.platinumOre
 
-        if(back <= stoneProbability):
+        if back <= stoneProbability:
             back = tiles.greystone
-        elif(back <= graniteProbability):
+        elif back <= graniteProbability:
             back = tiles.granite
-        elif(back <= quartzProbability):
+        elif back <= quartzProbability:
             back = tiles.quartz
         else:
             back = tiles.greystone
@@ -525,11 +525,11 @@ class chunkGenerator:
 
         back = tiles.greystone
 
-        if(front <= stoneProbability):
+        if front <= stoneProbability:
             front = tiles.greystone
-        elif(front <= ironProbability):
+        elif front <= ironProbability:
             front = tiles.ironOre
-        elif(front <= goldProbability):
+        elif front <= goldProbability:
             front = tiles.goldOre
 
         return front, back
@@ -545,20 +545,20 @@ class chunkGenerator:
         coalProbability = 20 + redclayProbability
         copperProbability = 20 + coalProbability
 
-        if(front <= gravelProbability):
+        if front <= gravelProbability:
             front = tiles.gravel
-        elif(front <= dirtProbability):
+        elif front <= dirtProbability:
             front = tiles.browndirt
-        elif(front <= redclayProbability):
+        elif front <= redclayProbability:
             front = tiles.redClay
-        elif(front <= coalProbability):
+        elif front <= coalProbability:
             front = tiles.coke
-        elif(front <= copperProbability):
+        elif front <= copperProbability:
             front = tiles.copperOre
 
-        if(back <= gravelProbability):
+        if back <= gravelProbability:
             back = tiles.gravel
-        elif(back <= dirtProbability):
+        elif back <= dirtProbability:
             back = tiles.browndirt
         else:
             back = redclayProbability
@@ -576,20 +576,20 @@ class chunkGenerator:
         coalProbability = 20 + redclayProbability
         copperProbability = 20 + coalProbability
 
-        if(front <= gravelProbability):
+        if front <= gravelProbability:
             front = tiles.gravel
-        elif(front <= dirtProbability):
+        elif front <= dirtProbability:
             front = tiles.browndirt
-        elif(front <= redclayProbability):
+        elif front <= redclayProbability:
             front = tiles.redClay
-        elif(front <= coalProbability):
+        elif front <= coalProbability:
             front = tiles.coke
-        elif(front <= copperProbability):
+        elif front <= copperProbability:
             front = tiles.copperOre
 
-        if(back <= gravelProbability):
+        if back <= gravelProbability:
             back = tiles.gravel
-        elif(back <= dirtProbability):
+        elif back <= dirtProbability:
             back = tiles.browndirt
         else:
             back = redclayProbability
