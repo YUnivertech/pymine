@@ -72,7 +72,7 @@ class Serializer:
     def setEntity(self, key, li):
         c = self.conn.cursor()
         ## Update string at existing key
-        c.execute('UPDATE terrain SET entity =?, WHERE keys=?', (bz2.compress(li), key))
+        c.execute('UPDATE terrain SET entity =? WHERE keys=?', (bz2.compress(li), key))
         self.conn.commit()
 
     def getEntity(self, key):
@@ -80,7 +80,7 @@ class Serializer:
         c.execute('''SELECT entity FROM terrain WHERE keys=?''', (key,))
         li = c.fetchone()
         try:
-            li = bz2.decompress( li )
+            li = bz2.decompress( li[0] )
             return li
         except Exception as e:
             # print(e)
@@ -474,159 +474,6 @@ class RidgedMulti():
         return (value * 1.25) - 1
 
 
-# class OpenSimplex():
-#     """ Generates OpenSimplex noise. """
-#     def __init__(self, seed=0, frequency=1, persistence=0.5, lacunarity=2, octaves=6):
-#         self.stretch_constant = -1/6
-#         self.squish_constant = 1/3
-#         self.prng = np.random.RandomState(seed)
-#         self.perm = self.prng.permutation(256)
-#         self.perm = np.tile(self.perm, 2)
-#         self.frequency = frequency
-#         self.persistence = persistence
-#         self.lacunarity = lacunarity
-#         self.octaves = octaves
-
-#     def next_perm(self):
-#         self.perm = self.prng.permutation(256)
-#         self.perm = np.tile(self.perm, 2)
-
-#     def grad(self, hash, x, y, z):
-#         h = hash & 15
-
-#         if h < 8:
-#             u = x
-#         else:
-#             u = y
-
-#         if h < 4:
-#             v = y
-#         else:
-#             if h == 12 or h == 14:
-#                 v = x
-#             else:
-#                 v = z
-
-#         if h & 1 == 0:
-#             r1 = -u
-#         else:
-#             r1 = u
-
-#         if h & 2 == 0:
-#             r2 = -v
-#         else:
-#             r2 = v
-
-#         return r1 + r2
-
-#     def __getitem__(self, pos):
-#         x,y,z = pos
-#         F3 = 1/3
-#         G3 = 1/6
-
-#         x *= self.frequency
-#         y *= self.frequency
-#         z *= self.frequency
-#         value = 0
-#         cur_persistence = 1
-
-#         for i in range(self.octaves):
-#             #self.next_perm()
-#             s = (x+y+z)*F3
-
-#             xs = x + s
-#             ys = y + s
-#             zs = z + s
-
-#             if xs == 0:
-#                 xs = -1
-#             if ys == 0:
-#                 ys = -1
-#             if zs == 0:
-#                 zs = -1
-
-#             i = math.floor(xs)
-#             j = math.floor(ys)
-#             k = math.floor(zs)
-
-#             t = (i+j+k)*G3
-#             X0 = i - t
-#             Y0 = j - t
-#             Z0 = k - t
-#             x0 = x - X0
-#             y0 = y - Y0
-#             z0 = z - Z0
-
-#             if x0 >= y0:
-#                 if y0 >= z0:
-#                     i1 = 1; j1 = 0; k1 = 0; i2 = 1; j2 = 1; k2 = 0;
-#                 elif x0 >= z0:
-#                     i1 = 1; j1 = 0; k1 = 0; i2 = 1; j2 = 0; k2 = 1;
-#                 else:
-#                     i1 = 0; j1 = 0; k1 = 1; i2 = 1; j2 = 0; k2 = 1;
-#             else:
-#                 if y0 < z0:
-#                     i1 = 0; j1 = 0; k1 = 1; i2 = 0; j2 = 1; k2 = 1;
-#                 elif x0 < z0:
-#                     i1 = 0; j1 = 1; k1 = 0; i2 = 0; j2 = 1; k2 = 1;
-#                 else:
-#                     i1 = 0; j1 = 1; k1 = 0; i2 = 1; j2 = 1; k2 = 0;
-
-#             x1 = x0 - i1 + G3
-#             y1 = y0 - j1 + G3
-#             z1 = z0 - k1 + G3
-
-#             x2 = x0 - i2 + 2*G3
-#             y2 = y0 - j2 + 2*G3
-#             z2 = z0 - k2 + 2*G3
-
-#             x3 = x0 - 1 + 3*G3
-#             y3 = y0 - 1 + 3*G3
-#             z3 = z0 - 1 + 3*G3
-
-#             ii = i & 0xff
-#             jj = j & 0xff
-#             kk = k & 0xff
-
-#             t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0
-
-#             if t0 < 0:
-#                 n0 = 0
-#             else:
-#                 t0 *= t0
-#                 n0 = t0 * t0 * self.grad(self.perm[ii + self.perm[jj + self.perm[kk]]], x0, y0, z0);
-
-#             t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1
-#             if t1 < 0:
-#                 n1 = 0
-#             else:
-#                 t1 *= t1
-#                 n1 = t1 * t1 * self.grad(self.perm[ii + i1 + self.perm[jj + j1 +  self.perm[kk + k1]]], x1, y1, z1);
-
-#             t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2
-#             if t2 < 0:
-#                 n2 = 0
-#             else:
-#                 t2 *= t2
-#                 n2 = t2 * t2 * self.grad(self.perm[ii + i2 + self.perm[jj + j2 + self.perm[kk + k2]]], x2, y2, z2);
-
-#             t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3
-#             if t3 < 0:
-#                 n3 = 0
-#             else:
-#                 t3 *= t3
-#                 n3 = t3 * t3 * self.grad(self.perm[ii + 1 + self.perm[jj + 1 + self.perm[kk+1]]], x3, y3, z3);
-
-#             signal = 32 * (n0 + n1 + n2 + n3)
-#             value += signal * cur_persistence
-#             x *= self.lacunarity
-#             y *= self.lacunarity
-#             z *= self.lacunarity
-#             cur_persistence *= self.persistence
-
-#         return value
-
-
 class Turbulence():
     """
     Noise module that randomly displaces the input value before
@@ -805,17 +652,3 @@ class Voronoi():
                                                 math.floor(yCan),
                                                 math.floor(zCan), 0))
 
-
-## Test
-# perl = Perlin()
-# p = perl[1.4,30.5,3.3]
-# print(p)
-# simp = OpenSimplex()
-# s = simp[1,3,30]
-# print(s)
-# multi = RidgedMulti()
-# m = multi[15,45,754]
-# print(m)
-# vor = Voronoi()
-# v = vor[1,30,5]
-# print(v)
