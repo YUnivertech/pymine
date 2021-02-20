@@ -11,15 +11,6 @@ class Chunk:
 
     def __init__(  self, index = 0, blocks = None, walls = None, localTable = {}  ):
 
-        """Constructor for the chunk
-
-        Args:
-            index (int): The absoulute index of the chunk
-            blocks (list): A container to hold the blocks in the chunjk
-            walls (list): A container to hold the blocks in the chunjk
-            localTable (dictionary): Table containing Local chunk-specific data
-        """
-
         self.index            =  index
         self.TILE_TABLE_LOCAL =  localTable if localTable else {}
 
@@ -35,17 +26,6 @@ class Chunk:
         self.lightMap           =  [[0 for i in range(0,   CHUNK_WIDTH)] for i in range(0, CHUNK_HEIGHT)]
 
     def breakWallAt( self, x, y, tool, dt):
-
-        """[summary]
-
-        Args:
-            x ([type]): [description]
-            y ([type]): [description]
-            tool ([type]): [description]
-
-        Returns:
-            [type]: [description]
-        """
 
         if (x, y, False) not in self.TILE_TABLE_LOCAL:
             self.TILE_TABLE_LOCAL[ ( x, y, False ) ] = { }
@@ -63,18 +43,6 @@ class Chunk:
 
     def breakBlockAt( self, x, y, tool, dt):
 
-        """[summary]
-
-        Args:
-            x ([type]): [description]
-            y ([type]): [description]
-            tool ([type]): [description]
-
-        Returns:
-            [type]: [description]
-        """
-        #print(self.index)
-
         if (x, y, True) not in self.TILE_TABLE_LOCAL:
             self.TILE_TABLE_LOCAL[ ( x, y, True ) ] = { }
 
@@ -91,11 +59,13 @@ class Chunk:
         return False
 
     def placeWallAt( self, x, y, val):
+
         if self.walls[y][x] != tiles.air: return False
         self.walls[y][x] = val
         return True
 
     def placeBlockAt( self, x, y, val):
+
         if self.blocks[y][x] != tiles.air: return False
         self.blocks[y][x] = val
         print(tiles.TILE_NAMES[val])
@@ -143,14 +113,6 @@ class Chunk:
 class ChunkBuffer:
 
     def __init__(  self, length, middleIndex, targetWorld, seed=None  ):
-        """Contructor for a chunk buffer
-
-        Args:
-            length (int): The number of chunks in the chunk buffer (Always an odd integer)
-            middleIndex (int): The absoulute index of the middle chunk of the chunk buffer
-            serializer (Serializer): The serializer used by the chunk buffer
-            chunkGenerator (chunkGenerator): The noise generator used to generate chunks for the first time
-        """
 
         # Create references to required objects
         self.serializer     =  Serializer(targetWorld)
@@ -189,15 +151,6 @@ class ChunkBuffer:
 
     def shiftBuffer( self, deltaChunk ):
 
-        """Shifts the chunkBuffer by one on either side
-
-        Args:
-            deltaChunk (int): The change in the player's chunk
-            callback (function): Reference to the renderer to render the newly loaded chunks
-        """
-
-        # rep = lambda num : ( num-1 )//2
-        # rep = lambda num : 0 if num is 1 else -1
         rep = lambda num : 0 if num == 1 else -1
 
         # Index of the chunk to be dumped (-1 while shifting left, 0 while shifting right) and the extremity needing to be changed
@@ -274,8 +227,6 @@ class ChunkBuffer:
         return loadIndex
 
     def saveComplete(self):
-        """Saves the complete chunk buffer
-        """
         for chunk in self.chunks:
             self.serializer[chunk.index] = pickle.dumps( [ chunk.blocks, chunk.walls ] ), pickle.dumps( chunk.TILE_TABLE_LOCAL )
 
@@ -286,11 +237,6 @@ class ChunkBuffer:
         self.chunks[key] = value
 
     def __len__( self ):
-        """Returns the number of active chunks
-
-        Returns:
-            int: Number of active chunks
-        """
         return self.length
 
     def populateChunk(self, chunk):
@@ -356,12 +302,6 @@ class chunkGenerator:
 
     def __init__(self, seed = None):
 
-        """Initializes the noise generator
-
-        Args:
-            seed (int, optional): The seed of the noise generator. Defaults to None.
-        """
-
         # self.simp = OpenSimplex()
         # self.voronoi = Voronoi()
         # self.ridgedMulti = RidgedMulti()
@@ -369,30 +309,10 @@ class chunkGenerator:
 
     def frontVal(self, x, y):
 
-        """Returns value of (x,y) at front-plane
-
-        Args:
-            x (float): The x-coordinate of the noise plane
-            y (float): The y-coordinate of the noise plane
-
-        Returns:
-            float: Value on the noise plane at (x,y), normalized between 0 and 100
-        """
-
         #return (self.simp[x, y, 0.1] * 50)
         return ( self.simp.noise3d( x, y, 0.1 ) + 1 ) * 50
 
     def backVal(self, x, y):
-
-        """Returns value of (x,y) at back-plane
-
-        Args:
-            x (float): The x-coordinate of the noise plane
-            y (float): The y-coordinate of the noise plane
-
-        Returns:
-            float: Value on the noise plane at (x,y), normalized between 0 and 100
-        """
 
         #return (self.simp[x, y, -0.1] * 50)
         return ( self.simp.noise3d(x, y, -0.1) + 1 ) * 50

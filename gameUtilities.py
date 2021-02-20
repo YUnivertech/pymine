@@ -15,14 +15,7 @@ class Serializer:
 
         except Exception as e:
             pass
-
-    ## Save method
     def __setitem__( self, key, t ):
-
-        """
-            Saves/Updates the string at a particular key location.
-            Requires the key as an int and chunkObj as UTF-8 string.
-        """
 
         c = self.conn.cursor()
         try:
@@ -35,13 +28,7 @@ class Serializer:
             c.execute( 'UPDATE terrain SET list =?, local =?  WHERE keys=?', ( bz2.compress( t[0] ), bz2.compress( t[1] ), key ) )
             self.conn.commit()
 
-    ## Load method
     def __getitem__(self, key):
-        """
-            Retrieves the string stored at a particular key location.
-            Requires the key as an int.
-            Returns the string at the key's location (if key is present) or None
-        """
         c = self.conn.cursor()
         c.execute('''SELECT list FROM terrain WHERE keys=?''', (key,))
         li = c.fetchone()
@@ -74,10 +61,6 @@ class Serializer:
 
     def savePlayer( self, name, pickled ):
 
-        """
-            Saves/Updates the pickledplayer at a particular playername.
-            Requires the name as a string and pickled as UTF-8 string.
-        """
         c = self.conn.cursor()
         try:
             ## Save pickledplayer at new playername
@@ -91,11 +74,6 @@ class Serializer:
 
     def loadPlayer( self, name ):
 
-        """
-            Retrieves the pickledplayer stored at a particular playername.
-            Requires the name as a string.
-            Returns the pickledplayer at the playername's location (if present) or None
-        """
         c = self.conn.cursor()
         c.execute( '''SELECT pickledplayer FROM player WHERE playername=?''', ( name, ) )
         res = c.fetchone()

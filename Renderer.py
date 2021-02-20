@@ -17,16 +17,6 @@ class Renderer:
     @classmethod
     def initialize(cls, chunkBuffer, entityBuffer, camera, player, windowSize, screen):
 
-        """Initializes the class with references to global objects
-
-        Args:
-            chunkBuffer (chunkBuffer): Reference to the client's chunkBuffer
-            camera (list): Reference to the client's camera
-            player (list): Reference to the client's player
-            windowSize (list): Reference to a list containing the size of the current window
-            screen (Pygame.Surface): Reference to the window's surface
-        """
-
         # Create references to global objects
         cls.chunkBuffer     =  chunkBuffer
         cls.entityBuffer    =  entityBuffer
@@ -47,9 +37,6 @@ class Renderer:
 
     @classmethod
     def updateScreen(  cls  ):
-
-        """Renders the surfaces of each chunk (in the active chunk buffer) on to the window
-        """
 
         rightWalker     =  cls.midChunk        # Goes from the index of the middle chunk to the right-most chunk
         leftWalker      =  cls.midChunk - 1    # Goes from the index of the chunk one before the middle to the left-most chunk
@@ -166,9 +153,6 @@ class Renderer:
 
     @classmethod
     def updateRefs(  cls  ):
-
-        """Method which which re-calculates the internal data of the class to reflect changes in external references
-        """
 
         cls.updateSize()
         cls.updateCam()

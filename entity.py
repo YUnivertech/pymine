@@ -4,7 +4,9 @@ import math, Chunk
 import gameUtilities
 
 class ItemEntity:
+
     def __init__(self, id, pos, width, height):
+
         self.id = id
         self.pos = pos
         self.width = width
@@ -13,23 +15,12 @@ class ItemEntity:
         self.surfPos = lambda : [ int(self.pos[0] - self.width//2), int(self.pos[1] + self.height//2) ]
 
     def draw( self ):
+
         self.surf.blit(tiles.TILE_TABLE.get(self.id, tiles.bedrock), [0, 0])
-        # puts the texture of the block itself onto my surface
 
 class Entity:
 
     def __init__(self, pos:list, chunkBuffer:Chunk.ChunkBuffer, entityBuffer, width:int, height, friction:float, health:int=100, grounded:bool=True):
-        """[summary]
-
-        Args:
-            pos (list): [description]
-            chunkBuffer (Chunk.ChunkBuffer): [description]
-            width (float): [description]
-            height (float): [description]
-            friction (float): [description]
-            health (int, optional): [description]. Defaults to 100.
-            grounded (bool, optional): [description]. Defaults to True.
-        """
 
         self.pos         = pos
         self.chunkBuffer = chunkBuffer

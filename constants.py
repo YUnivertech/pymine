@@ -31,8 +31,7 @@ UNDERGROUND_X       =  0.05
 UNDERGROUND_Y       =  0.1
 
 # Infinity
-# generateBigNum = lambda numBits : 1<<(numBits-1)|generateBigNum(numBits-1) if(numBits >= 1) else 1
-INF = math.inf  # generateBigNum(64)
+INF = math.inf
 
 # Constants for camera
 LERP_C              =  0.025
