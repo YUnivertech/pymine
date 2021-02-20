@@ -15,7 +15,6 @@ displaySize = [400, 300]
 framerate = 0
 
 # Camera variables
-# camera = pygame.math.Vector2([0, CHUNK_HEIGHT_P//2])
 camera = [0, CHUNK_HEIGHT_P//2]
 prevCamera = [0, 0]
 cameraBound = True
@@ -31,15 +30,13 @@ entityBuffer = entity.EntityBuffer(chunkBuffer, chunkBuffer.serializer, None)
 chunkBuffer.entityBuffer = entityBuffer
 
 # Create and display window
-
-# Create and display window
 screen = pygame.display.set_mode(displaySize, pygame.RESIZABLE)
 pygame.display.set_caption("Hello World!")
 pygame.display.set_icon(pygame.image.load("Resources/Default/gameIcon.png"))
 
 # Convert all images to optimized form
 tiles.loadImageTable()
-items.loadImageTable()
+# items.loadImageTable()
 
 for i in range(len(chunkBuffer)):
     chunkBuffer[i].draw()
@@ -58,6 +55,7 @@ entityBuffer.plyr = player
 Renderer.initialize(chunkBuffer, entityBuffer, camera, player, displaySize, screen)
 
 def takeCommand( ):
+
     global cameraBound
     command = input(">> ")
     command = command.split()
@@ -72,14 +70,18 @@ def takeCommand( ):
 prev = time.time()
 dt = 0
 running = True
+
 def ui_init( displaySize ):
     gui_manager = pygame_gui.UIManager(displaySize, 'theme.json')
     btn_pos = (displaySize[0]-30, displaySize[1]-30)
-    info_btn = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(btn_pos, (25, 25)), text="i", manager=gui_manager, object_id="Testbutton", tool_tip_text="Game Details")
+    info_btn = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(btn_pos, (25, 25)), text="i", manager=gui_manager, object_id="Testbutton", tool_tip_text=     '''W, A, S, D to move
+                                                                                                                                                                    E to toggle inventory
+                                                                                                                                                                    Left mouse button to break
+                                                                                                                                                                    Right mouse button to place''')
     return tuple((gui_manager, btn_pos, info_btn))
 gui_manager, btn_pos, info_btn = ui_init(displaySize)
+
 while running:
-    # !------------------------------------------------------------------------------------------------------------------------------------------------------
 
     # event handling loop
     for event in pygame.event.get():
