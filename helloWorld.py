@@ -2,6 +2,13 @@ import sys
 from Renderer import *
 import time
 import entity
+import pygame_gui
+from pygame_gui.ui_manager import UIManager
+from pygame_gui.elements.ui_text_box import UITextBox
+from pygame_gui.core import IncrementalThreadedResourceLoader
+from pygame_gui import UI_TEXT_BOX_LINK_CLICKED
+from pygame_gui.elements import UIButton
+
 
 # Screen variables
 displaySize = [400, 300]
@@ -65,7 +72,12 @@ def takeCommand( ):
 prev = time.time()
 dt = 0
 running = True
-
+def ui_init( displaySize ):
+    gui_manager = pygame_gui.UIManager(displaySize, 'theme.json')
+    btn_pos = (displaySize[0]-30, displaySize[1]-30)
+    info_btn = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(btn_pos, (25, 25)), text="i", manager=gui_manager, object_id="Testbutton", tool_tip_text="Game Details")
+    return tuple((gui_manager, btn_pos, info_btn))
+gui_manager, btn_pos, info_btn = ui_init(displaySize)
 while running:
     # !------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -74,6 +86,11 @@ while running:
 
         if event.type == pygame.QUIT:
             running = False
+
+        elif event.type == pygame.USEREVENT:
+            if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                if event.ui_element == info_btn:
+                    print( 'Hello World!' )
 
         elif event.type == pygame.KEYDOWN:
             if      event.key == pygame.K_n :              cameraBound = not cameraBound # This should free the camera from being fixed to the player
@@ -94,8 +111,11 @@ while running:
 
         elif    event.type == pygame.MOUSEBUTTONUP :       eventHandler.remMouseButton( event.button )
 
-        elif    event.type == pygame.VIDEORESIZE :         eventHandler.addWindowResize( )
+        elif    event.type == pygame.VIDEORESIZE :
+            eventHandler.addWindowResize( )
+            gui_manager, btn_pos, info_btn = ui_init( (screen.get_width(), screen.get_height()) )
 
+        gui_manager.process_events(event)
 
     if cameraBound:
         player.run()
@@ -157,6 +177,9 @@ while running:
     if eventHandler.cameraMovementFlag: Renderer.updateScreen( )
 
     if inventoryVisible:   player.inventory.draw( )
+
+    gui_manager.update(dt)
+    gui_manager.draw_ui(screen)
 
     pygame.display.update()     # Updating the screen
 

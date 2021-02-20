@@ -148,6 +148,9 @@ class Entity:
     def moveRight(self):
         self.acc[0] = self.friction * 2
 
+    def moveDown(self):
+        pass
+
     def jump(self):
         self.vel[1] = JUMP_VEL
         self.acc[1] = -GRAVITY_ACC
