@@ -440,7 +440,7 @@ class Inventory:
             for y in range(0, INV_ROWS):
                 self.screen.blit(slot, coors)
                 self.screen.blit( INV_FONT.render( str(self.quantities[y][x]), (0, 0, 0) )[0], coors )
-                self.screen.blit( INV_FONT.render( items.ITEM_NAMES.get(self.items[y][x], 'X'), (0, 0, 0) )[0], [coors[0], coors[1] + 12] )
+                self.screen.blit( INV_FONT.render( tiles.TILE_NAMES.get(self.items[y][x], 'X'), (0, 0, 0) )[0], [coors[0], coors[1] + 12] )
 
                 coors[1]+= 40   #! MAGIC NUMBER
             coors[1] = 16
