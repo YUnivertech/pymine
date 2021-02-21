@@ -1,14 +1,8 @@
-import sys
-from Renderer import *
-import time
-import entity
 import pygame_gui
-from pygame_gui.ui_manager import UIManager
-from pygame_gui.elements.ui_text_box import UITextBox
-from pygame_gui.core import IncrementalThreadedResourceLoader
-from pygame_gui import UI_TEXT_BOX_LINK_CLICKED
+import entity
+from Renderer import *
 from pygame_gui.elements import UIButton
-
+from pygame_gui.elements.ui_text_box import UITextBox
 
 # Screen variables
 displaySize = [400, 300]
@@ -55,7 +49,6 @@ entityBuffer.plyr = player
 Renderer.initialize(chunkBuffer, entityBuffer, camera, player, displaySize, screen)
 
 def takeCommand( ):
-
     global cameraBound
     command = input(">> ")
     command = command.split()
@@ -72,14 +65,17 @@ dt = 0
 running = True
 
 def ui_init( displaySize ):
-    gui_manager = pygame_gui.UIManager(displaySize, 'theme.json')
-    btn_pos = (displaySize[0]-30, displaySize[1]-30)
-    info_btn = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(btn_pos, (25, 25)), text="i", manager=gui_manager, object_id="Testbutton", tool_tip_text=     '''W, A, S, D to move
-                                                                                                                                                                    E to toggle inventory
-                                                                                                                                                                    Left mouse button to break
-                                                                                                                                                                    Right mouse button to place''')
-    return tuple((gui_manager, btn_pos, info_btn))
-gui_manager, btn_pos, info_btn = ui_init(displaySize)
+    manager = pygame_gui.UIManager(displaySize, 'theme.json')
+    pos = (displaySize[0]-30, 40)
+    btn = UIButton(pygame.Rect(pos, (25, 25)), "i", manager, object_id="Testbutton", tool_tip_text="Game Details")
+    box_pos = (displaySize[0]//2 - 100, displaySize[1]//2 - 105)
+    text = "A - Move left<br>D - Move right<br>W - Jump<br>Left click - break<br>Middle click - place<br>E - Toggle inventory"
+    text_box = UITextBox(text, pygame.Rect(box_pos, (200 , 210)), manager )
+    return tuple((manager, pos, btn, box_pos, text_box))
+
+gui_manager, btn_pos, info_btn, textbox_pos, textbox = ui_init(displaySize)
+textbox.kill()
+textbox_state = False
 
 while running:
 
@@ -92,7 +88,11 @@ while running:
         elif event.type == pygame.USEREVENT:
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                 if event.ui_element == info_btn:
-                    print( 'Hello World!' )
+                    textbox_state = not textbox_state
+                    if textbox_state:
+                        gui_manager, btn_pos, info_btn, textbox_pos, textbox = ui_init(displaySize)
+                    else:
+                        textbox.kill()
 
         elif event.type == pygame.KEYDOWN:
             if      event.key == pygame.K_n :              cameraBound = not cameraBound # This should free the camera from being fixed to the player
@@ -115,7 +115,9 @@ while running:
 
         elif    event.type == pygame.VIDEORESIZE :
             eventHandler.addWindowResize( )
-            gui_manager, btn_pos, info_btn = ui_init( (screen.get_width(), screen.get_height()) )
+            gui_manager, btn_pos, info_btn, textbox_pos, textbox = ui_init( (screen.get_width(), screen.get_height()) )
+            if not textbox_state:
+                textbox.kill()
 
         gui_manager.process_events(event)
 

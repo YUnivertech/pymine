@@ -1,26 +1,33 @@
 {
-    "button":
-    {
-        "colours":
-        {
+    "button": {
+        "colours": {
             "normal_bg": "#00000045",
             "normal_text": "#FFE900",
             "normal_border": "#00000050",
             "hovered_border": "#DDDDDD99",
             "hovered_bg": "#35393e50"
         },
-        "misc":
-        {
+        "misc": {
             "shape": "rounded_rectangle",
             "shape_corner_radius": "3",
             "border_width": "1",
             "shadow_width": "1",
             "tool_tip_delay": "0.5",
-            "state_transitions":
-             {
+            "state_transitions": {
                  "normal_hovered": "0.25",
                  "hovered_normal": "0.25"
              }
+        }
+    },
+    "text_box": {
+        "colours": {
+            "dark_bg":"#21282DEE",
+            "normal_border": "#666666DD"
+        },
+         "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "9",
+            "border_width": "2"
         }
     }
 }
