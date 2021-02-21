@@ -1,7 +1,6 @@
 from constants import *
 
 # Tile names along with their IDs
-
 crack         = 0
 
 # air
@@ -74,23 +73,19 @@ TILE_TABLE = {
     bedrock       : pygame.image.load("Resources/Default/bedrock2.png"),
     obsidian      : pygame.image.load("Resources/Default/obsidian.png"),
     hellstone     : pygame.image.load("Resources/Default/hellstone.png"),
-
     unobtaniumOre : pygame.image.load("Resources/Default/unobtaniumOre.png"),
     diamondOre    : pygame.image.load("Resources/Default/diamondOre.png"),
     platinumOre   : pygame.image.load("Resources/Default/ironOre.png"),
     goldOre       : pygame.image.load("Resources/Default/goldOre.png"),
     ironOre       : pygame.image.load("Resources/Default/ironOre.png"),
     copperOre     : pygame.image.load("Resources/Default/copperOre.png"),
-
     granite       : pygame.image.load("Resources/Default/granite.png"),
     quartz        : pygame.image.load("Resources/Default/quartz.png"),
     limestone     : pygame.image.load("Resources/Default/limestone.png"),
     greystone     : pygame.image.load("Resources/Default/greystone.png"),
     sandstone     : pygame.image.load("Resources/Default/sandstone.png"),
-
     gravel        : pygame.image.load("Resources/Default/gravel.png"),
     coke          : pygame.image.load("Resources/Default/coalOre.png"),
-
     clay          : pygame.image.load("Resources/Default/clay.png"),
     redClay       : pygame.image.load("Resources/Default/redClay.png"),
     browndirt     : pygame.image.load("Resources/Default/browndirt.png")
