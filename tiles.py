@@ -35,152 +35,38 @@ coke          = 16
 clay          = 17
 redClay       = 18
 
-# block for sand
-sand          = 19
-
 # blocks for dirt and grass
 browndirt     = 20
-grass         = 21
-snowygrass    = 22
-
-# blocks for snow
-snow          = 23
-ice           = 24
-
-# tree related
-# blocks for different woods
-jungleWood    = 25
-oakWood       = 26
-borealWood    = 27
-pineWood      = 28
-cactusWood    = 29
-palmWood      = 30
-
-# leaves for different trees
-jungleLeaves  = 25
-oakLeaves     = 26
-borealLeaves  = 27
-pineLeaves    = 28
-cactusLeaves  = 29
-palmLeaves    = 30
-
-# blocks for different woods
-junglePlank   = 25
-oakPlank      = 26
-borealPlank   = 27
-pinePlank     = 28
-cactusPlank   = 29
-palmPlank     = 30
-
-# saplings for different trees
-jungleSapling = 25
-oakSapling    = 26
-borealSapling = 27
-pineSapling   = 28
-cactusSapling = 29
-palmSapling   = 30
-
-# mineral blocks
-cosmonium     = 31
-adamantite    = 32
-unobtanium    = 33
-diamond       = 34
-platinum      = 35
-gold          = 36
-iron          = 37
-copper        = 38
-
-# blocks for glass
-glass         = 39
-glasswindow   = 40
-
-# torch
-torch         = 41
-boreal_torch  = 41
-nether_torch  = 41
-
-# bed and door
-bed           = 42
-door_upper    = 42
-door_lower    = 42
 
 # Tile table with names
 TILE_NAMES = {
     # air
     air           : "air",
-
-    # bedrock wastes blocks
     bedrock       : "bedrock",
     obsidian      : " obsidian",
     hellstone     : " hellstone",
-
-    # ores
     unobtaniumOre : "unrefined unobtanium",
     diamondOre    : "diamond ore",
     platinumOre   : "platinum ore",
     goldOre       : "gold ore",
     ironOre       : "iron ore",
     copperOre     : "copper ore",
-
-
-    # stones
     granite       : "granite",
     quartz        : "quartz",
     limestone     : "limestone",
     greystone     : "stone",
     sandstone     : "sandstone",
-
-    # transition blocks
     gravel        : "gravel",
     coke          : "coke",
-
-    # clays
     clay          : "clay",
     redClay       : "red clay",
-
-    # sand
-    sand          : "sand",
-
-    # dirt, grass
-    browndirt     : "dirt",
-    grass         : "grass",
-
-    # Snowy blocks
-    snowygrass    : "snowy grass",
-    snow          : "snow",
-    ice           : "ice",
-
-    # woods
-    jungleWood    : "jungle logs",
-    oakWood       : "oak logs",
-    borealWood    : "boreal logs",
-    pineWood      : "pine logs",
-    cactusWood    : "cactus",
-    palmWood      : "palm logs",
-
-    # mineral blocks
-    cosmonium     : "cosmonium",
-    adamantite    : "adamantite",
-    unobtanium    : "unobtanium",
-    diamond       : "diamond",
-    platinum      : "platinum",
-    gold          : "gold",
-    iron          : "iron",
-    copper        : "copper",
-
-    glass         : " glass",
-    glasswindow   : "glass window",
-
-    torch         : "torch",
-    bed           : "bed",
+    browndirt     : "dirt"
 
 }
 
 TILE_MODIFIERS = {
     crack :     [pygame.image.load("Resources/Default/break{}.png".format(i)) for i in range(0, 9)]
-    # fire  :     [pygame.image.load("Resources/Default/break{}.png".format(i)) for i in range(0, 9)]
-    # water :     [pygame.image.load("Resources/Default/break{}.png".format(i)) for i in range(0, 9)]
-    # lava  :     [pygame.image.load("Resources/Default/break{}.png".format(i)) for i in range(0, 9)]
+
 }
 
 TILE_TABLE = {
@@ -207,7 +93,7 @@ TILE_TABLE = {
 
     clay          : pygame.image.load("Resources/Default/clay.png"),
     redClay       : pygame.image.load("Resources/Default/redClay.png"),
-    browndirt     : pygame.image.load("Resources/Default/browndirt.png"),
+    browndirt     : pygame.image.load("Resources/Default/browndirt.png")
 }
 
 TILE_ATTR = {
@@ -230,29 +116,8 @@ TILE_ATTR = {
     coke          :{ID:16, FRICTION:0.8,  LUMINOSITY:160, HEALTH:50,  INFLAMMABLE:None, LTIMPERMEABILITY:0},
     clay          :{ID:17, FRICTION:0.9,  LUMINOSITY:0,   HEALTH:45,  INFLAMMABLE:None, LTIMPERMEABILITY:0},
     redClay       :{ID:18, FRICTION:0.9,  LUMINOSITY:0,   HEALTH:45,  INFLAMMABLE:None, LTIMPERMEABILITY:0},
-    sand          :{ID:19, FRICTION:0.85, LUMINOSITY:0,   HEALTH:15,  INFLAMMABLE:None, LTIMPERMEABILITY:0},
-    browndirt     :{ID:20, FRICTION:0.8,  LUMINOSITY:0,   HEALTH:30,  INFLAMMABLE:None, LTIMPERMEABILITY:0},
-    grass         :{ID:21, FRICTION:0.8,  LUMINOSITY:0,   HEALTH:30,  INFLAMMABLE:3,    LTIMPERMEABILITY:0},
-    snowygrass    :{ID:22, FRICTION:0.8,  LUMINOSITY:0,   HEALTH:30,  INFLAMMABLE:None, LTIMPERMEABILITY:0},
-    snow          :{ID:23, FRICTION:0.85, LUMINOSITY:0,   HEALTH:15,  INFLAMMABLE:None, LTIMPERMEABILITY:0},
-    ice           :{ID:24, FRICTION:0.4,  LUMINOSITY:0,   HEALTH:30,  INFLAMMABLE:None, LTIMPERMEABILITY:150},
-    glass         :{ID:25, FRICTION:0.5,  LUMINOSITY:0,   HEALTH:30,  INFLAMMABLE:None, LTIMPERMEABILITY:200},
-    jungleWood    :{ID:26, FRICTION:0.8,  LUMINOSITY:0,   HEALTH:35,  INFLAMMABLE:4,    LTIMPERMEABILITY:0},
-    oakWood       :{ID:27, FRICTION:0.8,  LUMINOSITY:0,   HEALTH:35,  INFLAMMABLE:4,    LTIMPERMEABILITY:0},
-    borealWood    :{ID:28, FRICTION:0.8,  LUMINOSITY:0,   HEALTH:35,  INFLAMMABLE:4,    LTIMPERMEABILITY:0},
-    pineWood      :{ID:29, FRICTION:0.8,  LUMINOSITY:0,   HEALTH:35,  INFLAMMABLE:4,    LTIMPERMEABILITY:0},
-    cactusWood    :{ID:30, FRICTION:0.8,  LUMINOSITY:0,   HEALTH:35,  INFLAMMABLE:4,    LTIMPERMEABILITY:0},
-    palmWood      :{ID:31, FRICTION:0.8,  LUMINOSITY:0,   HEALTH:35,  INFLAMMABLE:4,    LTIMPERMEABILITY:0},
-    cosmonium     :{ID:32, FRICTION:0.8,  LUMINOSITY:150, HEALTH:85,  INFLAMMABLE:None, LTIMPERMEABILITY:0},
-    adamantite    :{ID:33, FRICTION:0.8,  LUMINOSITY:0,   HEALTH:85,  INFLAMMABLE:None, LTIMPERMEABILITY:0},
-    unobtanium    :{ID:34, FRICTION:0.6,  LUMINOSITY:0,   HEALTH:80,  INFLAMMABLE:None, LTIMPERMEABILITY:0},
-    diamond       :{ID:35, FRICTION:0.6,  LUMINOSITY:0,   HEALTH:80,  INFLAMMABLE:None, LTIMPERMEABILITY:150},
-    platinum      :{ID:36, FRICTION:0.6,  LUMINOSITY:0,   HEALTH:70,  INFLAMMABLE:None, LTIMPERMEABILITY:0},
-    gold          :{ID:37, FRICTION:0.6,  LUMINOSITY:0,   HEALTH:65,  INFLAMMABLE:None, LTIMPERMEABILITY:0},
-    iron          :{ID:38, FRICTION:0.6,  LUMINOSITY:0,   HEALTH:65,  INFLAMMABLE:None, LTIMPERMEABILITY:0},
-    copper        :{ID:39, FRICTION:0.6,  LUMINOSITY:0,   HEALTH:60,  INFLAMMABLE:None, LTIMPERMEABILITY:0},
-    torch         :{ID:42, FRICTION:None, LUMINOSITY:200, HEALTH:15,  INFLAMMABLE:None, LTIMPERMEABILITY:0},
-    bed           :{ID:44, FRICTION:0.4,  LUMINOSITY:0,   HEALTH:30,  INFLAMMABLE:3,    LTIMPERMEABILITY:0},
+    browndirt     :{ID:20, FRICTION:0.8,  LUMINOSITY:0,   HEALTH:30,  INFLAMMABLE:None, LTIMPERMEABILITY:0}
+
 }
 
 
