@@ -106,10 +106,11 @@ class Renderer:
 
         item = cls.player.inventory.getSelectedItem()
         name, quantity = 'Nothing', cls.player.inventory.getSelectedQuantity()
-        if tiles.TILE_NAMES.get( item, None ):
-            name = tiles.TILE_NAMES[item]
-        elif items.ITEM_NAMES.get( item, None ):
-            name = items.ITEM_NAMES[item]
+        if item:
+            if tiles.TILE_NAMES.get( item, None ):
+                name = tiles.TILE_NAMES[item]
+            elif items.ITEM_NAMES.get( item, None ):
+                name = items.ITEM_NAMES[item]
 
         if name != 'Nothing': name += '  ' + str( quantity )
         toShow, rect = SC_DISPLAY_FONT.render( name , (0, 0, 0) )
