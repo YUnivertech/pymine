@@ -1,0 +1,13 @@
+breaking placing based on key press and USE function
+
+fix surfpos and other pos
+menus
+multiplayer(decentralized)
+crafting, furnace
+npc, projectiles
+walls
+tile, item properties
+entity surface vs hitbox diff
+multiprocesssing - shaders, populate chunk
+world gen
+fix code - better var/def name,
