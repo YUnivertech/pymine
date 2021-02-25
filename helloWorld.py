@@ -86,7 +86,7 @@ while running:
                     else:
                         textbox.kill()
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_n:       cameraBound = not cameraBound # This should free the camera from being fixed to the player
+            if event.key == pygame.K_n:       cameraBound = not cameraBound
             elif event.key == pygame.K_SLASH: takeCommand()
             elif event.key == pygame.K_e:     inventoryVisible = not inventoryVisible
             elif event.key == pygame.K_DOWN:  player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] + 1) % INV_ROWS
@@ -94,11 +94,12 @@ while running:
             elif event.key == pygame.K_RIGHT: player.inventory.itemHeld[0] = (player.inventory.itemHeld[0] + 1) % INV_COLS
             elif event.key == pygame.K_LEFT:  player.inventory.itemHeld[0] = (player.inventory.itemHeld[0] - 1 + INV_COLS) % INV_COLS
             else:                             eventHandler.addKey( event.key )
-        elif event.type == pygame.KEYUP :           eventHandler.remKey( event.key )
-        elif event.type == pygame.MOUSEMOTION :     eventHandler.addMouseMotion( event, camera, displaySize )
-        elif event.type == pygame.MOUSEBUTTONDOWN : eventHandler.addMouseButton( event.button )
-        elif event.type == pygame.MOUSEBUTTONUP :   eventHandler.remMouseButton( event.button )
-        elif event.type == pygame.VIDEORESIZE :
+
+        elif event.type == pygame.KEYUP:           eventHandler.remKey( event.key )
+        elif event.type == pygame.MOUSEMOTION:     eventHandler.addMouseMotion( event, camera, displaySize )
+        elif event.type == pygame.MOUSEBUTTONDOWN: eventHandler.addMouseButton( event.button )
+        elif event.type == pygame.MOUSEBUTTONUP:   eventHandler.remMouseButton( event.button )
+        elif event.type == pygame.VIDEORESIZE:
             eventHandler.addWindowResize( )
             gui_manager, btn_pos, info_btn, textbox_pos, textbox = ui_init( (screen.get_width(), screen.get_height()) )
             if not textbox_state: textbox.kill()

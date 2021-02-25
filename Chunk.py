@@ -8,17 +8,18 @@ from gameUtilities import *
 from random import randint
 
 class Chunk:
-    def __init__(  self, index = 0, blocks = None, walls = None, localTable = {}  ):
-        self.index            =  index
-        self.TILE_TABLE_LOCAL =  localTable if localTable else {}
-        self.surface = pygame.Surface( ( CHUNK_WIDTH_P, CHUNK_HEIGHT_P ) )
+    def __init__(  self, index=0, blocks=None, walls=None, localTable={}  ):
+        self.index            = index
+        self.TILE_TABLE_LOCAL = localTable if localTable else {}
+        self.surface          = pygame.Surface( ( CHUNK_WIDTH_P, CHUNK_HEIGHT_P ) )
         if blocks is None:
-            self.blocks         =  [[tiles.air for i in range(0,   CHUNK_WIDTH)] for i in range(0, CHUNK_HEIGHT)]
-            self.walls          =  [[tiles.air for i in range(0,   CHUNK_WIDTH)] for i in range(0, CHUNK_HEIGHT)]
+            self.blocks = [[tiles.air for i in range(0,CHUNK_WIDTH)] for i in range(0, CHUNK_HEIGHT)]
+            self.walls  = [[tiles.air for i in range(0,CHUNK_WIDTH)] for i in range(0, CHUNK_HEIGHT)]
         else:
-            self.blocks         =  blocks
-            self.walls          =  walls
-        self.lightMap           =  [[0 for i in range(0,   CHUNK_WIDTH)] for i in range(0, CHUNK_HEIGHT)]
+            self.blocks = blocks
+            self.walls  = walls
+
+        self.lightMap   = [[0 for i in range(0,   CHUNK_WIDTH)] for i in range(0, CHUNK_HEIGHT)]
 
     def breakWallAt( self, x, y, tool, dt):
         if (x, y, False) not in self.TILE_TABLE_LOCAL:
@@ -56,19 +57,19 @@ class Chunk:
         self.blocks[y][x] = val
         return True
 
-    def draw( self, rect = [0, 0, CHUNK_WIDTH, CHUNK_HEIGHT] ):
+    def draw( self, rect=[0, 0, CHUNK_WIDTH, CHUNK_HEIGHT] ):
         self.surface.fill( ( 30, 150, 240 ), [rect[0] * TILE_WIDTH, TILE_WIDTH* (CHUNK_HEIGHT - rect[3]), TILE_WIDTH * (rect[2] - rect[0]), TILE_WIDTH * (rect[3] - rect[1])])
         for i in range( rect[1], rect[3] ):
-            coors  =  [ 0, ( CHUNK_HEIGHT - i - 1 ) * TILE_WIDTH ]
+            coors = [ 0, ( CHUNK_HEIGHT - i - 1 ) * TILE_WIDTH ]
             for j in range( rect[0], rect[2] ):
                 coors[0] = j * TILE_WIDTH
-                currTileRef =  self.blocks[i][j]
-                currWallRef =  self.walls[i][j]
+                currTileRef = self.blocks[i][j]
+                currWallRef = self.walls[i][j]
                 if currTileRef > 0:
                     self.surface.blit( tiles.TILE_TABLE[currTileRef], coors )
                     if (j, i, True) in self.TILE_TABLE_LOCAL:
                         if HEALTH in self.TILE_TABLE_LOCAL[ (j, i, True)]:
-                            breakState = (self.TILE_TABLE_LOCAL[ ( j, i, True ) ][ HEALTH ] * 8) / 100
+                            breakState = (self.TILE_TABLE_LOCAL[(j, i, True)][HEALTH] * 8) / 100
                             self.surface.blit( tiles.TILE_MODIFIERS[ tiles.crack ][ 8 - int(breakState) ], coors )
 
                 elif currWallRef > 0:
@@ -93,7 +94,7 @@ class ChunkBuffer:
         self.length         = length
         self.len            = length - 1
         # Positions of the left-most, middle and right-most chunks
-        self.positions      = [ middleIndex - self.len // 2, middleIndex, middleIndex + self.len // 2 ]
+        self.positions      = [middleIndex-self.len//2, middleIndex, middleIndex+self.len//2]
         # Create lists of required objects
         self.chunks         = [ ]
         self.lightSurfs     = [ ]
@@ -102,12 +103,12 @@ class ChunkBuffer:
         for i in range( self.positions[ 0 ],  self.positions[ 2 ] + 1 ):
             retrieved = self.serializer[ i ]
             if retrieved is None:
-                retrieved  =  Chunk( i )
+                retrieved  = Chunk( i )
                 self.populateChunk( retrieved )
             else:
-                li         =  pickle.loads( retrieved[ 0 ] )
-                lo         =  pickle.loads( retrieved[ 1 ] )
-                retrieved  =  Chunk( i, li[ 0 ], li[ 1 ], lo )
+                li         = pickle.loads( retrieved[ 0 ] )
+                lo         = pickle.loads( retrieved[ 1 ] )
+                retrieved  = Chunk( i, li[ 0 ], li[ 1 ], lo )
 
             self.chunks.append( retrieved )
             self.lightSurfs.append( pygame.Surface( ( CHUNK_WIDTH_P, CHUNK_HEIGHT_P ) ) )
@@ -119,29 +120,29 @@ class ChunkBuffer:
         # Index of the chunk to be loaded (0 while shifting left, -1 while shifting right) and the extremity needing to be changed
         loadIndex = rep( -deltaChunk )
         # Ready the tiles, walls and local table to be serialized and dump
-        li                                             = [ self.chunks[ dumpIndex ].blocks, self.chunks[ dumpIndex ].walls ]
-        lo                                             = self.chunks[ dumpIndex ].TILE_TABLE_LOCAL
+        li = [ self.chunks[ dumpIndex ].blocks, self.chunks[ dumpIndex ].walls ]
+        lo = self.chunks[ dumpIndex ].TILE_TABLE_LOCAL
         self.serializer[ self.positions[ dumpIndex ] ] = pickle.dumps( li ), pickle.dumps( lo )
         # After dumping, increment the position of the dumped tile by deltaChunk
         self.positions[dumpIndex]                       += deltaChunk
         # Get references to surfaces which must be recycled
-        recycleShade                                    =  self.lightSurfs[dumpIndex]
+        recycleShade                                    = self.lightSurfs[dumpIndex]
         # Start from last if shifting right otherwise from 0
-        moveIndex                                       =  self.len * -dumpIndex
+        moveIndex                                       = self.len * -dumpIndex
         for i in range( 0, self.len ):
-            nextMoveIndex                 =  moveIndex + deltaChunk
-            self.chunks[ moveIndex ]      =  self.chunks[ nextMoveIndex ]
-            self.lightSurfs[ moveIndex ]  =  self.lightSurfs[ nextMoveIndex ]
+            nextMoveIndex                = moveIndex + deltaChunk
+            self.chunks[ moveIndex ]     = self.chunks[ nextMoveIndex ]
+            self.lightSurfs[ moveIndex ] = self.lightSurfs[ nextMoveIndex ]
             moveIndex += deltaChunk
         # Recycle surfaces
-        self.lightSurfs[ loadIndex ]                    =  recycleShade
+        self.lightSurfs[ loadIndex ]     = recycleShade
         # Increment positions of the chunk to be loaded and the middle chunk by deltaChunk
-        self.positions[ 1 ]                             += deltaChunk
-        self.positions[ loadIndex ]                     += deltaChunk
+        self.positions[ 1 ]             += deltaChunk
+        self.positions[ loadIndex ]     += deltaChunk
         # Load new chunk and populate if not generated
-        self.chunks[ loadIndex ]                        =  self.serializer[ self.positions[ loadIndex ] ]
+        self.chunks[ loadIndex ]         = self.serializer[ self.positions[ loadIndex ] ]
         if self.chunks[ loadIndex] is None:
-            self.chunks[ loadIndex ]      =  Chunk( self.positions[ loadIndex ] )
+            self.chunks[ loadIndex ]     = Chunk( self.positions[ loadIndex ] )
             self.populateChunk( self.chunks[ loadIndex ] )
         else:
             li                     = pickle.loads( self.chunks[ loadIndex ][ 0 ] )
@@ -169,74 +170,74 @@ class ChunkBuffer:
         return self.length
 
     def populateChunk(self, chunk):
-        absouluteIndex  =   chunk.index * CHUNK_WIDTH
+        absouluteIndex  = chunk.index * CHUNK_WIDTH
         for i in range(0, CHUNK_WIDTH):
-            ## Lower bedrock wastes
+            # Lower bedrock wastes
             for j in range(0, 10):
-                front, back  =  self.chunkGenerator.getLowerBedrockWastes( absouluteIndex, j )
-                chunk[j][i]  = front
+                front, back = self.chunkGenerator.getLowerBedrockWastes( absouluteIndex, j )
+                chunk[j][i] = front
                 chunk.walls[j][i]  = back
 
-            ## Upper bedrock wastes
+            # Upper bedrock wastes
             for j in range(10, 20):
-                front, back   =  self.chunkGenerator.getUpperBedrockWastes( absouluteIndex, j )
-                chunk[j][i]  = front
+                front, back = self.chunkGenerator.getUpperBedrockWastes( absouluteIndex, j )
+                chunk[j][i] = front
                 chunk.walls[j][i]  = back
 
-            ## Lower Caves
+            # Lower Caves
             for j in range(20, 50):
-                front, back   =  self.chunkGenerator.getLowerCaves( absouluteIndex, j )
-                chunk[j][i]  = front
+                front, back = self.chunkGenerator.getLowerCaves( absouluteIndex, j )
+                chunk[j][i] = front
                 chunk.walls[j][i]  = back
 
-            ## Middle Caves
+            # Middle Caves
             for j in range(50, 90):
-                front, back    =  self.chunkGenerator.getMiddleCaves( absouluteIndex, j )
-                chunk[j][i]  = front
+                front, back = self.chunkGenerator.getMiddleCaves( absouluteIndex, j )
+                chunk[j][i] = front
                 chunk.walls[j][i]  = back
 
-            ## Upper Caves
+            # Upper Caves
             for j in range(90, 120):
-                front, back    =  self.chunkGenerator.getUpperCaves( absouluteIndex, j )
-                chunk[j][i]  = front
+                front, back = self.chunkGenerator.getUpperCaves( absouluteIndex, j )
+                chunk[j][i] = front
                 chunk.walls[j][i]  = back
 
-            ## Lower Undergrounds
+            # Lower Undergrounds
             for j in range(120, 140):
-                front, back    =  self.chunkGenerator.getUpperUnderground( absouluteIndex, j )
-                chunk[j][i]  = front
+                front, back = self.chunkGenerator.getUpperUnderground( absouluteIndex, j )
+                chunk[j][i] = front
                 chunk.walls[j][i]  = back
 
-            ## Upper Undergrounds
+            # Upper Undergrounds
             for j in range(140, 170):
-                front, back    =  self.chunkGenerator.getUpperUnderground( absouluteIndex, j )
-                chunk[j][i]  = front
+                front, back = self.chunkGenerator.getUpperUnderground( absouluteIndex, j )
+                chunk[j][i] = front
                 chunk.walls[j][i]  = back
 
-            absouluteIndex  +=  1
+            absouluteIndex  += 1
 
 
 class chunkGenerator:
-    def __init__(self, seed = None):
+    def __init__(self, seed=None):
         # self.simp = OpenSimplex()
         # self.voronoi = Voronoi()
         # self.ridgedMulti = RidgedMulti()
         self.simp = OpenSimplex()
 
     def frontVal(self, x, y):
-        #return (self.simp[x, y, 0.1] * 50)
+        # return (self.simp[x, y, 0.1] * 50)
         return ( self.simp.noise3d( x, y, 0.1 ) + 1 ) * 50
 
     def backVal(self, x, y):
-        #return (self.simp[x, y, -0.1] * 50)
+        # return (self.simp[x, y, -0.1] * 50)
         return ( self.simp.noise3d(x, y, -0.1) + 1 ) * 50
 
     def getLowerBedrockWastes(self, x, y):
         if y == 0:
             return tiles.bedrock, tiles.bedrock
         else:
-            front  =  self.frontVal(x * BEDROCK_LOWER_X, y * BEDROCK_LOWER_Y)
-            back   =  self.backVal(x * BEDROCK_LOWER_X, y * BEDROCK_LOWER_Y)
+            front = self.frontVal(x * BEDROCK_LOWER_X, y * BEDROCK_LOWER_Y)
+            back  = self.backVal(x * BEDROCK_LOWER_X, y * BEDROCK_LOWER_Y)
             bedrockProbability = 50
             front = tiles.obsidian
             if front <= bedrockProbability:
@@ -249,10 +250,10 @@ class chunkGenerator:
             return front, back
 
     def getUpperBedrockWastes(self, x, y):
-        front  =  self.frontVal(x * BEDROCK_UPPER_X, y * BEDROCK_UPPER_Y)
-        back   =  self.backVal(x * BEDROCK_UPPER_X, y * BEDROCK_UPPER_Y)
-        obsidianProbability = 70
-        stoneProbability = 20 + obsidianProbability
+        front                = self.frontVal(x * BEDROCK_UPPER_X, y * BEDROCK_UPPER_Y)
+        back                 = self.backVal(x * BEDROCK_UPPER_X, y * BEDROCK_UPPER_Y)
+        obsidianProbability  = 70
+        stoneProbability     = 20 + obsidianProbability
         hellStoneProbability = 12.5 + stoneProbability
         if front <= obsidianProbability:
             front = tiles.obsidian

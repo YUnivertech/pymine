@@ -14,7 +14,7 @@ class ItemEntity:
         self.surf.blit(tiles.TILE_TABLE.get(self.id, tiles.bedrock), [0, 0])
 
 class Entity:
-    def __init__(self, pos:list, chunkBuffer:Chunk.ChunkBuffer, entityBuffer, width:int, height, friction:float, health:int=100, grounded:bool=True):
+    def __init__(self, pos, chunkBuffer, entityBuffer, width, height, friction, health=100, grounded=True):
         self.pos          = pos
         self.chunkBuffer  = chunkBuffer
         self.entityBuffer = entityBuffer
@@ -36,39 +36,39 @@ class Entity:
         self.yPosChunk    = lambda p: int(p[1] // TILE_WIDTH)
         self.tile         = lambda p: self.chunkBuffer[self.currChunkInd(p)][self.yPosChunk(p)][self.xPosChunk(p)]
 
-    def le(self, off:tuple, pos=None):
+    def le(self, off, pos=None):
         if not pos: pos = self.pos
         return pos[0] - (self.width * 0.5) + off[0], pos[1] + off[1]
 
-    def ri(self, off:tuple, pos=None):
+    def ri(self, off, pos=None):
         if not pos: pos = self.pos
         return pos[0] + (self.width * 0.5) + off[0], pos[1] + off[1]
 
-    def bo(self, off:tuple, pos=None):
+    def bo(self, off, pos=None):
         if not pos: pos = self.pos
         return pos[0] + off[0], pos[1] - (self.height * 0.5) + off[1]
 
-    def up(self, off:tuple, pos=None):
+    def up(self, off, pos=None):
         if not pos: pos = self.pos
         return pos[0] + off[0], pos[1] + (self.height * 0.5) + off[1]
 
-    def lB(self, off:tuple, pos=None):
+    def lB(self, off, pos=None):
         if not pos: pos = self.pos
         return pos[0] - (self.width * 0.5) + off[0], pos[1] - (self.height * 0.5) + off[1]
 
-    def lU(self, off:tuple, pos=None):
+    def lU(self, off, pos=None):
         if not pos: pos = self.pos
         return pos[0] - (self.width * 0.5) + off[0], pos[1] + (self.height * 0.5) + off[1]
 
-    def rB(self, off:tuple, pos=None):
+    def rB(self, off, pos=None):
         if not pos: pos = self.pos
         return pos[0] + (self.width * 0.5) + off[0], pos[1] - (self.height * 0.5) + off[1]
 
-    def rU(self, off:tuple, pos=None):
+    def rU(self, off, pos=None):
         if not pos: pos = self.pos
         return pos[0] + (self.width * 0.5) + off[0], pos[1] + (self.height * 0.5) + off[1]
 
-    def driveUpdate(self, dt:float):
+    def driveUpdate(self, dt):
         dt2 = dt
         t = 16 / (MAX_VEL*SCALE_VEL)
         while dt2 >= t:
@@ -78,7 +78,7 @@ class Entity:
         else:
             self.update(dt2)
 
-    def update(self, dt:float):
+    def update(self, dt):
         nextPos = self.pos.copy()
         self.calcFriction()
         self.checkGround( self.pos )
@@ -123,22 +123,22 @@ class Entity:
         self.acc[1] = -GRAVITY_ACC
         self.grounded = False
 
-    def checkUp(self, pos:list):
+    def checkUp(self, pos):
         if self.tile(self.lU((0,0), pos)) != 0 or self.tile(self.rU((0,0), pos)) != 0 or self.tile(self.up((0,0), pos)) != 0:
             return False
         else: return True
 
-    def checkLeft(self, pos:list):
+    def checkLeft(self, pos):
         if self.tile(self.lU((0,0), pos)) != 0 or self.tile(self.lB((0,0), pos)) != 0 or self.tile(self.le((0,0), pos)) != 0:
             return False
         else: return True
 
-    def checkRight(self, pos:list):
+    def checkRight(self, pos):
         if self.tile(self.rB((0,0), pos)) != 0 or self.tile(self.rU((0,0), pos)) != 0 or self.tile(self.ri((0,0), pos)) != 0:
             return False
         else: return True
 
-    def checkGround(self, pos:list):
+    def checkGround(self, pos):
         if self.tile(self.lB((0,0), pos)) != 0 or self.tile(self.rB((0,0), pos)) != 0 or self.tile(self.bo((0,0), pos)) != 0:
             self.grounded = True
             return False
@@ -146,7 +146,7 @@ class Entity:
             self.grounded = False
             return True
 
-    def check(self, i:int, dt:float, pos:list):
+    def check(self, i, dt, pos):
         if i == 0:
             if self.vel[0]+self.acc[0]*dt > 0:  res = self.checkRight(pos)
             else:   res = self.checkLeft(pos)
@@ -157,7 +157,7 @@ class Entity:
 
 class Player(Entity):
 
-    def __init__( self , screen , pos:list, chunkBuffer:Chunk.ChunkBuffer, entityBuffer, eventHandler, keyState, mouseState, cursorPos, friction:float, health:int=100, grounded:bool=True):
+    def __init__( self, screen, pos, chunkBuffer, entityBuffer, eventHandler, keyState, mouseState, cursorPos, friction, health=100, grounded=True):
         super().__init__(pos, chunkBuffer, entityBuffer, PLYR_WIDTH, PLYR_HEIGHT, friction, health, grounded)
 
         self.eventHandler = eventHandler
@@ -194,7 +194,7 @@ class Player(Entity):
         if self.mouseState[2]:  self.placing = True     # middle is there
         self.pick()
 
-    def update( self, dt:float ):
+    def update( self, dt ):
         nextPos = self.pos.copy( )
         self.calcFriction( )
         self.checkGround( self.pos )
@@ -237,7 +237,7 @@ class Player(Entity):
             self.eventHandler.tileBreakPos[1] = y
             if state:   # The block was broken
                 # self.entityBuffer.addItem( block, [self.cursorPos[0], self.cursorPos[1]], chunkInd)
-                self.entityBuffer.addItem( block, self.cursorPos.copy(), chunkInd)
+                self.entityBuffer.addItem(block, self.cursorPos.copy(), chunkInd)
 
             # print(chunk, chunkInd, x, y, sep='\t')
         elif self.placing:
@@ -247,7 +247,7 @@ class Player(Entity):
             y = (self.cursorPos[1] // TILE_WIDTH)
             # i need to get the first item from the inventory and just simply place that
             toPlace = self.inventory.getSelectedItem()
-            dist = math.sqrt( pow( self.pos[0] - self.cursorPos[0], 2 ) + pow( self.pos[1] - self.cursorPos[1], 2 ) )
+            dist = math.sqrt(pow(self.pos[0]-self.cursorPos[0], 2)+pow(self.pos[1]-self.cursorPos[1], 2))
             if toPlace and dist > PLYR_HEIGHT:
                 res = self.chunkBuffer[chunkInd].placeBlockAt( x, y, toPlace)
                 if res: self.inventory.remItemPos( 1, self.inventory.itemHeld )

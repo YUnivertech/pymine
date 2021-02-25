@@ -5,7 +5,7 @@
             "normal_text": "#FFE900",
             "normal_border": "#00000050",
             "hovered_border": "#DDDDDD99",
-            "hovered_bg": "#35393e50"
+            "hovered_bg": "#35393E50"
         },
         "misc": {
             "shape": "rounded_rectangle",
