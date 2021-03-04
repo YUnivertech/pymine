@@ -13,8 +13,6 @@ class Chunk:
         else:
             self.blocks = blocks
 
-        self.lightMap   = [[0 for i in range(0,   CHUNK_WIDTH)] for i in range(0, CHUNK_HEIGHT)]
-
     def breakBlockAt( self, x, y, tool, dt):
         if(self.blocks[y][x] is tiles.air): return None
         if (x, y, True) not in self.TILE_TABLE_LOCAL:
@@ -88,7 +86,7 @@ class ChunkBuffer:
         # Index of the chunk to be loaded (0 while shifting left, -1 while shifting right) and the extremity needing to be changed
         loadIndex = rep( -deltaChunk )
         # Ready the tiles, walls and local table to be serialized and dump
-        li = [ self.chunks[ dumpIndex ].blocks ]
+        li = self.chunks[ dumpIndex ].blocks
         lo = self.chunks[ dumpIndex ].TILE_TABLE_LOCAL
         self.serializer[ self.positions[ dumpIndex ] ] = pickle.dumps( li ), pickle.dumps( lo )
         # After dumping, increment the position of the dumped tile by deltaChunk
@@ -116,7 +114,7 @@ class ChunkBuffer:
 
     def saveComplete(self):
         for chunk in self.chunks:
-            self.serializer[chunk.index] = pickle.dumps( [ chunk.blocks ] ), pickle.dumps( chunk.TILE_TABLE_LOCAL )
+            self.serializer[chunk.index] = pickle.dumps( chunk.blocks ), pickle.dumps( chunk.TILE_TABLE_LOCAL )
 
     def __getitem__( self, key ):
         return self.chunks[key]
