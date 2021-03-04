@@ -1,16 +1,4 @@
 from Chunk import *
-import math
-
-# Translations
-#     From                        To
-# 1   array-space                 chunk-space
-#     coordinates in the array    coordinates in the chunk
-# 2   chunk-space                 world-space
-#     coordinates in the chunk    coordinates in the world (absolute coordinates)
-# 3   world-space                 camera-space
-#     coordinates in the world    coordinates relative to camera
-# 4   camera-space                screen-space
-#     coordinates in the array    coordinates on the display
 
 class Renderer:
     @classmethod
@@ -32,7 +20,7 @@ class Renderer:
         cls.updateRefs()
 
     @classmethod
-    def updateScreen(  cls  ):
+    def updateScreen( cls ):
         rightWalker = cls.midChunk
         leftWalker  = cls.midChunk - 1
 
@@ -90,11 +78,8 @@ class Renderer:
         playerCoors[1]  = cls.numVer - playerCoors[1]
         item            = cls.player.inventory.getSelectedItem()
         name, quantity  = 'Nothing', cls.player.inventory.getSelectedQuantity()
-        if item:
-            if tiles.TILE_NAMES.get( item, None ):
-                name = tiles.TILE_NAMES[item]
-            elif items.ITEM_NAMES.get( item, None ):
-                name = items.ITEM_NAMES[item]
+        if item and tiles.TILE_NAMES.get( item, None ):
+            name = tiles.TILE_NAMES[item]
 
         if name != 'Nothing': name += '  ' + str( quantity )
         toShow, rect = SC_DISPLAY_FONT.render( name , (0, 0, 0) )
@@ -114,7 +99,6 @@ class Renderer:
 
     @classmethod
     def updateSize( cls ):
-        # Number of pixels to be rendered on the top and side halves of the camera
         cls.numHor = cls.windowSize[0] // 2
         cls.numVer = cls.windowSize[1] // 2
 
@@ -122,11 +106,10 @@ class Renderer:
     def updateCam( cls ):
         cls.upIndex = CHUNK_HEIGHT_P - ( cls.camera[1] + cls.numVer )
         if cls.upIndex < 0: cls.upIndex = 0
-        # Height of the visible region of the slice
         cls.downIndex = CHUNK_HEIGHT_P - cls.upIndex
         if cls.downIndex > cls.windowSize[1]: cls.downIndex = cls.windowSize[1]
 
     @classmethod
-    def updateRefs(  cls  ):
+    def updateRefs( cls ):
         cls.updateSize()
         cls.updateCam()

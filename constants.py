@@ -1,6 +1,4 @@
-import pygame
-import math
-import pygame.freetype
+import math, pygame.freetype
 
 # Initalize pygame and start the clock
 pygame.init()
@@ -48,8 +46,6 @@ PLYR_HEIGHT      = TILE_WIDTH+14    # 54
 PLYR_RANGE       = 4*TILE_WIDTH
 INV_COLS         = 10
 INV_ROWS         = 3
-
-# List of attributes (constants)
 
 # Tiles, items, entities
 ID               = 0

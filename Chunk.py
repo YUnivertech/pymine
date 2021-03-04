@@ -1,11 +1,8 @@
-import pickle
-
-import tiles, items, time
-from constants import *
+import pickle, tiles
 from opensimplex import OpenSimplex
+from constants import *
 from gameUtilities import *
 
-from random import randint
 
 class Chunk:
     def __init__(  self, index=0, blocks=None, walls=None, localTable={}  ):
@@ -149,11 +146,6 @@ class ChunkBuffer:
             lo                     = pickle.loads( self.chunks[ loadIndex ][ 1 ] )
             self.chunks[loadIndex] = Chunk( self.positions[loadIndex], li[ 0 ], li[ 1 ], lo )
 
-        # Form light map for newly loaded chunk and the chunk before it
-        # In case of left shift, i=-1,-2 are generated
-        # In case of right shift, i=0, 1 are generated
-        # self.formLightMap( loadIndex )
-        # self.formLightMap( loadIndex - deltaChunk )
         return loadIndex
 
     def saveComplete(self):
@@ -219,17 +211,12 @@ class ChunkBuffer:
 
 class chunkGenerator:
     def __init__(self, seed=None):
-        # self.simp = OpenSimplex()
-        # self.voronoi = Voronoi()
-        # self.ridgedMulti = RidgedMulti()
         self.simp = OpenSimplex()
 
     def frontVal(self, x, y):
-        # return (self.simp[x, y, 0.1] * 50)
         return ( self.simp.noise3d( x, y, 0.1 ) + 1 ) * 50
 
     def backVal(self, x, y):
-        # return (self.simp[x, y, -0.1] * 50)
         return ( self.simp.noise3d(x, y, -0.1) + 1 ) * 50
 
     def getLowerBedrockWastes(self, x, y):

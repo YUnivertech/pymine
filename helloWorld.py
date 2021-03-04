@@ -1,8 +1,7 @@
-import pygame_gui
-import entity
-from Renderer import *
+import time, pygame_gui, entity
 from pygame_gui.elements import UIButton
 from pygame_gui.elements.ui_text_box import UITextBox
+from Renderer import *
 
 # Screen variables
 displaySize = [400, 300]
@@ -38,6 +37,7 @@ eventHandler = entity.ClientEventHandler()
 
 # Player variables
 player = entity.Player(screen, [0, 3000], chunkBuffer, entityBuffer, eventHandler, eventHandler.keyStates, eventHandler.mouseState, eventHandler.cursorPos, DEFAULT_FRICTION)
+player.load(chunkBuffer.serializer)
 currChunk = prevChunk = deltaChunk = 0
 inventoryVisible = False
 entityBuffer.plyr = player
@@ -153,5 +153,6 @@ while running:
     pygame.display.update()     # Updating the screen
 
 chunkBuffer.saveComplete()
+player.save(chunkBuffer.serializer)
 chunkBuffer.serializer.stop()
 pygame.display.quit()

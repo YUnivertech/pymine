@@ -70,7 +70,7 @@ TILE_MODIFIERS = {
 
 TILE_TABLE = {
 
-    bedrock       : pygame.image.load("Resources/Default/bedrock2.png"),
+    bedrock       : pygame.image.load("Resources/Default/bedrock.png"),
     obsidian      : pygame.image.load("Resources/Default/obsidian.png"),
     hellstone     : pygame.image.load("Resources/Default/hellstone.png"),
     unobtaniumOre : pygame.image.load("Resources/Default/unobtaniumOre.png"),
@@ -94,8 +94,8 @@ TILE_TABLE = {
 TILE_ATTR = {
     air           :{LUMINOSITY:255},
     bedrock       :{ID:1,  FRICTION:0.8,  LUMINOSITY:0,   HEALTH:INF, INFLAMMABLE:None},
-    obsidian      :{ID:2,  FRICTION:0.8,  LUMINOSITY:0,   HEALTH:100, INFLAMMABLE:0  },
-    hellstone     :{ID:3,  FRICTION:0.8,  LUMINOSITY:255, HEALTH:100, INFLAMMABLE:0  },
+    obsidian      :{ID:2,  FRICTION:0.8,  LUMINOSITY:0,   HEALTH:100, INFLAMMABLE:0   },
+    hellstone     :{ID:3,  FRICTION:0.8,  LUMINOSITY:255, HEALTH:100, INFLAMMABLE:0   },
     unobtaniumOre :{ID:4,  FRICTION:0.8,  LUMINOSITY:160, HEALTH:90,  INFLAMMABLE:None},
     diamondOre    :{ID:5,  FRICTION:0.8,  LUMINOSITY:175, HEALTH:90,  INFLAMMABLE:None},
     platinumOre   :{ID:6,  FRICTION:0.8,  LUMINOSITY:160, HEALTH:80,  INFLAMMABLE:None},

@@ -1,5 +1,5 @@
 from constants import *
-import tiles, items, math, Chunk, gameUtilities
+import tiles, items, math, Chunk, gameUtilities, pickle
 
 class ItemEntity:
     def __init__(self, id, pos, width, height):
@@ -78,31 +78,6 @@ class Entity:
         else:
             self.update(dt2)
 
-    def update(self, dt):
-        nextPos = self.pos.copy()
-        self.calcFriction()
-        self.checkGround( self.pos )
-        if not self.grounded: self.acc[1] = -GRAVITY_ACC
-        for i in range(0, 2):
-            nextVel = self.vel[i] + self.acc[i]*dt
-            if nextVel >= abs(self.friction*dt):
-                self.vel[i] -= self.friction*dt
-            elif nextVel <= -abs(self.friction*dt):
-                self.vel[i] += self.friction*dt
-            else:
-                self.vel[i] = 0
-                self.acc[i] = 0
-
-            self.acc[i] = MAX_ACC*2 if(self.acc[i] > MAX_ACC*2) else -MAX_ACC*2 if(self.acc[i] < -MAX_ACC*2) else self.acc[i]
-            self.vel[i] += self.acc[i] * dt
-            if self.vel[i] < -MAX_VEL*(1-self.friction*0.2): self.vel[i] = -MAX_VEL*(1-self.friction*0.2)
-            elif self.vel[i] > MAX_VEL*(1-self.friction*0.2): self.vel[i] = MAX_VEL*(1-self.friction*0.2)
-            nextPos[i] += self.vel[i] * SCALE_VEL * dt
-            move = self.check( i, dt , nextPos)
-            nextPos = self.pos.copy()
-            if move: self.pos[i] += self.vel[i] * SCALE_VEL * dt
-            else: self.vel[i] = 0
-
     def calcFriction(self):
         if self.tile(self.lB((0,-1))) == 0:
             self.friction = AIR_FRICTION
@@ -166,9 +141,6 @@ class Player(Entity):
         self.cursorPos = cursorPos
         self.inventory = Inventory(screen, INV_COLS, INV_ROWS)
         self.tangibility = 0
-        # 0 means intangible
-        # 1 means interacting with blocks
-        # 2 means interacting with walls
 
     def run( self ):
         self.acc[0] = 0
@@ -229,23 +201,18 @@ class Player(Entity):
             block = self.chunkBuffer[ chunkInd ][ y ][ x ]
             state = self.chunkBuffer[ chunkInd ].breakBlockAt( x, y, 10, dt)
             self.chunkBuffer[ chunkInd ].breakWallAt( x, y, 10, dt)
-            # self.chunkBuffer[ chunkInd ][y][x] = tiles.air
-            # self.chunkBuffer[ chunkInd ].walls[y][x] = tiles.air
             self.eventHandler.tileBreakFlag = True
             self.eventHandler.tileBreakIndex = chunkInd
             self.eventHandler.tileBreakPos[0] = x
             self.eventHandler.tileBreakPos[1] = y
             if state:   # The block was broken
-                # self.entityBuffer.addItem( block, [self.cursorPos[0], self.cursorPos[1]], chunkInd)
                 self.entityBuffer.addItem(block, self.cursorPos.copy(), chunkInd)
 
-            # print(chunk, chunkInd, x, y, sep='\t')
         elif self.placing:
             chunk = math.floor(self.cursorPos[0] / CHUNK_WIDTH_P)
             chunkInd = chunk - self.chunkBuffer.positions[0]
             x = (self.cursorPos[0] // TILE_WIDTH) - chunk * CHUNK_WIDTH
             y = (self.cursorPos[1] // TILE_WIDTH)
-            # i need to get the first item from the inventory and just simply place that
             toPlace = self.inventory.getSelectedItem()
             dist = math.sqrt(pow(self.pos[0]-self.cursorPos[0], 2)+pow(self.pos[1]-self.cursorPos[1], 2))
             if toPlace and dist > PLYR_HEIGHT:
@@ -256,12 +223,22 @@ class Player(Entity):
             self.eventHandler.tilePlaceIndex = chunkInd
             self.eventHandler.tilePlacePos[0] = x
             self.eventHandler.tilePlacePos[1] = y
-            # if (x, y, True) in self.chunkBuffer[ chunkInd].TILE_TABLE_LOCAL: print("True")
-            # else: print("False")
 
     def pick( self ):
         l = self.entityBuffer.pickItem()
         for item in l: self.inventory.addItem(item, 1)
+
+    def save( self, serializer ):
+        li = [self.inventory.items, self.inventory.quantities]
+        li = pickle.dumps(li)
+        serializer.savePlayer(1, li)
+
+    def load( self, serializer):
+        li = serializer.loadPlayer(1)
+        if li:
+            li = pickle.loads(li)
+            self.inventory.items = li[0]
+            self.inventory.quantities = li[1]
 
 
 class Inventory:
@@ -292,24 +269,6 @@ class Inventory:
             self.items[firstEmpty[1]][firstEmpty[0]] = i
             self.quantities[firstEmpty[1]][firstEmpty[0]] = maxFit
             if q > 0: self.addItem( i, q )
-
-    def addItemPos( self, item:int, quantity:int, pos:list ):
-        if self.items[pos[1]][pos[0]] != item:
-            self.selItem[0] = self.items[ pos[1] ][ pos[0] ]
-            self.selItem[1] = self.quantities[ pos[1] ][ pos[0] ]
-            self.items[ pos[1] ][ pos[0] ] = item
-            self.quantities[ pos[1] ][ pos[0] ] = quantity
-        else:
-            self.items[pos[1]][pos[0]] = item
-            self.items[pos[1]][pos[0]] = item
-            if self.quantities[pos[1]][pos[0]] + quantity > items.ITEM_ATTR[item][MAX_STACK]:
-                self.selItem[0] = item
-                self.selItem[1] = self.quantities[pos[1]][pos[0]] + quantity - items.ITEM_ATTR[item][MAX_STACK]
-                self.quantities[pos[1]][pos[0]] = items.ITEM_ATTR[item][MAX_STACK]
-            else:
-                self.selItem[0] = None
-                self.selItem[1] = 0
-                self.quantities[pos[1]][pos[0]] += quantity
 
     def remItemStack( self, item:int, quantity:int ):
         for x in range(INV_COLS):
@@ -394,7 +353,6 @@ class ClientEventHandler:
         self.cursorPos[1] = int(camera[1]) + displaySize[1]//2 - self.mousePos[1]
 
     def addMouseButton( self, button ):
-        # 1 for left, 2 for middle, 3 for right, 4 for scroll up and 5 for scroll down
         mouseInFlag = True
         self.mouseState[ button ] = True
 
@@ -422,10 +380,6 @@ class EntityBuffer:
     def addItem(self, item, pos, index):
         ie = ItemEntity(item, pos,16, 16,)
         self.entities[index].append(ie)
-        # 0 is the index of the chunk in the chunk buffer in which it was broken
-
-    def addEntity(self, e:Entity):
-        self.entities[e.currChunkInd(e.pos)].append(e)
 
     def shift( self, d):
         if d < 0:       # Player has moved left
@@ -438,11 +392,6 @@ class EntityBuffer:
             li = None
             if li is None:  self.entities.insert(len(self.entities), [])
             else:           self.entities.insert(len(self.entities), li)
-
-    def update( self ):
-        for i in self.entities:
-            for j in i:
-                j.update()
 
     def pickItem( self ):
         l = []
