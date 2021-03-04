@@ -1,8 +1,9 @@
-import sqlite3,  bz2
+import sqlite3, bz2, os
 
 class Serializer:
     def __init__( self, target ):
         self.name = "Worlds/" + target + '.db'
+        if not os.path.isdir("Worlds"): os.mkdir("Worlds")
         self.conn = sqlite3.connect( self.name )
         c = self.conn.cursor()
         try:
