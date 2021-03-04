@@ -3,32 +3,17 @@ from opensimplex import OpenSimplex
 from constants import *
 from gameUtilities import *
 
-
 class Chunk:
-    def __init__(  self, index=0, blocks=None, walls=None, localTable={}  ):
+    def __init__(  self, index=0, blocks=None, localTable={}  ):
         self.index            = index
         self.TILE_TABLE_LOCAL = localTable if localTable else {}
         self.surface          = pygame.Surface( ( CHUNK_WIDTH_P, CHUNK_HEIGHT_P ) )
         if blocks is None:
             self.blocks = [[tiles.air for i in range(0,CHUNK_WIDTH)] for i in range(0, CHUNK_HEIGHT)]
-            self.walls  = [[tiles.air for i in range(0,CHUNK_WIDTH)] for i in range(0, CHUNK_HEIGHT)]
         else:
             self.blocks = blocks
-            self.walls  = walls
 
         self.lightMap   = [[0 for i in range(0,   CHUNK_WIDTH)] for i in range(0, CHUNK_HEIGHT)]
-
-    def breakWallAt( self, x, y, tool, dt):
-        if (x, y, False) not in self.TILE_TABLE_LOCAL:
-            self.TILE_TABLE_LOCAL[ ( x, y, False ) ] = { }
-        if HEALTH not in self.TILE_TABLE_LOCAL[ (x, y, False)]:
-            self.TILE_TABLE_LOCAL[ ( x, y, False ) ][ HEALTH ] = 100
-        self.TILE_TABLE_LOCAL[ ( x, y, False ) ][ HEALTH ] -= (25 * dt)
-        if self.TILE_TABLE_LOCAL[ (x, y, False)][ HEALTH] <= 0:
-            del self.TILE_TABLE_LOCAL[ ( x, y, False ) ]
-            self.walls[y][x] = tiles.air
-
-        return True
 
     def breakBlockAt( self, x, y, tool, dt):
         if(self.blocks[y][x] is tiles.air): return None
@@ -45,11 +30,6 @@ class Chunk:
 
         return False
 
-    def placeWallAt( self, x, y, val):
-        if self.walls[y][x] != tiles.air: return False
-        self.walls[y][x] = val
-        return True
-
     def placeBlockAt( self, x, y, val):
         if self.blocks[y][x] != tiles.air: return False
         self.blocks[y][x] = val
@@ -62,19 +42,11 @@ class Chunk:
             for j in range( rect[0], rect[2] ):
                 coors[0] = j * TILE_WIDTH
                 currTileRef = self.blocks[i][j]
-                currWallRef = self.walls[i][j]
                 if currTileRef > 0:
                     self.surface.blit( tiles.TILE_TABLE[currTileRef], coors )
                     if (j, i, True) in self.TILE_TABLE_LOCAL:
                         if HEALTH in self.TILE_TABLE_LOCAL[ (j, i, True)]:
                             breakState = (self.TILE_TABLE_LOCAL[(j, i, True)][HEALTH] * 8) / 100
-                            self.surface.blit( tiles.TILE_MODIFIERS[ tiles.crack ][ 8 - int(breakState) ], coors )
-
-                elif currWallRef > 0:
-                    self.surface.blit( tiles.TILE_TABLE[currWallRef], coors )
-                    if (i, j, False) in self.TILE_TABLE_LOCAL:
-                        if HEALTH in self.TILE_TABLE_LOCAL[ (j, i, False)]:
-                            breakState = (self.TILE_TABLE_LOCAL[ ( j, i, False ) ][ HEALTH ] * 8) / 100
                             self.surface.blit( tiles.TILE_MODIFIERS[ tiles.crack ][ 8 - int(breakState) ], coors )
 
     def __getitem__(  self, key  ):
@@ -95,7 +67,6 @@ class ChunkBuffer:
         self.positions      = [middleIndex-self.len//2, middleIndex, middleIndex+self.len//2]
         # Create lists of required objects
         self.chunks         = [ ]
-        self.lightSurfs     = [ ]
         self.entityBuffer   = None
         # Load all objects
         for i in range( self.positions[ 0 ],  self.positions[ 2 ] + 1 ):
@@ -106,10 +77,9 @@ class ChunkBuffer:
             else:
                 li         = pickle.loads( retrieved[ 0 ] )
                 lo         = pickle.loads( retrieved[ 1 ] )
-                retrieved  = Chunk( i, li[ 0 ], li[ 1 ], lo )
+                retrieved  = Chunk( i, li, lo )
 
             self.chunks.append( retrieved )
-            self.lightSurfs.append( pygame.Surface( ( CHUNK_WIDTH_P, CHUNK_HEIGHT_P ) ) )
 
     def shiftBuffer( self, deltaChunk ):
         rep = lambda num : 0 if num == 1 else -1
@@ -118,22 +88,17 @@ class ChunkBuffer:
         # Index of the chunk to be loaded (0 while shifting left, -1 while shifting right) and the extremity needing to be changed
         loadIndex = rep( -deltaChunk )
         # Ready the tiles, walls and local table to be serialized and dump
-        li = [ self.chunks[ dumpIndex ].blocks, self.chunks[ dumpIndex ].walls ]
+        li = [ self.chunks[ dumpIndex ].blocks ]
         lo = self.chunks[ dumpIndex ].TILE_TABLE_LOCAL
         self.serializer[ self.positions[ dumpIndex ] ] = pickle.dumps( li ), pickle.dumps( lo )
         # After dumping, increment the position of the dumped tile by deltaChunk
         self.positions[dumpIndex]                       += deltaChunk
-        # Get references to surfaces which must be recycled
-        recycleShade                                    = self.lightSurfs[dumpIndex]
         # Start from last if shifting right otherwise from 0
         moveIndex                                       = self.len * -dumpIndex
         for i in range( 0, self.len ):
             nextMoveIndex                = moveIndex + deltaChunk
             self.chunks[ moveIndex ]     = self.chunks[ nextMoveIndex ]
-            self.lightSurfs[ moveIndex ] = self.lightSurfs[ nextMoveIndex ]
             moveIndex += deltaChunk
-        # Recycle surfaces
-        self.lightSurfs[ loadIndex ]     = recycleShade
         # Increment positions of the chunk to be loaded and the middle chunk by deltaChunk
         self.positions[ 1 ]             += deltaChunk
         self.positions[ loadIndex ]     += deltaChunk
@@ -145,13 +110,13 @@ class ChunkBuffer:
         else:
             li                     = pickle.loads( self.chunks[ loadIndex ][ 0 ] )
             lo                     = pickle.loads( self.chunks[ loadIndex ][ 1 ] )
-            self.chunks[loadIndex] = Chunk( self.positions[loadIndex], li[ 0 ], li[ 1 ], lo )
+            self.chunks[loadIndex] = Chunk( self.positions[loadIndex], li, lo )
 
         return loadIndex
 
     def saveComplete(self):
         for chunk in self.chunks:
-            self.serializer[chunk.index] = pickle.dumps( [ chunk.blocks, chunk.walls ] ), pickle.dumps( chunk.TILE_TABLE_LOCAL )
+            self.serializer[chunk.index] = pickle.dumps( [ chunk.blocks ] ), pickle.dumps( chunk.TILE_TABLE_LOCAL )
 
     def __getitem__( self, key ):
         return self.chunks[key]
@@ -169,46 +134,38 @@ class ChunkBuffer:
             for j in range(0, 10):
                 front, back = self.chunkGenerator.getLowerBedrockWastes( absouluteIndex, j )
                 chunk[j][i] = front
-                chunk.walls[j][i]  = back
 
             # Upper bedrock wastes
             for j in range(10, 20):
                 front, back = self.chunkGenerator.getUpperBedrockWastes( absouluteIndex, j )
                 chunk[j][i] = front
-                chunk.walls[j][i]  = back
 
             # Lower Caves
             for j in range(20, 50):
                 front, back = self.chunkGenerator.getLowerCaves( absouluteIndex, j )
                 chunk[j][i] = front
-                chunk.walls[j][i]  = back
 
             # Middle Caves
             for j in range(50, 90):
                 front, back = self.chunkGenerator.getMiddleCaves( absouluteIndex, j )
                 chunk[j][i] = front
-                chunk.walls[j][i]  = back
 
             # Upper Caves
             for j in range(90, 120):
                 front, back = self.chunkGenerator.getUpperCaves( absouluteIndex, j )
                 chunk[j][i] = front
-                chunk.walls[j][i]  = back
 
             # Lower Undergrounds
             for j in range(120, 140):
                 front, back = self.chunkGenerator.getUpperUnderground( absouluteIndex, j )
                 chunk[j][i] = front
-                chunk.walls[j][i]  = back
 
             # Upper Undergrounds
             for j in range(140, 170):
                 front, back = self.chunkGenerator.getUpperUnderground( absouluteIndex, j )
                 chunk[j][i] = front
-                chunk.walls[j][i]  = back
 
             absouluteIndex  += 1
-
 
 class chunkGenerator:
     def __init__(self, seed=None):

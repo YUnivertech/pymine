@@ -200,7 +200,6 @@ class Player(Entity):
             y = (self.cursorPos[1] // TILE_WIDTH)
             block = self.chunkBuffer[ chunkInd ][ y ][ x ]
             state = self.chunkBuffer[ chunkInd ].breakBlockAt( x, y, 10, dt)
-            self.chunkBuffer[ chunkInd ].breakWallAt( x, y, 10, dt)
             self.eventHandler.tileBreakFlag = True
             self.eventHandler.tileBreakIndex = chunkInd
             self.eventHandler.tileBreakPos[0] = x

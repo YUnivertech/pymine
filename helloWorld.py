@@ -86,8 +86,7 @@ while running:
                     else:
                         textbox.kill()
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_n:       cameraBound = not cameraBound
-            elif event.key == pygame.K_SLASH: takeCommand()
+            if   event.key == pygame.K_SLASH: takeCommand()
             elif event.key == pygame.K_e:     inventoryVisible = not inventoryVisible
             elif event.key == pygame.K_DOWN:  player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] + 1) % INV_ROWS
             elif event.key == pygame.K_UP:    player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] - 1 + INV_ROWS) % INV_ROWS

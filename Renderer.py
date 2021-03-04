@@ -14,7 +14,6 @@ class Renderer:
         # Index of the middle chunk in the chunk buffer
         cls.length       = cls.chunkBuffer.length
         cls.midChunk     = ( cls.length - 1 ) // 2
-        cls.isShader     = False
 
         # Update constants to reflect new References
         cls.updateRefs()
@@ -33,14 +32,11 @@ class Renderer:
                 slicePos  = [sliceInd * TILE_WIDTH - cls.camera[0] + cls.numHor, 0]
                 sliceRect = [tileWalker * TILE_WIDTH, cls.upIndex, TILE_WIDTH, cls.downIndex]
                 sliceSurf = cls.chunkBuffer[rightWalker].surface.subsurface( sliceRect )
-                lightSurf = cls.chunkBuffer.lightSurfs[rightWalker].subsurface( sliceRect )
                 if slicePos[0] > cls.windowSize[0]:
                     rightWalker = cls.length
                     break
 
                 cls.screen.blit( sliceSurf, slicePos )
-                if cls.isShader:
-                    cls.screen.blit( lightSurf, slicePos, special_flags=pygame.BLEND_RGBA_MULT )
 
                 tileWalker      += 1
 
@@ -55,14 +51,11 @@ class Renderer:
                 slicePos  = [sliceInd * TILE_WIDTH - cls.camera[0] + cls.numHor, 0]
                 sliceRect = [tileWalker * TILE_WIDTH, cls.upIndex, TILE_WIDTH, cls.downIndex]
                 sliceSurf = cls.chunkBuffer[leftWalker].surface.subsurface( sliceRect )
-                lightSurf = cls.chunkBuffer.lightSurfs[leftWalker].subsurface( sliceRect )
                 if slicePos[0] < -TILE_WIDTH:
                     leftWalker = -1
                     break
 
                 cls.screen.blit( sliceSurf, slicePos )
-                if cls.isShader:
-                    cls.screen.blit( lightSurf, slicePos, special_flags = pygame.BLEND_RGBA_MULT )
 
                 tileWalker -= 1
 
