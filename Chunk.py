@@ -31,6 +31,7 @@ class Chunk:
         return True
 
     def breakBlockAt( self, x, y, tool, dt):
+        if(self.blocks[y][x] is tiles.air): return None
         if (x, y, True) not in self.TILE_TABLE_LOCAL:
             self.TILE_TABLE_LOCAL[ ( x, y, True ) ] = { }
         if HEALTH not in self.TILE_TABLE_LOCAL[ (x, y, True)]:
