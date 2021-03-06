@@ -1,4 +1,4 @@
-from Chunk import *
+from Old.Chunk import *
 
 '''
 Translations

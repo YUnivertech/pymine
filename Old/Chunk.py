@@ -1,11 +1,10 @@
 import pickle
 
-import tiles, items, time
+import tiles, time
 from constants import *
 from opensimplex import OpenSimplex
 from gameUtilities import *
 
-from random import randint
 
 class Chunk:
 
@@ -26,8 +25,8 @@ class Chunk:
         self.surface = pygame.Surface( ( CHUNK_WIDTH_P, CHUNK_HEIGHT_P ) )
 
         if(blocks is None):
-            self.blocks         =  [[tiles.air for i in range(0,   CHUNK_WIDTH)] for i in range(0, CHUNK_HEIGHT)]
-            self.walls          =  [[tiles.air for i in range(0,   CHUNK_WIDTH)] for i in range(0, CHUNK_HEIGHT)]
+            self.blocks         =  [[tiles.air for i in range( 0, CHUNK_WIDTH )] for i in range( 0, CHUNK_HEIGHT )]
+            self.walls          =  [[tiles.air for i in range( 0, CHUNK_WIDTH )] for i in range( 0, CHUNK_HEIGHT )]
         else:
             self.blocks         =  blocks
             self.walls          =  walls
@@ -98,7 +97,7 @@ class Chunk:
     def placeBlockAt( self, x, y, val):
         if(self.blocks[y][x] != tiles.air): return False
         self.blocks[y][x] = val
-        print(tiles.TILE_NAMES[val])
+        print( tiles.TILE_NAMES[val] )
         return True
 
     def draw( self, rect = [0, 0, CHUNK_WIDTH, CHUNK_HEIGHT] ):
@@ -123,7 +122,7 @@ class Chunk:
                         if(HEALTH in self.TILE_TABLE_LOCAL[ ( j, i, True ) ] ):
 
                             breakState = (self.TILE_TABLE_LOCAL[ ( j, i, True ) ][ HEALTH ] * 8) / 100
-                            self.surface.blit( tiles.TILE_MODIFIERS[ tiles.crack ][ 8 - int(breakState) ], coors )
+                            self.surface.blit( tiles.TILE_MODIFIERS[ tiles.crack][8 - int( breakState )], coors )
 
                 elif( currWallRef > 0 ):
                     self.surface.blit( tiles.TILE_TABLE[currWallRef], coors )
@@ -132,7 +131,7 @@ class Chunk:
                         if(HEALTH in self.TILE_TABLE_LOCAL[ ( j, i, False ) ] ):
 
                             breakState = (self.TILE_TABLE_LOCAL[ ( j, i, False ) ][ HEALTH ] * 8) / 100
-                            self.surface.blit( tiles.TILE_MODIFIERS[ tiles.crack ][ 8 - int(breakState) ], coors )
+                            self.surface.blit( tiles.TILE_MODIFIERS[ tiles.crack][8 - int( breakState )], coors )
 
     def update( self, dt ):
 

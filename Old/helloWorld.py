@@ -1,4 +1,3 @@
-import sys
 from Renderer import *
 import time
 import entity
@@ -20,7 +19,7 @@ chunkBuffer = ChunkBuffer(bufferWidth, 0, "world1")
 print(bufferWidth)
 del bufferWidth
 
-entityBuffer = entity.EntityBuffer(chunkBuffer, chunkBuffer.serializer, None)
+entityBuffer = entity.EntityBuffer( chunkBuffer, chunkBuffer.serializer, None )
 chunkBuffer.entityBuffer = entityBuffer
 
 # Create and display window
@@ -28,21 +27,21 @@ chunkBuffer.entityBuffer = entityBuffer
 # Create and display window
 screen = pygame.display.set_mode(displaySize, pygame.RESIZABLE)
 pygame.display.set_caption("Hello World!")
-pygame.display.set_icon(pygame.image.load("Resources/Default/gameIcon.png"))
+pygame.display.set_icon( pygame.image.load( "../Resources/Default/gameIcon.png" ) )
 
 # Convert all images to optimized form
-tiles.loadImageTable()
-items.loadImageTable()
+tiles.loadImageTable( )
+items.loadImageTable( )
 
 for i in range(len(chunkBuffer)):
     chunkBuffer[i].draw()
     chunkBuffer.renderLightmap(i)
 
 # Input handling containers
-eventHandler = entity.ClientEventHandler()
+eventHandler = entity.ClientEventHandler( )
 
 # Player variables
-player = entity.Player(screen, [0, 3000], chunkBuffer, entityBuffer, eventHandler, eventHandler.keyStates, eventHandler.mouseState, eventHandler.cursorPos, DEFAULT_FRICTION)
+player = entity.Player( screen, [0, 3000], chunkBuffer, entityBuffer, eventHandler, eventHandler.keyStates, eventHandler.mouseState, eventHandler.cursorPos, DEFAULT_FRICTION )
 player.load(chunkBuffer.serializer)
 currChunk = prevChunk = deltaChunk = 0
 inventoryVisible = False

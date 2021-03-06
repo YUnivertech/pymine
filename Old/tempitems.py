@@ -1,4 +1,4 @@
-from constants import *
+from Old.constants import *
 
 HAND_DAMAGE = 30
 USE = 13
@@ -284,7 +284,7 @@ ITEM_NAMES = {
 }
 
 ITEM_TABLE = {
-    slot : pygame.image.load("Resources/Default/InventorySpace.png")
+    slot : pygame.image.load( "../Resources/Default/InventorySpace.png" )
 }
 
 ITEM_ATTR = {

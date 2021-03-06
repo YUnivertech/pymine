@@ -1,5 +1,5 @@
-from Chunk import *
-import math
+from Old.Chunk import *
+
 
 # Translations
 #     From                        To
@@ -55,12 +55,12 @@ class Renderer:
         leftWalker      =  cls.midChunk - 1    # Goes from the index of the chunk one before the middle to the left-most chunk
 
         # Loop to render chunks on the right of the camera (including the camera's chunk)
-        while( rightWalker < cls.length ):
+        while rightWalker < cls.length:
 
             tileWalker      =  0    # Goes from the index of the left-most to the right-most tile in the chunk
 
             # Loop to render each individual vertical slice of the chunk
-            while( tileWalker < CHUNK_WIDTH ):
+            while tileWalker < CHUNK_WIDTH:
 
                 sliceInd        =  ( cls.chunkBuffer[rightWalker].index * CHUNK_WIDTH ) + tileWalker   # Absoulute index of the current vertical slice
                 slicePos        =  [sliceInd * TILE_WIDTH - cls.camera[0] + cls.numHor, 0]             # List containing the coordinates where the slice must be blitted on-screen
@@ -69,24 +69,24 @@ class Renderer:
                 sliceSurf       =  cls.chunkBuffer[rightWalker].surface.subsurface( sliceRect )       # Mini-surface containing the visible region of the chunk's surface
                 lightSurf       =  cls.chunkBuffer.lightSurfs[rightWalker].subsurface( sliceRect )      # Mini-surface containing the visible region of the chunk's lightmap
 
-                if( slicePos[0] > cls.windowSize[0] ):     # Stop blitting if slice is beyond the right edge od the window
+                if slicePos[0] > cls.windowSize[0]:     # Stop blitting if slice is beyond the right edge od the window
                     rightWalker     =  cls.length
                     break
 
                 cls.screen.blit( sliceSurf, slicePos )
-                if(cls.isShader):
+                if cls.isShader:
                     cls.screen.blit( lightSurf, slicePos, special_flags = pygame.BLEND_RGBA_MULT )
                 tileWalker      += 1
 
             rightWalker     += 1
 
         # Loop to render chunks on the left of the camera (excluding the camera's chunk)
-        while( leftWalker >= 0 ):
+        while leftWalker >= 0:
 
             tileWalker      =  CHUNK_WIDTH - 1    # Goes from the index of the left-most to the right-most tile in the chunk
 
             # Loop to render each individual vertical slice of the chunk
-            while( tileWalker >= 0 ):
+            while tileWalker >= 0:
 
                 sliceInd        =  ( cls.chunkBuffer[leftWalker].index * CHUNK_WIDTH ) + tileWalker     # Absoulute index of the current vertical slice
                 slicePos        =  [sliceInd * TILE_WIDTH - cls.camera[0] + cls.numHor, 0]              # List containing the coordinates where the slice must be blitted on-screen
@@ -95,12 +95,12 @@ class Renderer:
                 sliceSurf       =  cls.chunkBuffer[leftWalker].surface.subsurface( sliceRect )         # Mini-surface containing the visible region of the chunk's surface
                 lightSurf       =  cls.chunkBuffer.lightSurfs[leftWalker].subsurface( sliceRect )       # Mini-surface containing the visible region of the chunk's lightmap
 
-                if( slicePos[0] < -TILE_WIDTH ):    # Stop blitting if slice is bryond the left edge of the window
+                if slicePos[0] < -TILE_WIDTH:    # Stop blitting if slice is bryond the left edge of the window
                     leftWalker      =  -1
                     break
 
                 cls.screen.blit ( sliceSurf, slicePos )
-                if(cls.isShader):
+                if cls.isShader:
                     cls.screen.blit( lightSurf, slicePos, special_flags = pygame.BLEND_RGBA_MULT )
                 tileWalker      -= 1
 
@@ -119,12 +119,13 @@ class Renderer:
 
         item = cls.player.inventory.getSelectedItem()
         name, quantity = 'Nothing', cls.player.inventory.getSelectedQuantity()
-        if(tiles.TILE_NAMES.get(item, None)):
-            name = tiles.TILE_NAMES[item]
-        elif(items.ITEM_NAMES.get(item, None)):
-            name = items.ITEM_NAMES[item]
+        if item:
+            if tiles.TILE_NAMES.get( item, None ):
+                name = tiles.TILE_NAMES[item]
+            elif items.ITEM_NAMES.get( item, None ):
+                name = items.ITEM_NAMES[item]
 
-        if(name != 'Nothing'): name += '  ' + str(quantity)
+        if name != 'Nothing': name += '  ' + str( quantity )
         toShow, rect = SC_DISPLAY_FONT.render( name , (0, 0, 0) )
         xVal = cls.screen.get_width() - toShow.get_width() - 8
         cls.screen.blit(toShow, [xVal, 16])
@@ -155,13 +156,13 @@ class Renderer:
         # Upper index of the visible region of each slice
         cls.upIndex     =  CHUNK_HEIGHT_P - ( cls.camera[1] + cls.numVer )
 
-        if( cls.upIndex < 0 ):    # If lower than zero, then make 0
+        if cls.upIndex < 0:    # If lower than zero, then make 0
             cls.upIndex     =  0
 
         # Height of the visible region of the slice
         cls.downIndex   =  CHUNK_HEIGHT_P - cls.upIndex
 
-        if( cls.downIndex > cls.windowSize[1] ):    # If greater than height-of-window, then make height-of-window
+        if cls.downIndex > cls.windowSize[1]:    # If greater than height-of-window, then make height-of-window
             cls.downIndex   =  cls.windowSize[1]
 
     @classmethod
@@ -172,141 +173,3 @@ class Renderer:
 
         cls.updateSize()
         cls.updateCam()
-
-    @classmethod
-    def setShaders( cls ):
-        cls.isShader = not cls.isShader
-
-
-class Shader:
-
-    def __init__( self, parent ):
-
-        self.parent = parent
-
-    def shadeRetro( self, index, top=True, down=True, left=True, right=True ):
-
-        for c in range( 0, parent.length ):
-            for i in range( 0, CHUNK_HEIGHT ):
-                for j in range( 0, CHUNK_WIDTH ):
-
-                    currTileRef = parent[index][i][j]
-                    currWallRef = parent[index].walls[i][j]
-
-                    selfLuminousity  = 0
-
-                    # if(currTileRef > 0 or currWallRef == 0):    # Front tile is present or wall is absent
-                    #     selfLuminousity = TILE_ATTR[currTileRef][LUMINOSITY]
-                    # elif(currWallRef > 0):                      # Front tile is absent but wall is present
-                    #     selfLuminousity = TILE_ATTR[currWallRef][LUMINOSITY]
-
-                    selfLuminousity = tiles.TILE_ATTR[currTileRef][LUMINOSITY]
-                    selfIllumination = self[index].lightMap[i][j]
-
-                    if(selfLuminousity is not 0 and selfIllumination < selfLuminousity):
-                        parent[index].lightMap[i][j] = selfLuminousity
-                        self.propagateRetro(index, j, i)
-
-    def propagateRetro( self, index, x, y, top=True, right=True, bottom=True, left=True ):
-
-        if(index < 0): index = self.length+index
-
-        topVal      =  self[index].lightMap[y][x]-16
-        rightVal    =  self[index].lightMap[y][x]-16
-        bottomVal   =  self[index].lightMap[y][x]-16
-        leftVal     =  self[index].lightMap[y][x]-16
-
-        if(topVal < 0): top=False
-        if(rightVal < 0): right=False
-        if(bottomVal < 0): bottom=False
-        if(leftVal < 0): left=False
-
-        # Top side
-        if(top):
-            if(y+1 < CHUNK_HEIGHT):         #check if the next position (1 above) is valid
-                if(topVal > self[index].lightMap[y+1][x]):
-                    self[index].lightMap[y+1][x]   =  topVal
-                    self.propogateRetro(index, x, y+1, bottom=False)
-
-        # Bottom side
-        if(bottom):
-            if(y-1 >= 0):                   #check if the next position (1 below) is valid
-                if(bottomVal >= self[index].lightMap[y-1][x]):
-                    self[index].lightMap[y-1][x]   =  bottomVal
-                    self.propogateRetro(index, x, y-1, top=False)
-
-        # Left side
-        if(left):
-            if(x-1 >= 0):                   #check if the next position (1 to the left) is valid
-                if(leftVal > self[index].lightMap[y][x-1]):
-                    self[index].lightMap[y][x-1]   =  leftVal
-                    self.propogateRetro(index, x-1, y, right=False)
-
-            elif(index-1 >= 0):             #check if previous chunk exists in the chunk buffer
-                if(leftVal > self[index-1].lightMap[y][CHUNK_WIDTH-1]):
-                    self[index-1].lightMap[y][CHUNK_WIDTH-1]   =  leftVal
-                    self.propogateRetro(index-1, CHUNK_WIDTH-1, y, right=False)
-
-        # Right side
-        if(right):
-            if(x+1 < CHUNK_WIDTH):          #check if the next position (1 to the right) is valid
-                if(rightVal > self[index].lightMap[y][x+1]):
-                    self[index].lightMap[y][x+1]   =  rightVal
-                    self.propogateRetro(index, x+1, y, left=False)
-
-            elif(index+1 < self.length):    #check if next chunk exists in the chunk buffer
-                if(rightVal > self[index+1].lightMap[y][0]):
-                    self[index+1].lightMap[y][0]   =  rightVal
-                    self.propogateRetro(index+1, 0, y, left=False)
-
-    def shadeRadial( self ):
-
-        luminous = None # the luminosity of the block
-        sq2 = 1.414
-        for index in range(0, parent.length):
-            currChunkRef = self.parent[index]
-            for y in range(CHUNK_HEIGHT):
-                for x in range(CHUNK_WIDTH):
-
-                    currTileRef = parent[index][y][x]
-                    currWallRef = parent[index].walls[y][x]
-
-                    if( currTileRef is luminous or currWallRef is luminous):
-
-                        propagateRadial( index, x, y, True, True, True, True)
-
-                        # i, j = 1, 1
-                        while( y-1-i>0 and x-1-i>0 ):   #up diagonal left
-                            propagateRadial( index, x-1-i, y-1-i, up=True, left=True)
-
-                        # i, j = 1, 1
-                        while( y-1-i>0 and x+1+i<CHUNK_WIDTH ): #up diagonal right
-                            propagateRadial( index, x+1+i, y-1-i, up=True, right=True)
-
-                        # i, j = 1, 1
-                        while( y+1+i<CHUNK_HEIGHT and x-1-i>0 ):    #down diagonal left
-                            propagateRadial( index, x-1-i, y+1+i, down=True, left=True)
-
-                        # i, j = 1, 1
-                        while( y+1+i<CHUNK_HEIGHT and x+1+i<CHUNK_WIDTH ):  #down diagonal right
-                            propagateRadial( index, x+1+i, y+1+i, down=True, right=True)
-
-    def propagateRadial( self, index, x, y, up=False, down=False, left=False, right=False ):
-
-        currChunkRef = self.parent[index]
-        valid = True       #check if valid
-
-        if valid and lightval != 0:
-            if up:
-                currChunkRef[y+1][x].lightval = 0.5    #some value
-                propagateRadial(y+1, x, up=True)
-            if down:
-                currChunkRef[y-1][x].lightval = 0.5    #some value
-                propagateRadial(y-1, x, down=True)
-            if right:
-                currChunkRef[y][x+1].lightval = 0.5    #some value
-                propagateRadial(y, x+1, right=True)
-            if left:
-                currChunkRef[y][x-1].lightval = 0.5     #some value
-                propagateRadial(y, x-1, left=True)
-
