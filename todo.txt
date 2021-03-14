@@ -12,3 +12,37 @@ multiprocesssing - shaders, populate chunk
 world gen
 fix code - better var/def name,
 test
+
+----------------------------------------------------
+user uid = pub+priv+time
+ip - pub + priv
+
+User starts the game
+- main menu
+    - singleplayer -> world choosing(scroll), create world, delete world
+    - multiplayer
+        - join -> give the ip
+        - start -> it will tell u the ip-code and then u choose the world
+    - settings -> user settings(player customization, texture pack selection, audio settings, keys selection for movement)
+    - credits -> our name
+
+Game managers
+- ChunkBuffer
+- EntityBuffer
+- Tools -> serialzer and renderer
+- Player
+
+shaders and populate chunk will be multiprocesssed
+
+Classes
+- Chunk -> list of blocks and walls, local tile table, lightmap, time passed while it is active
+- Entity -> worldpos, hitboxPos, surf, surfpos, movement related  -> inherited by player, zombie, slime, etc.
+- ItemEntity
+- Inventory
+
+Data
+- constants
+- tiles
+- items
+- miscGUI
+- crafting
