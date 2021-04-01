@@ -22,12 +22,33 @@ class Chunk:
         if not self.local_tile_table:
             self.local_tile_table = {}
 
-    def draw(): pass
-    def break_block_at(_x, _y, _tool, _dt): pass
-    def break_wall_at(_x, _y, _tool, _dt): pass
-    def place_block_at(_x, _y, _item): pass
-    def place_wall_at(_x, _y, _item): pass
-    def update(_dt): pass
+    def draw( self , _rect = [ 0 , 0 , CHUNK_WIDTH , CHUNK_HEIGHT ] ): pass
+        # First we blit the transparent color of air
+        # Then we blit the tiles/walls
+        # Then we blit the tile modifiers (cracks, glows, etc.)
+        # Then we blit the liquids / fire
+
+
+    def break_block_at( _x , _y , _item , _dt ): pass
+        # Left click was done at the coordinates x, y for dt time using item tool at the block level
+        # the behaviour of tool is acted using its corresponding function which we can get from a dictionary
+
+    def break_wall_at( _x , _y , _item , _dt ): pass
+        # Left click was done at the coordinates x, y for dt time using item tool at the wall level
+        # the behaviour of tool is acted using its corresponding function which we can get from a dictionary
+
+    def place_block_at( _x , _y , _item , _dt ): pass
+        # Right click was done at the coordinates x, y for dt time using item item at the block level
+        # the behaviour of item is acted using its corresponding function which we can get from a dictionary
+
+    def place_wall_at( _x , _y , _item , _dt ): pass
+        # Right click was done at the coordinates x, y for dt time using item item at the wall level
+        # the behaviour of item is acted using its corresponding function which we can get from a dictionary
+
+    def update( _dt ): pass
+        # First we update the state of all the blocks using their respective function calls (growing trees, flowers, decaying blocks etc)
+        # Fire spread
+        # Liquid movement
 
 class ChunkBuffer:
     def __init__(): pass

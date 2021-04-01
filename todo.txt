@@ -43,6 +43,17 @@ Classes
 Data
 - constants
 - tiles
+- tile behaviours
 - items
+- item behaviours
 - miscGUI
 - crafting
+
+In multiplayer, there is a server and there are clients
+Even the person running the server must connect to it as a client
+Each player has their own copy of the chunk buffer which they get from the server (changes are saved to the server, not on the client)
+Each player has their own copy of the entity buffer which they get from the server (changes are saved to the server, not on the client)
+All rendering business (on-screen and in-place) are done by the client
+
+liquids will be modifiers which will be used as overlays on top of existing blocks an empty slot
+can have a certain liquid level but not a regular block
