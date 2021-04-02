@@ -79,7 +79,7 @@ class Chunk:
 
 class ChunkBuffer:
 
-    def __init__( self , _len ):
+    def __init__( self , _len , _middle = 0 ):
 
         # size and positions of chunks in the world
         self.len            = _len
@@ -89,7 +89,7 @@ class ChunkBuffer:
         self.chunks         = [None] * _len
         self.light_surfs    = [None] * _len
 
-        # References to the other managers
+        # References to the other managers (These must be provided in the main)
         self.entity_buffer  = None
         self.renderer       = None
         self.serializer     = None

@@ -1,11 +1,5 @@
 from game_utilities import *
 
-# from Old.constants import *
-# # from constants import *
-# import Old.tiles as tiles
-# import items, math, pickle, pygame
-#
-#
 # class Hitbox:
 #     def __init__( self ):
 #         pass
