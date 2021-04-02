@@ -1,6 +1,10 @@
 import sqlite3, bz2, os, math
 from functools import lru_cache
 
+from constants import *
+
+class Renderer:
+    def __init__( self ): pass
 
 class Serializer:
     def __init__( self, target ):
@@ -321,9 +325,9 @@ class Voronoi:
                                                 math.floor(yCan),
                                                 math.floor(zCan), 0))
 
-v = Voronoi()
-import time
-chk_a = time.time()
-for i in range(64*16):
-    a = v[(23.32,234.423,4324.33)]
-print(time.time()-chk_a)
+# v = Voronoi()
+# import time
+# chk_a = time.time()
+# for i in range(64*16):
+#     a = v[(23.32,234.423,4324.33)]
+# print(time.time()-chk_a)

@@ -1,4 +1,4 @@
-from constants import *
+from game_utilities import *
 
 # from Old.constants import *
 # # from constants import *
