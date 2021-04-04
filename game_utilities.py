@@ -3,8 +3,57 @@ from functools import lru_cache
 
 from constants import *
 
+# Translations
+#     From                        To
+# 1   array-space                 chunk-space
+#     coordinates in the array    coordinates in the chunk
+# 2   chunk-space                 world-space
+#     coordinates in the chunk    coordinates in the world (absolute coordinates)
+# 3   world-space                 camera-space
+#     coordinates in the world    coordinates relative to camera
+# 4   camera-space                screen-space
+#     coordinates in the array    coordinates on the display
+
 class Renderer:
-    def __init__( self ): pass
+
+    def __init__( self ):
+
+        # References to other managers (must be provided in main)
+        self.entity_buffer  = None
+        self.chunk_buffer   = None
+        self.serializer     = None
+        self.player         = None
+
+        # Reference to camera and screen surface
+        self.camera         = None
+        self.screen         = None
+
+        # Reference to window size
+        self.window_size    = None
+
+        # Index of the middle chunk (the chunk the camera is in)
+        self.middle         = None
+
+        # Indexes of the top and bottom most pixels of the chunk to be rendered
+        self.up_index       = None
+        self.down_index     = None
+
+        # Number of pixels on the top and bottom half of the screen
+        self.num_hor        = None
+        self.num_ver        = None
+
+    def initialize( self , _entity_buffer , _chunk_buffer , _serializer , _player , _camera , _screen ):
+
+        self.entity_buffer  = _entity_buffer
+        self.chunk_buffer   = _chunk_buffer
+        self.serializer     = _serializer
+        self.player         = _player
+        self.camera         = _camera
+        self.screen         = _screen
+
+    def paint_screen( self ): pass
+    def update_size( self ): pass
+    def update_camera( self ): pass
 
 class Serializer:
     def __init__( self, target ):

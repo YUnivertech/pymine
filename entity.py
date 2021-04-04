@@ -1,5 +1,14 @@
 from game_utilities import *
 
+# ! def initialize( self , _renderer , _chunk_buffer , _serializer , _player , _camera , _screen ):
+
+# !    self.renderer       = _renderer
+# !    self.chunk_buffer   = _chunk_buffer
+# !    self.serializer     = _serializer
+# !    self.player         = _player
+# !    self.camera         = _camera
+# !    self.screen         = _screen
+
 # class Hitbox:
 #     def __init__( self ):
 #         pass

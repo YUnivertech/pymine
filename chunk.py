@@ -95,6 +95,15 @@ class ChunkBuffer:
         self.serializer     = None
         self.player         = None
 
+    def initialize( self , _entity_buffer , _renderer , _serializer , _player , _camera , _screen ):
+
+        self.entity_buffer  = _entity_buffer
+        self.renderer       = _renderer
+        self.serializer     = _serializer
+        self.player         = _player
+        self.camera         = _camera
+        self.screen         = _screen
+
     def draw( self ):
 
         for chunk in self.chunks: chunk.draw()
