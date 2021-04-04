@@ -3,6 +3,17 @@ import pygame
 import pygame.freetype
 import enum
 
+# ! --------------------------------------------------
+# ! |           WE DO NOT USE MAGIC NUMBERS          |
+# ! |           WE DO NOT USE MAGIC NUMBERS          |
+# ! |           WE DO NOT USE MAGIC NUMBERS          |
+# ! |           WE DO NOT USE MAGIC NUMBERS          |
+# ! |           WE DO NOT USE MAGIC NUMBERS          |
+# ! |           WE DO NOT USE MAGIC NUMBERS          |
+# ! |           WE DO NOT USE MAGIC NUMBERS          |
+# ! |           WE DO NOT USE MAGIC NUMBERS          |
+# ! --------------------------------------------------
+
 # Infinity
 INF                 = math.inf
 
@@ -112,13 +123,14 @@ class item_modifs( enum.Enum ):
 
 class items( enum.Enum ):
 
+    # inventory slot
     slot            = 0
 
+    # hellish blocks
     bedrock         = 1
     obsidian        = 2
     hellstone       = 3
 
-    unobtanium_ore  = 4
     diamond_ore     = 5
     platinum_ore    = 6
     gold_ore        = 7
@@ -201,16 +213,20 @@ class items( enum.Enum ):
     snow                 = 75
     ice                  = 76
 
+    # glass items
     glass                = 77
     glasspane            = 78
     glasswindow          = 78
 
+    # Ranged weapons
     bow                  = 80
     arrow                = 81
 
+    # Animal hides
     deerskin             = 82
     rottenleather        = 83
 
+    # pickaxes
     wood_pickaxe         = 90
     stone_pickaxe        = 91
     copper_pickaxe       = 92
@@ -222,6 +238,7 @@ class items( enum.Enum ):
     hellstone_pickaxe    = 98
     adamantite_pickaxe   = 99
 
+    # axes
     wood_axe             = 100
     stone_axe            = 101
     copper_axe           = 102
@@ -233,6 +250,7 @@ class items( enum.Enum ):
     hellstone_axe        = 108
     adamantite_axe       = 109
 
+    # battleaxes
     wood_battleaxe       = 110
     stone_battleaxe      = 111
     copper_battleaxe     = 112
@@ -244,6 +262,7 @@ class items( enum.Enum ):
     hellstone_battleaxe  = 118
     adamantite_battleaxe = 119
 
+    # swords
     wood_sword           = 120
     stone_sword          = 121
     copper_sword         = 122
@@ -255,25 +274,32 @@ class items( enum.Enum ):
     hellstone_sword      = 128
     adamantite_sword     = 129
 
+    # doors
     wood_door            = 130
     iron_door            = 131
     gold_door            = 132
     platinum_door        = 133
 
+    # lighter
     lighter              = 140
 
+    # bed and bucket
     bed                  = 141
     iron_bucket          = 142
 
+    # food items acquired from trees
     berry                = 143
     apple                = 144
 
+    # food items acquired through violence
     chicken              = 145
     deermeat             = 146
     rottenmeat           = 147
 
+    # torch
     torch                = 148
 
+    # items for interactable tiles
     crafting_table       = 149
     furnace              = 150
 
