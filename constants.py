@@ -20,76 +20,26 @@ CHUNK_HEIGHT_P      = TILE_WIDTH * CHUNK_HEIGHT
 # Constant to determine the linear interpolation of the camera
 LERP_C              = 0.025
 
-# Font for displaying item names in inventory
-# INV_FONT            = pygame.freetype.SysFont( 'Consolas' , size = 16 , bold = True )
+# Constants for entity and physics (time_unit = seconds, length_unit = points)
+GRAVITY_ACC         = 0.98
+JUMP_VEL            = 1
+SCALE_VEL           = TILE_WIDTH * 12    # 16 is number of tiles to move
+AIR_FRICTION        = 0.2
+DEFAULT_FRICTION    = 0.5
+MAX_ACC             = 1
+MAX_VEL             = 1
+HITBOX_WIDTH        = TILE_WIDTH-2
+HITBOX_HEIGHT       = TILE_WIDTH+6
+PLYR_WIDTH          = TILE_WIDTH+2      # 36
+PLYR_HEIGHT         = TILE_WIDTH+14    # 54
+PLYR_RANGE          = 4*TILE_WIDTH
+INV_COLS            = 10
+INV_ROWS            = 3
 
-# import math, pygame.freetype
-#
 # # Initalize pygame and start the clock
 # pygame.init()
 # clock = pygame.time.Clock()
-#
-# # Width of an individual tile unit (in points)
-# TILE_WIDTH       = 16
-#
-# # Width, height of chunk (in tiles)
-# CHUNK_WIDTH      = 16
-# CHUNK_HEIGHT     = 512
-#
-# # Width, height of chunk (in points)
-# CHUNK_HEIGHT_P   = CHUNK_HEIGHT * TILE_WIDTH
-# CHUNK_WIDTH_P    = CHUNK_WIDTH * TILE_WIDTH
-#
-# # Constants for chunk generation
-# BEDROCK_LOWER_X  = 0.1
-# BEDROCK_LOWER_Y  = 0.2
-# BEDROCK_UPPER_X  = 0.1
-# BEDROCK_UPPER_Y  = 0.2
-# CAVE_X           = 0.05
-# CAVE_Y           = 0.1
-# UNDERGROUND_X    = 0.05
-# UNDERGROUND_Y    = 0.1
-#
-# # Infinity
-# INF = math.inf
-#
-# # Constants for camera
-# LERP_C           = 0.025
-#
-# # Constants for entity and physics (time_unit = seconds, length_unit = points)
-# GRAVITY_ACC      = 0.98
-# JUMP_VEL         = 1
-# SCALE_VEL        = TILE_WIDTH * 12    # 16 is number of tiles to move
-# AIR_FRICTION     = 0.2
-# DEFAULT_FRICTION = 0.5
-# MAX_ACC          = 1
-# MAX_VEL          = 1
-# HITBOX_WIDTH     = TILE_WIDTH-2
-# HITBOX_HEIGHT    = TILE_WIDTH+6
-# PLYR_WIDTH       = TILE_WIDTH+2      # 36
-# PLYR_HEIGHT      = TILE_WIDTH+14    # 54
-# PLYR_RANGE       = 4*TILE_WIDTH
-# INV_COLS         = 10
-# INV_ROWS         = 3
-#
-# # Tiles, items, entities
-# ID               = 0
-#
-# # Tiles
-# LUMINOSITY       = 1
-# FRICTION         = 2
-# BREAKTIME        = 3
-# HEALTH           = 4
-# INFLAMMABLE      = 5
-# LTIMPERMEABILITY = 6
-# DROPS            = 7
-#
-# # items
-# PLACEABLE        = 8
-# PLACES           = 9
-# DAMAGE           = 10
-# MAX_STACK        = 11
-#
+
 # # entities
 # WEIGHT           = 12
 # INV_FONT         = pygame.freetype.SysFont('Consolas', size=16, bold=True)
@@ -98,7 +48,26 @@ LERP_C              = 0.025
 
 # ! ----------------------------------------------------------------
 
+class tile_attr( enum.Enum ):
+
+    # Light related attributes
+    LUMINOSITY      = 0
+    LTIMPERM        = 1
+
+    # Health related attributes
+    HEALTH          = 2
+    INFLAMMABLE     = 3
+
+    # Physics related attributes
+    FRICTION        = 4
+
+    # Gameplay related attributes
+    DROPS           = 5
+    TYPE            = 6
+
 class tile_modifs( enum.Enum ):
+
+    # Modifier to indicate tile is cracked
     crack           = 0
 
 class tiles( enum.Enum ):
@@ -128,14 +97,188 @@ class tiles( enum.Enum ):
     clay            = 17
     red_clay        = 18
 
-
     brown_dirt      = 20
 
+class item_attr( enum.Enum ):
+    PLACEABLE        = 1
+    PLACES           = 2
+    DAMAGE           = 3
+    MAX_STACK        = 4
+    HAND_DAMAGE      = 30
+    USE              = 13
+
+class item_modifs( enum.Enum ):
+    pass
+
 class items( enum.Enum ):
-    air = 0
+
+    slot            = 0
+
+    bedrock         = 1
+    obsidian        = 2
+    hellstone       = 3
+
+    unobtanium_ore  = 4
+    diamond_ore     = 5
+    platinum_ore    = 6
+    gold_ore        = 7
+    iron_ore        = 8
+    copper_ore      = 9
+
+    granite         = 10
+    quartz          = 11
+    limestone       = 12
+    greystone       = 13
+    sandstone       = 14
+
+    gravel          = 15
+    coke            = 16
+
+    clay            = 17
+    red_clay        = 18
+
+    brown_dirt      = 20
+    grass           = 21
+    snowygrass      = 22
+
+    stick                = 4
+
+    junglewood           = 10
+    junglewood_plank     = 11
+    oakwood              = 12
+    oakwood_plank        = 13
+    borealwood           = 14
+    borealwood_plank     = 15
+    pinewood             = 16
+    pinewood_plank       = 17
+    cactuswood           = 18
+    cactuswood_plank     = 19
+    palmwood             = 20
+    palmwood_plank       = 21
+
+    cosmonium_ore        = 30
+    cosmonium_ingot      = 31
+    cosmonium_block      = 32
+    unobtanium_ore       = 33
+    unobtanium_ingot     = 34
+    unobtanium_block     = 35
+    platinum_ore         = 36
+    platinum_ingot       = 37
+    platinum_block       = 38
+    gold_ore             = 39
+    gold_brick           = 40
+    gold_block           = 41
+    iron_ore             = 42
+    iron_ingot           = 43
+    iron_block           = 44
+    copper_ore           = 45
+    copper_ingot         = 46
+    copper_block         = 47
+
+    diamond_ore          = 50
+    diamond_gem          = 51
+    diamond_block        = 52
+    hellstone            = 53
+    adamantite           = 54
+    adamantite_block     = 55
+    obsidian             = 56
+    bedrock              = 57
+
+    granite              = 60
+    quartz               = 61
+    limestone            = 62
+    greystone            = 63
+    sandstone            = 64
+
+    gravel               = 70
+    coal                 = 71
+
+    clay                 = 72
+    redClay              = 73
+
+    sand                 = 74
+
+    snow                 = 75
+    ice                  = 76
+
+    glass                = 77
+    glasspane            = 78
+    glasswindow          = 78
+
+    bow                  = 80
+    arrow                = 81
+
+    deerskin             = 82
+    rottenleather        = 83
+
+    wood_pickaxe         = 90
+    stone_pickaxe        = 91
+    copper_pickaxe       = 92
+    iron_pickaxe         = 93
+    gold_pickaxe         = 94
+    diamond_pickaxe      = 95
+    platinum_pickaxe     = 96
+    unobtanium_pickaxe   = 97
+    hellstone_pickaxe    = 98
+    adamantite_pickaxe   = 99
+
+    wood_axe             = 100
+    stone_axe            = 101
+    copper_axe           = 102
+    iron_axe             = 103
+    gold_axe             = 104
+    diamond_axe          = 105
+    platinum_axe         = 106
+    unobtanium_axe       = 107
+    hellstone_axe        = 108
+    adamantite_axe       = 109
+
+    wood_battleaxe       = 110
+    stone_battleaxe      = 111
+    copper_battleaxe     = 112
+    iron_battleaxe       = 113
+    gold_battleaxe       = 114
+    diamond_battleaxe    = 115
+    platinum_battleaxe   = 116
+    unobtanium_battleaxe = 117
+    hellstone_battleaxe  = 118
+    adamantite_battleaxe = 119
+
+    wood_sword           = 120
+    stone_sword          = 121
+    copper_sword         = 122
+    iron_sword           = 123
+    gold_sword           = 124
+    diamond_sword        = 125
+    platinum_sword       = 126
+    unobtanium_sword     = 127
+    hellstone_sword      = 128
+    adamantite_sword     = 129
+
+    wood_door            = 130
+    iron_door            = 131
+    gold_door            = 132
+    platinum_door        = 133
+
+    lighter              = 140
+
+    bed                  = 141
+    iron_bucket          = 142
+
+    berry                = 143
+    apple                = 144
+
+    chicken              = 145
+    deermeat             = 146
+    rottenmeat           = 147
+
+    torch                = 148
+
+    crafting_table       = 149
+    furnace              = 150
 
 
-# Tile table with names
+# Dictionary consisting of tile as key; name as a string
 TILE_NAMES = {
     tiles.air             : "air",
     tiles.bedrock         : "bedrock",
@@ -159,6 +302,7 @@ TILE_NAMES = {
     tiles.brown_dirt      : "dirt"
 }
 
+# Dictionary consisting of tile as key; list of surfaces of modifiers as value
 TILE_MODIFIERS = {
     tile_modifs.crack     :     [pygame.image.load("Resources/Default/break{}.png".format(i)) for i in range(0, 9)]
     # tile_modifs.on_fire:
@@ -167,6 +311,7 @@ TILE_MODIFIERS = {
     # tile_modifs.lava :
 }
 
+# Dictionary consisting of tile as key; surface (image) as value
 TILE_TABLE = {
 
     tiles.bedrock         : pygame.image.load("Resources/Default/bedrock.png"),
@@ -190,209 +335,31 @@ TILE_TABLE = {
     tiles.brown_dirt      : pygame.image.load("Resources/Default/browndirt.png")
 }
 
-# TILE_ATTR = {
-#     air           :{LUMINOSITY:255},
-#     bedrock       :{ID:1,  FRICTION:0.8,  LUMINOSITY:0,   HEALTH:INF, INFLAMMABLE:None},
-#     obsidian      :{ID:2,  FRICTION:0.8,  LUMINOSITY:0,   HEALTH:100, INFLAMMABLE:0   },
-#     hellstone     :{ID:3,  FRICTION:0.8,  LUMINOSITY:255, HEALTH:100, INFLAMMABLE:0   },
-#     unobtaniumOre :{ID:4,  FRICTION:0.8,  LUMINOSITY:160, HEALTH:90,  INFLAMMABLE:None},
-#     diamondOre    :{ID:5,  FRICTION:0.8,  LUMINOSITY:175, HEALTH:90,  INFLAMMABLE:None},
-#     platinumOre   :{ID:6,  FRICTION:0.8,  LUMINOSITY:160, HEALTH:80,  INFLAMMABLE:None},
-#     goldOre       :{ID:7,  FRICTION:0.8,  LUMINOSITY:160, HEALTH:70,  INFLAMMABLE:None},
-#     ironOre       :{ID:8,  FRICTION:0.8,  LUMINOSITY:160, HEALTH:70,  INFLAMMABLE:None},
-#     granite       :{ID:9,  FRICTION:0.8,  LUMINOSITY:0,   HEALTH:55,  INFLAMMABLE:None},
-#     quartz        :{ID:10, FRICTION:0.8,  LUMINOSITY:0,   HEALTH:55,  INFLAMMABLE:None},
-#     limestone     :{ID:11, FRICTION:0.8,  LUMINOSITY:0,   HEALTH:55,  INFLAMMABLE:None},
-#     copperOre     :{ID:12, FRICTION:0.8,  LUMINOSITY:160, HEALTH:60,  INFLAMMABLE:None},
-#     greystone     :{ID:13, FRICTION:0.8,  LUMINOSITY:0,   HEALTH:55,  INFLAMMABLE:None},
-#     sandstone     :{ID:14, FRICTION:0.8,  LUMINOSITY:0,   HEALTH:50,  INFLAMMABLE:None},
-#     gravel        :{ID:15, FRICTION:0.8,  LUMINOSITY:0,   HEALTH:50,  INFLAMMABLE:None},
-#     coke          :{ID:16, FRICTION:0.8,  LUMINOSITY:160, HEALTH:50,  INFLAMMABLE:None},
-#     clay          :{ID:17, FRICTION:0.9,  LUMINOSITY:0,   HEALTH:45,  INFLAMMABLE:None},
-#     redClay       :{ID:18, FRICTION:0.9,  LUMINOSITY:0,   HEALTH:45,  INFLAMMABLE:None},
-#     browndirt     :{ID:20, FRICTION:0.8,  LUMINOSITY:0,   HEALTH:30,  INFLAMMABLE:None}
-#
-# }
-#
-#
-# def loadImageTable():
-#     for key in TILE_TABLE:
-#         TILE_TABLE[key] = pygame.transform.smoothscale(TILE_TABLE[key], (TILE_WIDTH, TILE_WIDTH))
-#         TILE_TABLE[key] = TILE_TABLE[key].convert_alpha()
-#     for key in TILE_MODIFIERS:
-#         for i in range(0, len(TILE_MODIFIERS[key])):
-#             TILE_MODIFIERS[key][i] = pygame.transform.smoothscale( TILE_MODIFIERS[key][i], ( TILE_WIDTH, TILE_WIDTH ) )
-#             TILE_MODIFIERS[key][i] = TILE_MODIFIERS[key][i].convert_alpha()
+# Dictionary consisting of tile as key; dictionary consisting of tile attribute as key and attribute as value as value
+TILE_ATTR = {
+    tiles.air           : {tile_attr.LUMINOSITY:255},
+    tiles.bedrock       : {tile_attr.FRICTION:0.8,  tile_attr.LUMINOSITY:0,   tile_attr.HEALTH:INF, tile_attr.INFLAMMABLE:None},
+    tiles.obsidian      : {tile_attr.FRICTION:0.8,  tile_attr.LUMINOSITY:0,   tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:0   },
+    tiles.hellstone     : {tile_attr.FRICTION:0.8,  tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:0   },
+    tiles.unobtaniumOre : {tile_attr.FRICTION:0.8,  tile_attr.LUMINOSITY:160, tile_attr.HEALTH:90,  tile_attr.INFLAMMABLE:None},
+    tiles.diamondOre    : {tile_attr.FRICTION:0.8,  tile_attr.LUMINOSITY:175, tile_attr.HEALTH:90,  tile_attr.INFLAMMABLE:None},
+    tiles.platinumOre   : {tile_attr.FRICTION:0.8,  tile_attr.LUMINOSITY:160, tile_attr.HEALTH:80,  tile_attr.INFLAMMABLE:None},
+    tiles.goldOre       : {tile_attr.FRICTION:0.8,  tile_attr.LUMINOSITY:160, tile_attr.HEALTH:70,  tile_attr.INFLAMMABLE:None},
+    tiles.ironOre       : {tile_attr.FRICTION:0.8,  tile_attr.LUMINOSITY:160, tile_attr.HEALTH:70,  tile_attr.INFLAMMABLE:None},
+    tiles.granite       : {tile_attr.FRICTION:0.8,  tile_attr.LUMINOSITY:0,   tile_attr.HEALTH:55,  tile_attr.INFLAMMABLE:None},
+    tiles.quartz        : {tile_attr.FRICTION:0.8,  tile_attr.LUMINOSITY:0,   tile_attr.HEALTH:55,  tile_attr.INFLAMMABLE:None},
+    tiles.limestone     : {tile_attr.FRICTION:0.8,  tile_attr.LUMINOSITY:0,   tile_attr.HEALTH:55,  tile_attr.INFLAMMABLE:None},
+    tiles.copperOre     : {tile_attr.FRICTION:0.8,  tile_attr.LUMINOSITY:160, tile_attr.HEALTH:60,  tile_attr.INFLAMMABLE:None},
+    tiles.greystone     : {tile_attr.FRICTION:0.8,  tile_attr.LUMINOSITY:0,   tile_attr.HEALTH:55,  tile_attr.INFLAMMABLE:None},
+    tiles.sandstone     : {tile_attr.FRICTION:0.8,  tile_attr.LUMINOSITY:0,   tile_attr.HEALTH:50,  tile_attr.INFLAMMABLE:None},
+    tiles.gravel        : {tile_attr.FRICTION:0.8,  tile_attr.LUMINOSITY:0,   tile_attr.HEALTH:50,  tile_attr.INFLAMMABLE:None},
+    tiles.coke          : {tile_attr.FRICTION:0.8,  tile_attr.LUMINOSITY:160, tile_attr.HEALTH:50,  tile_attr.INFLAMMABLE:None},
+    tiles.clay          : {tile_attr.FRICTION:0.9,  tile_attr.LUMINOSITY:0,   tile_attr.HEALTH:45,  tile_attr.INFLAMMABLE:None},
+    tiles.redClay       : {tile_attr.FRICTION:0.9,  tile_attr.LUMINOSITY:0,   tile_attr.HEALTH:45,  tile_attr.INFLAMMABLE:None},
+    tiles.browndirt     : {tile_attr.FRICTION:0.8,  tile_attr.LUMINOSITY:0,   tile_attr.HEALTH:30,  tile_attr.INFLAMMABLE:None}
+}
 
-# ! ----------------------------------------------------------------------
-
-# from Old.constants import *
-#
-# HAND_DAMAGE = 30
-# USE = 13
-#
-# slot                 = 0
-#
-# # items for dirt and grass blocks
-# grass                = 1
-# browndirt            = 2
-# snowygrass           = 3
-# stick                = 4
-#
-# # wood
-# junglewood           = 10
-# junglewood_plank     = 11
-# oakwood              = 12
-# oakwood_plank        = 13
-# borealwood           = 14
-# borealwood_plank     = 15
-# pinewood             = 16
-# pinewood_plank       = 17
-# cactuswood           = 18
-# cactuswood_plank     = 19
-# palmwood             = 20
-# palmwood_plank       = 21
-#
-# # metals
-# cosmonium_ore        = 30
-# cosmonium_ingot      = 31
-# cosmonium_block      = 32
-# unobtanium_ore       = 33
-# unobtanium_ingot     = 34
-# unobtanium_block     = 35
-# platinum_ore         = 36
-# platinum_ingot       = 37
-# platinum_block       = 38
-# gold_ore             = 39
-# gold_brick           = 40
-# gold_block           = 41
-# iron_ore             = 42
-# iron_ingot           = 43
-# iron_block           = 44
-# copper_ore           = 45
-# copper_ingot         = 46
-# copper_block         = 47
-#
-# # non-metals
-# diamond_ore          = 50
-# diamond_gem          = 51
-# diamond_block        = 52
-# hellstone            = 53
-# adamantite           = 54
-# adamantite_block     = 55
-# obsidian             = 56
-# bedrock              = 57
-#
-# # items for the stones
-# granite              = 60
-# quartz               = 61
-# limestone            = 62
-# greystone            = 63
-# sandstone            = 64
-#
-# # items for transition blocks
-# gravel               = 70
-# coal                 = 71
-#
-# # items for the clay blocks
-# clay                 = 72
-# redClay              = 73
-#
-# # item for the sand block
-# sand                 = 74
-#
-# # items for snowy blocks
-# snow                 = 75
-# ice                  = 76
-#
-# # items for the glass blocks
-# glass                = 77
-# # glasspane          = 78
-# glasswindow          = 78
-#
-# # bow and arrow
-# bow                  = 80
-# arrow                = 81
-#
-# # animal hides
-# deerskin             = 82
-# rottenleather        = 83
-#
-# # pickaxes
-# wood_pickaxe         = 90
-# stone_pickaxe        = 91
-# copper_pickaxe       = 92
-# iron_pickaxe         = 93
-# gold_pickaxe         = 94
-# diamond_pickaxe      = 95
-# platinum_pickaxe     = 96
-# unobtanium_pickaxe   = 97
-# hellstone_pickaxe    = 98
-# adamantite_pickaxe   = 99
-#
-# # axes
-# wood_axe             = 100
-# stone_axe            = 101
-# copper_axe           = 102
-# iron_axe             = 103
-# gold_axe             = 104
-# diamond_axe          = 105
-# platinum_axe         = 106
-# unobtanium_axe       = 107
-# hellstone_axe        = 108
-# adamantite_axe       = 109
-#
-# # battle axes
-# wood_battleaxe       = 110
-# stone_battleaxe      = 111
-# copper_battleaxe     = 112
-# iron_battleaxe       = 113
-# gold_battleaxe       = 114
-# diamond_battleaxe    = 115
-# platinum_battleaxe   = 116
-# unobtanium_battleaxe = 117
-# hellstone_battleaxe  = 118
-# adamantite_battleaxe = 119
-#
-# # swords
-# wood_sword           = 120
-# stone_sword          = 121
-# copper_sword         = 122
-# iron_sword           = 123
-# gold_sword           = 124
-# diamond_sword        = 125
-# platinum_sword       = 126
-# unobtanium_sword     = 127
-# hellstone_sword      = 128
-# adamantite_sword     = 129
-#
-# # door
-# wood_door            = 130
-# iron_door            = 131
-# gold_door            = 132
-# platinum_door        = 133
-#
-# # lighter
-# lighter              = 140
-#
-# # bed and bucket
-# bed                  = 141
-# iron_bucket          = 142
-#
-# # fruits
-# berry                = 143
-# apple                = 144
-#
-# # meats
-# chicken              = 145
-# deermeat             = 146
-# rottenmeat           = 147
-#
-# torch                = 148
-#
-# crafting_table       = 149
-# furnace              = 150
-#
+# # Dictionary consisting of item as key; name as a string
 # ITEM_NAMES = {
 #     grass                : "grass",
 #     browndirt            : "dirt",
@@ -510,11 +477,13 @@ TILE_TABLE = {
 #     crafting_table       : "crafting table",
 #     furnace              : "furnace"
 # }
-#
+
+# Dictionary consisting of item as key; surface (image) as value
 # ITEM_TABLE = {
 #     slot : pygame.image.load( "../Resources/Default/InventorySpace.png" )
 # }
-#
+
+# Dictionary consisting of item as key; dictionary consisting of item attribute as key and attribute as value as value
 # ITEM_ATTR = {
 #     grass                : {ID:grass               , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
 #     browndirt            : {ID:browndirt           , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
@@ -632,8 +601,14 @@ TILE_TABLE = {
 #     crafting_table       : {ID:crafting_table      , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
 #     furnace              : {ID:furnace             , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None }
 # }
-#
-#
+
 # def loadImageTable():
+#     for key in TILE_TABLE:
+#         TILE_TABLE[key] = pygame.transform.smoothscale(TILE_TABLE[key], (TILE_WIDTH, TILE_WIDTH))
+#         TILE_TABLE[key] = TILE_TABLE[key].convert_alpha()
+#     for key in TILE_MODIFIERS:
+#         for i in range(0, len(TILE_MODIFIERS[key])):
+#             TILE_MODIFIERS[key][i] = pygame.transform.smoothscale( TILE_MODIFIERS[key][i], ( TILE_WIDTH, TILE_WIDTH ) )
+#             TILE_MODIFIERS[key][i] = TILE_MODIFIERS[key][i].convert_alpha()
 #     for key in ITEM_TABLE:
 #         ITEM_TABLE[key] = ITEM_TABLE[key].convert_alpha()
