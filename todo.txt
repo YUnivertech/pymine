@@ -1,3 +1,6 @@
+template for all initializer methods
+_chunk_buffer , _entity_buffer , _player , _renderer , _serializer , _camera , _screen
+
 breaking placing based on key press and USE function
 
 fix surfpos and other pos

@@ -142,7 +142,7 @@ class Chunk:
         self.local_tile_table   = _local_tile_table
         self.index              = _index
 
-        self.created            = _time
+        # self.created            = _time
         self.active_time        = _active_time
 
         self.surf               = pygame.surface( ( CHUNK_WIDTH_P , CHUNK_HEIGHT_P ) , flags = pygame.SRCALPHA )
@@ -216,7 +216,7 @@ class ChunkBuffer:
 
         # size and positions of chunks in the world
         self.len            = _len
-        self.positions      = [None] * _len
+        self.positions      = [None] * 3
 
         # chunk and light surface data
         self.chunks         = [None] * _len
@@ -242,6 +242,69 @@ class ChunkBuffer:
 
         for chunk in self.chunks: chunk.draw()
 
-    def shift( self , _delta ): pass
-    def save( self ): pass
-    def load( self ): pass
+    def shift( self , _delta ):
+        if _delta > 0:      self.shift_left( _delta )
+        elif _delta < 0:    self.shift_right( -_delta )
+
+    def shift_right( self , _delta ):
+
+        for i , pos in enumerate( range( self.positions[2] , self.positions[2] - _delta , -1 ) ):
+
+            li                      = [ self.chunks[self.len-1-i].blocks, self.chunks[self.len-1-i].walls ]
+            lo                      = self.chunk[self.len-1-i].local_tile_table
+
+            self.serializer[pos]    = li, lo
+
+        for i in range( self.len - 1, _delta - 1, -1 ):
+
+            self.chunks[i]          = self.chunks[i - _delta]
+
+        loadedChunks =  [None] * _delta
+        for i , pos in enumerate( range( self.positions[0] - _delta , self.positions[0] ) ):
+
+            loadedChunks[i]         = self.serializer[pos]
+            self.chunks[i]          = loadedChunks[i]
+            # Process the chunks before putting it in however
+
+        self.positions[0] -= _delta
+        self.positions[1] -= _delta
+        self.positions[2] -= _delta
+
+    def shift_left( self , _delta ):
+
+        for i , pos in enumerate( range( self.positions[0] , self.positions[0] + _delta ) ):
+
+            li                      = [ self.chunks[i].blocks , self.chunks[i].walls ]
+            lo                      = self.chunk[i].local_tile_table
+
+            self.serializer[pos]    = li , lo
+
+        for i in range( self.length - _delta ):
+
+            self.chunks[i]          = self.chunks[i + _delta]
+
+        loaded_chunks =  [None] * _delta
+        for i , pos in enumerate( range( self.len - _delta , self.len ) ):
+
+            loaded_chunks[i]        = self.serializer[self.positions[2] + i + 1]
+            self.chunks[pos]        = loaded_chunks[i]
+            # Process the chunks before putting it in however
+
+        self.positions[0] += _delta
+        self.positions[1] += _delta
+        self.positions[2] += _delta
+
+    def save( self ):
+
+        for chunk in self.chunks:
+            self.serializer[chunk.index] = pickle.dumps( [ chunk.blocks , chunk.walls ] ) , pickle.dumps( chunk.local_tile_table )
+
+    def load( self ):
+
+        for i in range( self.len ):
+            self.chunks[i] = self.serializer[self.positions[0] + i]
+        # Now generate and process the chunks as much as required
+
+    def __getitem__( self , _key ): return self.chunks[_key]
+
+    def __setitem__( self , _key , _val ): self.chunks[ _key ] = _val

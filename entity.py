@@ -342,30 +342,50 @@ from game_utilities import *
 #             coors[0] += 40      # ! MAGIC NUMBER
 #
 #
-# class EntityBuffer:
-#     def __init__( self ):
-#         pass
-#
-#     def add_player( self ):
-#         pass
-#
-#     def add_entity( self ):
-#         pass
-#
-#     def hit( self ):
-#         pass
-#
-#     def pick_item( self ):
-#         pass
-#
-#     def entity_in_range( self ):
-#         pass
-#
-#     def update( self ):
-#         pass
-#
-#     def draw( self ):
-#         pass
-#
-#     def shift( self, d):
-#         pass
+class EntityBuffer:
+    def __init__( self ):
+
+        # References to other managers (must be provided in main)
+        self.chunk_buffer   = None
+        self.player         = None
+        self.renderer       = None
+        self.serializer     = None
+        self.player         = None
+
+        # Reference to camera and screen surface
+        self.camera         = None
+        self.screen         = None
+
+    def initialize( self , _chunk_buffer , _player , _renderer , _serializer , _camera , _screen ):
+
+        # Set all references to main managers
+        self.chunk_buffer   = _chunk_buffer
+        self.player         = _player
+        self.renderer       = _renderer
+        self.serializer     = _serializer
+        self.camera         = _camera
+        self.screen         = _screen
+
+    def add_player( self ):
+        pass
+
+    def add_entity( self ):
+        pass
+
+    def hit( self ):
+        pass
+
+    def pick_item( self ):
+        pass
+
+    def entity_in_range( self ):
+        pass
+
+    def update( self ):
+        pass
+
+    def draw( self ):
+        pass
+
+    def shift( self, d):
+        pass

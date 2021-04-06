@@ -14,101 +14,6 @@ from constants import *
 # 4   camera-space                screen-space
 #     coordinates in the array    coordinates on the display
 
-'''
-def updateScreen(  cls  ):
-
-        """Renders the surfaces of each chunk (in the active chunk buffer) on to the window
-        """
-
-        rightWalker     =  cls.midChunk        # Goes from the index of the middle chunk to the right-most chunk
-        leftWalker      =  cls.midChunk - 1    # Goes from the index of the chunk one before the middle to the left-most chunk
-
-        # Loop to render chunks on the right of the camera (including the camera's chunk)
-        while( rightWalker < cls.length ):
-
-            tileWalker      =  0    # Goes from the index of the left-most to the right-most tile in the chunk
-
-            # Loop to render each individual vertical slice of the chunk
-            while( tileWalker < CHUNK_WIDTH ):
-
-                sliceInd        =  ( cls.chunkBuffer[rightWalker].index * CHUNK_WIDTH ) + tileWalker   # Absoulute index of the current vertical slice
-                slicePos        =  [sliceInd * TILE_WIDTH - cls.camera[0] + cls.numHor, 0]             # List containing the coordinates where the slice must be blitted on-screen
-
-                sliceRect       =  [tileWalker * TILE_WIDTH, cls.upIndex, TILE_WIDTH, cls.downIndex]   # Rectangular region containing the "visible" area of the chunk's surface
-                sliceSurf       =  cls.chunkBuffer[rightWalker].surface.subsurface( sliceRect )       # Mini-surface containing the visible region of the chunk's surface
-                lightSurf       =  cls.chunkBuffer.lightSurfs[rightWalker].subsurface( sliceRect )      # Mini-surface containing the visible region of the chunk's lightmap
-
-                if( slicePos[0] > cls.windowSize[0] ):     # Stop blitting if slice is beyond the right edge od the window
-                    rightWalker     =  cls.length
-                    break
-
-                cls.screen.blit( sliceSurf, slicePos )
-                if(cls.isShader):
-                    cls.screen.blit( lightSurf, slicePos, special_flags = pygame.BLEND_RGBA_MULT )
-                tileWalker      += 1
-
-            rightWalker     += 1
-
-        # Loop to render chunks on the left of the camera (excluding the camera's chunk)
-        while( leftWalker >= 0 ):
-
-            tileWalker      =  CHUNK_WIDTH - 1    # Goes from the index of the left-most to the right-most tile in the chunk
-
-            # Loop to render each individual vertical slice of the chunk
-            while( tileWalker >= 0 ):
-
-                sliceInd  = ( cls.chunkBuffer[leftWalker].index * CHUNK_WIDTH ) + tileWalker     # Absoulute index of the current vertical slice
-                slicePos  = [sliceInd * TILE_WIDTH - cls.camera[0] + cls.numHor, 0]              # List containing the coordinates where the slice must be blitted on-screen
-                sliceRect = [tileWalker * TILE_WIDTH, cls.upIndex, TILE_WIDTH, cls.downIndex]    # Rectangular region containing the "visible" area of the chunk's surface
-                sliceSurf = cls.chunkBuffer[leftWalker].surface.subsurface( sliceRect )         # Mini-surface containing the visible region of the chunk's surface
-                lightSurf = cls.chunkBuffer.lightSurfs[leftWalker].subsurface( sliceRect )       # Mini-surface containing the visible region of the chunk's lightmap
-
-                if( slicePos[0] < -TILE_WIDTH ):    # Stop blitting if slice is bryond the left edge of the window
-                    leftWalker      =  -1
-                    break
-
-                cls.screen.blit ( sliceSurf, slicePos )
-                if(cls.isShader):
-                    cls.screen.blit( lightSurf, slicePos, special_flags = pygame.BLEND_RGBA_MULT )
-                tileWalker      -= 1
-
-            leftWalker      -= 1
-
-        # Temporary player crosshair rendering
-        playerCoors = [cls.player.pos[0], cls.player.pos[1]]
-
-        # Translate to be in camera space
-        playerCoors[0] -= cls.camera[0]
-        playerCoors[1] -= cls.camera[1]
-
-        # Translate to be in screen space
-        playerCoors[0] += cls.numHor
-        playerCoors[1] =  cls.numVer - playerCoors[1]
-
-        item = cls.player.inventory.getSelectedItem()
-        name, quantity = 'Nothing', cls.player.inventory.getSelectedQuantity()
-        if(tiles.TILE_NAMES.get( item, None )):
-            name = tiles.TILE_NAMES[item]
-        elif(items.ITEM_NAMES.get( item, None )):
-            name = items.ITEM_NAMES[item]
-
-        if(name != 'Nothing'): name += '  ' + str(quantity)
-        toShow, rect = SC_DISPLAY_FONT.render( name , (0, 0, 0) )
-        xVal = cls.screen.get_width() - toShow.get_width() - 8
-        cls.screen.blit(toShow, [xVal, 16])
-
-        # ! temporary rendering of player crosshair
-        pygame.draw.rect(cls.screen, (255,50,50), pygame.Rect(playerCoors[0]-PLYR_WIDTH//2, playerCoors[1]-PLYR_HEIGHT//2, PLYR_WIDTH, PLYR_HEIGHT))
-        cls.entityBuffer.draw()
-        for group in cls.entityBuffer.entities:
-            for entity in group:
-                coors = entity.surfPos()
-                coors[1] -= cls.camera[1]
-                coors[1] = cls.numVer - coors[1]
-                coors[0] += cls.numHor - cls.camera[0]
-                cls.screen.blit( entity.surf, coors )
-'''
-
 class Renderer:
 
     def __init__( self ):
@@ -137,13 +42,13 @@ class Renderer:
         self.num_hor        = None
         self.num_ver        = None
 
-    def initialize( self , _entity_buffer , _chunk_buffer , _serializer , _player , _camera , _screen , _window_size ):
+    def initialize( self , _chunk_buffer , _entity_buffer , _player , _serializer , _camera , _screen , _window_size ):
 
         # Set all references to main managers
-        self.entity_buffer  = _entity_buffer
         self.chunk_buffer   = _chunk_buffer
-        self.serializer     = _serializer
+        self.entity_buffer  = _entity_buffer
         self.player         = _player
+        self.serializer     = _serializer
         self.camera         = _camera
         self.screen         = _screen
 
@@ -152,7 +57,102 @@ class Renderer:
         self.update_size()
         self.update_camera()
 
-    def paint_screen( self ): pass
+    def paint_screen( self ):
+
+        # First we need to put the background picture
+        # This remains constant if you are very high or very low
+        # In the overworld, it changes from day to night
+
+        # right_walker    = self.middle
+        # left_walker     = self.middle - 1
+
+        flag            = False
+
+        for right_walker in range( self.middle , self.chunk_buffer.length ):
+
+            slice_ind       = self.chunk_buffer[right_walker].index * CHUNK_WIDTH       # Absoulute index of current vertical slice
+            slice_pos       = [ 0 , 0 ]                                                 # List containing coordinates of the location where the slice must be blit
+            slice_rect      = [ 0 , self.up_index , TILE_WIDTH , self.down_index ]      # Rectangular region containing the "visible" area of the chunk's surface
+
+            for tile_walker in range( 0 , CHUNK_WIDTH ):
+
+                slice_pos[0]    = ( slice_ind + tile_walker ) * TILE_WIDTH - self.camera[0] + self.num_hor
+                slice_rect[0]   = tile_walker * TILE_WIDTH
+
+                slice_surf      = self.chunk_buffer[ right_walker ].surface.subsurface( slice_rect )            # Mini-surface containing the visible region of the chunk's surface
+
+                if slice_pos[0] > self.window_size[0] :
+                    flag = True
+                    break
+
+                self.screen.blit( slice_surf, slice_pos )
+
+                # if(cls.isShader):
+                #     light_surf      = self.chunk_buffer.light_surfs[ right_walker ].subsurface( slice_rect )
+                #     cls.screen.blit( light_surf, slice_pos, special_flags = pygame.BLEND_RGBA_MULT )
+
+            if flag : break
+
+        flag = False
+
+        for left_walker in range( self.middle - 1, -1 , -1 ):
+
+            slice_ind       = self.chunk_buffer[left_walker].index * CHUNK_WIDTH        # Absoulute index of current vertical slice
+            slice_pos       = [ 0 , 0 ]                                                 # List containing coordinates of the location where the slice must be blit
+            slice_rect      = [ 0 , self.up_index , TILE_WIDTH , self.down_index ]      # Rectangular region containing the "visible" area of the chunk's surface
+
+            for tile_walker in range( CHUNK_WIDTH - 1 , -1 , -1 ):
+
+                slice_pos[0]    = ( slice_ind + tile_walker ) * TILE_WIDTH - self.camera[0] + self.num_hor
+                slice_rect[0]   = tile_walker * TILE_WIDTH
+
+                slice_surf      = self.chunk_buffer[ left_walker ].surface.subsurface( slice_rect )            # Mini-surface containing the visible region of the chunk's surface
+
+                if slice_pos[0] < -TILE_WIDTH :
+                    flag = True
+                    break
+
+                self.screen.blit( slice_surf, slice_pos )
+
+                # if(cls.isShader):
+                #     cls.screen.blit( light_surf, slice_pos, special_flags = pygame.BLEND_RGBA_MULT )
+                #     light_surf      = self.chunk_buffer.light_surfs[ left_walker ].subsurface( slice_rect )
+
+
+            if flag : break
+
+        # # Temporary player crosshair rendering
+        # playerCoors = [cls.player.pos[0], cls.player.pos[1]]
+
+        # # Translate to be in camera space
+        # playerCoors[0] -= cls.camera[0]
+        # playerCoors[1] -= cls.camera[1]
+
+        # # Translate to be in screen space
+        # playerCoors[0] += cls.numHor
+        # playerCoors[1] =  cls.numVer - playerCoors[1]
+
+        # item = cls.player.inventory.getSelectedItem()
+        # name, quantity = 'Nothing', cls.player.inventory.getSelectedQuantity()
+        # if(tiles.TILE_NAMES.get( item, None )):
+        #     name = tiles.TILE_NAMES[item]
+        # elif(items.ITEM_NAMES.get( item, None )):
+        #     name = items.ITEM_NAMES[item]
+
+        # if(name != 'Nothing'): name += '  ' + str(quantity)
+        # toShow, rect = SC_DISPLAY_FONT.render( name , (0, 0, 0) )
+        # xVal = cls.screen.get_width() - toShow.get_width() - 8
+        # cls.screen.blit(toShow, [xVal, 16])
+
+        # pygame.draw.rect(cls.screen, (255,50,50), pygame.Rect(playerCoors[0]-PLYR_WIDTH//2, playerCoors[1]-PLYR_HEIGHT//2, PLYR_WIDTH, PLYR_HEIGHT))
+        # cls.entityBuffer.draw()
+        # for group in cls.entityBuffer.entities:
+        #     for entity in group:
+        #         coors = entity.surfPos()
+        #         coors[1] -= cls.camera[1]
+        #         coors[1] = cls.numVer - coors[1]
+        #         coors[0] += cls.numHor - cls.camera[0]
+        #         cls.screen.blit( entity.surf, coors )
 
     def update_size( self ):
 

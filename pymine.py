@@ -1,81 +1,122 @@
 from chunk import *
 from entity import *
+import time
 
-# Main loop
-while True:
-    break
+def start_game():
+    while 1:
+        mode = input("1 for singleplayer, 2 for multiplayer, 3 for settings, 4 for credits: ")
+        if mode != 1: print("Sorry, not yet implemented")
+        else:
+            world_list = []
+            print("Selected singplayer", "List of worlds:-", world_list, sep='\n')
 
-# from Renderer import *
-# import time
-# import entity
+            while 1:
+                opt = input("1 to select world, 2 to create world, 3 to delete world: ")
+                name = input("Enter name of world: ")
+                if opt == 2:
+                    if name in world_list:
+                        print("World already exists")
+                        continue
+                    return name , opt
+                elif opt == 1:
+                    if name not in world_list:
+                        print("World does not exist")
+                        continue
+                    return name , opt
+                elif opt == 3:
+                    if name not in world_list:
+                        print("World does not exist")
+                        continue
+                    # Just delete this world
 
-# # Screen variables
-# displaySize = [400, 300]
-# framerate = 0
+# Screen variables
+display_sz              = [ 400 , 300 ]
+framerate               = 0
 
-# # Camera variables
-# #camera = pygame.math.Vector2([0, CHUNK_HEIGHT_P//2])
-# camera = [0, CHUNK_HEIGHT_P//2]
-# prevCamera = [0, 0]
-# cameraBound = True
-
-# # Create chunk buffer and chunk-position buffer
-# bufferWidth = 1 + (pygame.display.Info().current_w//CHUNK_WIDTH_P) + 1
-# if(bufferWidth % 2 == 0): bufferWidth += 1
-# chunkBuffer = ChunkBuffer(bufferWidth, 0, "world1")
-# print(bufferWidth)
-# del bufferWidth
-
-# entityBuffer = entity.EntityBuffer( chunkBuffer, chunkBuffer.serializer, None )
-# chunkBuffer.entityBuffer = entityBuffer
-
-# # Create and display window
-
-# # Create and display window
-# screen = pygame.display.set_mode(displaySize, pygame.RESIZABLE)
-# pygame.display.set_caption("Hello World!")
-# pygame.display.set_icon( pygame.image.load( "../Resources/Default/gameIcon.png" ) )
+# Create the main window
+screen                  = pygame.display.set_mode( display_sz , pygame.RESIZABLE )
+pygame.display.set_caption( "Pymine" )
+pygame.display.set_icon( pygame.image.load( "../Resources/Default/gameIcon.png" ) )
 
 # # Convert all images to optimized form
 # tiles.loadImageTable( )
 # items.loadImageTable( )
 
-# for i in range(len(chunkBuffer)):
-#     chunkBuffer[i].draw()
-#     chunkBuffer.renderLightmap(i)
+# ---------- CREATION OF ALL MANAGERS ---------- #
 
-# # Input handling containers
-# eventHandler = entity.ClientEventHandler( )
+# Chunk Buffer
+buffer_width            = ( pygame.display.Info().current_w // CHUNK_WIDTH_P ) + 1
+buffer_width            = buffer_width if buffer_width % 2 else buffer_width + 1
+chunk_buffer = ChunkBuffer( buffer_width )
 
-# # Player variables
-# player = entity.Player( screen, [0, 3000], chunkBuffer, entityBuffer, eventHandler, eventHandler.keyStates, eventHandler.mouseState, eventHandler.cursorPos, DEFAULT_FRICTION )
-# player.load(chunkBuffer.serializer)
-# currChunk = prevChunk = deltaChunk = 0
-# inventoryVisible = False
+# Entity Buffer
+entity_buffer           = EntityBuffer( buffer_width )
 
-# entityBuffer.plyr = player
+# Player
+player                  = Player()
 
-# # Initialize the renderer
-# Renderer.initialize(chunkBuffer, entityBuffer, camera, player, displaySize, screen)
+# Renderer
+renderer                = Renderer()
 
-# def takeCommand( ):
-#     global cameraBound
-#     command = input(">> ")
-#     command = command.split()
+# Serializer
+serializer              = Serializer()
 
-#     if(command[0] == 'add'):
-#         player.inventory.addItem(eval(command[1], globals(), locals()), eval(command[2]))
+# Camera
+camera                  = [ 0, CHUNK_HEIGHT_P // 2 ]
+prev_cam                = [ 0 , 0 ]
+cam_bound               = True
 
-#     elif(command[0] == 'rem'):
-#         player.inventory.remItemStack(eval(command[1], globals(), locals()), eval(command[2]))
+# ---------- INITIALIZE MANAGERS ---------- #
 
-# # game loop
-# prev = time.time()
-# dt = 0
-# running = True
+# Chunk Buffer
+# chunk_buffer.initialize( entity_buffer , renderer , serializer , player , camera , screen )
+
+# Entity Buffer
+# entity_buffer.initialize( chunk_buffer , renderer , serializer , player , camera , screen )
+
+# Player
+# player.initialize( chunk_buffer , renderer , serializer , entity_buffer , camera , screen )
+# inventory_visible = False
+
+# Renderer
+# renderer.initialize( entityBuffer , chunk_buffer , serializer , player , camera , screen , display_sz)
+
+# Serializer
+# serializer.initialize()
+
+# Main loop
+running                 = True
+prev                    = time.time()
+dt                      = 0
+
+curr_chunk              = 0
+prev_chunk              = 0
+delta_chunk             = 0
+
+while running:
+
+    for event in pygame.event.get():
+
+        if      event.type == pygame.QUIT:      running = False
+
+        elif    event.type == pygame.KEYDOWN:   key_states[event.key] = True
+        elif    event.type == pygame.KEYUP:     key_states[event.key] = False
+
+        elif    event.type == pygame.MOUSEMOTION:       pass
+        elif    event.type == pygame.MOUSEBUTTONDOWN:   button_states[event.button] = True
+        elif    event.type == pygame.MOUSEBUTTONUP:     button_states[event.button] = False
+
+        elif    event.type == pygame.VIDEORESIZE:   display_sz[0] , display_sz[1] = screen.get_width() , screen.get_height()
+
+
+chunkBuffer.saveComplete()
+player.save(chunkBuffer.serializer)
+chunkBuffer.serializer.stop()
+pygame.display.quit()
+
+# ! ------------------------------
 
 # while running:
-# #!------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #     # event handling loop
 #     for event in pygame.event.get():
@@ -176,9 +217,3 @@ while True:
 
 #     #framerate = 1 / max(dt, 0.001)
 #     #print(framerate)
-
-
-# chunkBuffer.saveComplete()
-# player.save(chunkBuffer.serializer)
-# chunkBuffer.serializer.stop()
-# pygame.display.quit()
