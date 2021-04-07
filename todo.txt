@@ -60,3 +60,20 @@ All rendering business (on-screen and in-place) are done by the client
 
 liquids will be modifiers which will be used as overlays on top of existing blocks an empty slot
 can have a certain liquid level but not a regular block
+
+
+1> Get main menu running (Singleplayer only)
+2> Get worlds loading and unloading (including player)
+3> Get liquids and fire updating
+4> Game quits to main menu
+
+# def takeCommand( ):
+#     global cameraBound
+#     command = input(">> ")
+#     command = command.split()
+
+#     if(command[0] == 'add'):
+#         player.inventory.addItem(eval(command[1], globals(), locals()), eval(command[2]))
+
+#     elif(command[0] == 'rem'):
+#         player.inventory.remItemStack(eval(command[1], globals(), locals()), eval(command[2]))
