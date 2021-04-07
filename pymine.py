@@ -2,6 +2,10 @@ from chunk import *
 from entity import *
 import time
 
+# # Initalize pygame and start the clock
+# pygame.init()
+# clock = pygame.time.Clock()
+
 def start_game():
     while 1:
         mode = input("1 for singleplayer, 2 for multiplayer, 3 for settings, 4 for credits: ")
@@ -28,6 +32,9 @@ def start_game():
                         print("World does not exist")
                         continue
                     # Just delete this world
+
+key_states              = {}
+button_states           = {}
 
 # Screen variables
 display_sz              = [ 400 , 300 ]
@@ -109,9 +116,9 @@ while running:
         elif    event.type == pygame.VIDEORESIZE:   display_sz[0] , display_sz[1] = screen.get_width() , screen.get_height()
 
 
-chunkBuffer.saveComplete()
-player.save(chunkBuffer.serializer)
-chunkBuffer.serializer.stop()
+chunk_buffer.save()
+player.save( serializer )
+serializer.stop()
 pygame.display.quit()
 
 # ! ------------------------------

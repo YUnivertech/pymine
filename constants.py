@@ -47,10 +47,7 @@ PLYR_HEIGHT         = TILE_WIDTH+14    # 54
 PLYR_RANGE          = 4*TILE_WIDTH
 INV_COLS            = 10
 INV_ROWS            = 3
-
-# # Initalize pygame and start the clock
-# pygame.init()
-# clock = pygame.time.Clock()
+HAND_DAMAGE         = 30
 
 # # entities
 # WEIGHT           = 12
@@ -112,12 +109,11 @@ class tiles( enum.Enum ):
     brown_dirt      = 20
 
 class item_attr( enum.Enum ):
-    PLACEABLE        = 1
-    PLACES           = 2
-    DAMAGE           = 3
-    MAX_STACK        = 4
-    HAND_DAMAGE      = 30
-    USE              = 13
+
+    MAX_STACK        = 1
+    L_USE            = 2
+    R_USE            = 3
+
 
 class item_modifs( enum.Enum ):
     pass
