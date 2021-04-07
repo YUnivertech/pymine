@@ -33,6 +33,9 @@ def start_game():
                         continue
                     # Just delete this world
 
+
+start_game()
+
 key_states              = {}
 button_states           = {}
 
