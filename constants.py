@@ -83,75 +83,38 @@ class tiles( enum.Enum ):
 
     air             = 0
 
-    bedrock         = 1
-    obsidian        = 2
-    hellstone       = 3
+    # bedrock         = 1
+    # obsidian        = 2
+    # hellstone       = 3
+    #
+    # unobtanium_ore  = 4
+    # diamond_ore     = 5
+    # platinum_ore    = 6
+    # gold_ore        = 7
+    # iron_ore        = 8
+    # copper_ore      = 9
+    #
+    # granite         = 10
+    # quartz          = 11
+    # limestone       = 12
+    # greystone       = 13
+    # sandstone       = 14
+    #
+    # gravel          = 15
+    # coke            = 16
+    #
+    # clay            = 17
+    # red_clay        = 18
+    #
+    # brown_dirt      = 20
 
-    unobtanium_ore  = 4
-    diamond_ore     = 5
-    platinum_ore    = 6
-    gold_ore        = 7
-    iron_ore        = 8
-    copper_ore      = 9
+    # items for dirt and grass blocks
+    grass                = 1
+    browndirt            = 2
+    snowygrass           = 3
+    leaves = 4
 
-    granite         = 10
-    quartz          = 11
-    limestone       = 12
-    greystone       = 13
-    sandstone       = 14
-
-    gravel          = 15
-    coke            = 16
-
-    clay            = 17
-    red_clay        = 18
-
-    brown_dirt      = 20
-
-class item_attr( enum.Enum ):
-
-    MAX_STACK        = 1
-    L_USE            = 2
-    R_USE            = 3
-
-
-class item_modifs( enum.Enum ):
-    pass
-
-class items( enum.Enum ):
-
-    # inventory slot
-    slot            = 0
-
-    # hellish blocks
-    bedrock         = 1
-    obsidian        = 2
-    hellstone       = 3
-
-    diamond_ore     = 5
-    platinum_ore    = 6
-    gold_ore        = 7
-    iron_ore        = 8
-    copper_ore      = 9
-
-    granite         = 10
-    quartz          = 11
-    limestone       = 12
-    greystone       = 13
-    sandstone       = 14
-
-    gravel          = 15
-    coke            = 16
-
-    clay            = 17
-    red_clay        = 18
-
-    brown_dirt      = 20
-    grass           = 21
-    snowygrass      = 22
-
-    stick                = 4
-
+    # wood
     junglewood           = 10
     junglewood_plank     = 11
     oakwood              = 12
@@ -165,6 +128,107 @@ class items( enum.Enum ):
     palmwood             = 20
     palmwood_plank       = 21
 
+    # metals
+    cosmonium_ore        = 30
+    cosmonium            = 32
+    unobtanium_ore       = 33
+    unobtanium           = 35
+    platinum_ore         = 36
+    platinum             = 38
+    gold_ore             = 39
+    gold                 = 41
+    iron_ore             = 42
+    iron                 = 44
+    copper_ore           = 45
+    copper               = 47
+
+    # non-metals
+    diamond_ore          = 50
+    diamond_block        = 52
+    hellstone            = 53
+    adamantite           = 54
+    obsidian             = 56
+    bedrock              = 57
+
+    # items for the stones
+    granite              = 60
+    quartz               = 61
+    limestone            = 62
+    greystone            = 63
+    sandstone            = 64
+
+    # items for transition blocks
+    gravel               = 70
+    coal                 = 71
+
+    # items for the clay blocks
+    clay                 = 72
+    red_clay             = 73
+
+    # item for the sand block
+    sand                 = 74
+
+    # items for snowy blocks
+    snow                 = 75
+    ice                  = 76
+
+    # items for the glass blocks
+    glasspane            = 78
+    glasswindow          = 79
+
+    # door
+    wood_door_upper            = 130
+    wood_door_lower      = 130
+    iron_door_upper            = 131
+    iron_door_lower      = 131
+    gold_door_upper            = 132
+    gold_door_lower      = 132
+    platinum_door_upper        = 133
+    platinum_door_lower      = 133
+
+    # bed
+    bed_head                  = 141
+    bed_tail            = 142
+
+    torch                = 148
+
+    crafting_table       = 149
+    furnace              = 150
+    chest                = 151
+
+class item_attr( enum.Enum ):
+
+    MAX_STACK        = 1
+    L_USE            = 2
+    R_USE            = 3
+
+
+class item_modifs( enum.Enum ):
+    pass
+
+class items( enum.Enum ):
+    # items for dirt and grass blocks
+    grass                = 1
+    browndirt            = 2
+    snowygrass           = 3
+    stick                = 4
+    leaves               = 5
+
+    # wood
+    junglewood           = 10
+    junglewood_plank     = 11
+    oakwood              = 12
+    oakwood_plank        = 13
+    borealwood           = 14
+    borealwood_plank     = 15
+    pinewood             = 16
+    pinewood_plank       = 17
+    cactuswood           = 18
+    cactuswood_plank     = 19
+    palmwood             = 20
+    palmwood_plank       = 21
+
+    # metals
     cosmonium_ore        = 30
     cosmonium_ingot      = 31
     cosmonium_block      = 32
@@ -184,6 +248,7 @@ class items( enum.Enum ):
     copper_ingot         = 46
     copper_block         = 47
 
+    # non-metals
     diamond_ore          = 50
     diamond_gem          = 51
     diamond_block        = 52
@@ -193,33 +258,39 @@ class items( enum.Enum ):
     obsidian             = 56
     bedrock              = 57
 
+    # items for the stones
     granite              = 60
     quartz               = 61
     limestone            = 62
     greystone            = 63
     sandstone            = 64
 
+    # items for transition blocks
+    coal_ore             = 69
     gravel               = 70
     coal                 = 71
 
+    # items for the clay blocks
     clay                 = 72
-    redClay              = 73
+    red_clay             = 73
 
+    # item for the sand block
     sand                 = 74
 
+    # items for snowy blocks
     snow                 = 75
     ice                  = 76
 
-    # glass items
+    # items for the glass blocks
     glass                = 77
     glasspane            = 78
-    glasswindow          = 78
+    glasswindow          = 79
 
-    # Ranged weapons
+    # bow and arrow
     bow                  = 80
     arrow                = 81
 
-    # Animal hides
+    # animal hides
     deerskin             = 82
     rottenleather        = 83
 
@@ -247,7 +318,7 @@ class items( enum.Enum ):
     hellstone_axe        = 108
     adamantite_axe       = 109
 
-    # battleaxes
+    # battle axes
     wood_battleaxe       = 110
     stone_battleaxe      = 111
     copper_battleaxe     = 112
@@ -271,7 +342,7 @@ class items( enum.Enum ):
     hellstone_sword      = 128
     adamantite_sword     = 129
 
-    # doors
+    # door
     wood_door            = 130
     iron_door            = 131
     gold_door            = 132
@@ -284,21 +355,20 @@ class items( enum.Enum ):
     bed                  = 141
     iron_bucket          = 142
 
-    # food items acquired from trees
+    # fruits
     berry                = 143
     apple                = 144
 
-    # food items acquired through violence
+    # meats
     chicken              = 145
     deermeat             = 146
     rottenmeat           = 147
 
-    # torch
     torch                = 148
 
-    # items for interactable tiles
     crafting_table       = 149
     furnace              = 150
+    chest                = 151
 
 
 # Dictionary consisting of tile as key; name as a string
