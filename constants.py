@@ -4,17 +4,6 @@ import pygame.freetype
 import enum
 import pickle
 
-# ! --------------------------------------------------
-# ! |           WE DO NOT USE MAGIC NUMBERS          |
-# ! |           WE DO NOT USE MAGIC NUMBERS          |
-# ! |           WE DO NOT USE MAGIC NUMBERS          |
-# ! |           WE DO NOT USE MAGIC NUMBERS          |
-# ! |           WE DO NOT USE MAGIC NUMBERS          |
-# ! |           WE DO NOT USE MAGIC NUMBERS          |
-# ! |           WE DO NOT USE MAGIC NUMBERS          |
-# ! |           WE DO NOT USE MAGIC NUMBERS          |
-# ! --------------------------------------------------
-
 # Infinity
 INF                 = math.inf
 
@@ -83,36 +72,11 @@ class tiles( enum.Enum ):
 
     air             = 0
 
-    # bedrock         = 1
-    # obsidian        = 2
-    # hellstone       = 3
-    #
-    # unobtanium_ore  = 4
-    # diamond_ore     = 5
-    # platinum_ore    = 6
-    # gold_ore        = 7
-    # iron_ore        = 8
-    # copper_ore      = 9
-    #
-    # granite         = 10
-    # quartz          = 11
-    # limestone       = 12
-    # greystone       = 13
-    # sandstone       = 14
-    #
-    # gravel          = 15
-    # coke            = 16
-    #
-    # clay            = 17
-    # red_clay        = 18
-    #
-    # brown_dirt      = 20
-
-    # items for dirt and grass blocks
+    # tiles for dirt and grass blocks
     grass                = 1
     browndirt            = 2
     snowygrass           = 3
-    leaves = 4
+    leaves               = 4
 
     # wood
     junglewood           = 10
@@ -144,69 +108,72 @@ class tiles( enum.Enum ):
 
     # non-metals
     diamond_ore          = 50
-    diamond_block        = 52
-    hellstone            = 53
-    adamantite           = 54
-    obsidian             = 56
-    bedrock              = 57
+    diamond_block        = 51
+    hellstone            = 52
+    adamantite           = 53
+    obsidian             = 54
+    bedrock              = 55
 
-    # items for the stones
+    # tiles for the stones
     granite              = 60
     quartz               = 61
     limestone            = 62
     greystone            = 63
     sandstone            = 64
 
-    # items for transition blocks
+    # tiles for transition blocks
     gravel               = 70
     coal                 = 71
 
-    # items for the clay blocks
+    # clay
     clay                 = 72
     red_clay             = 73
 
-    # item for the sand block
+    # sand
     sand                 = 74
 
-    # items for snowy blocks
+    # snow
     snow                 = 75
     ice                  = 76
 
-    # items for the glass blocks
-    glasspane            = 78
-    glasswindow          = 79
+    # glass tiles
+    glasspane            = 77
+    glasswindow          = 78
 
     # door
-    wood_door_upper            = 130
-    wood_door_lower      = 130
-    iron_door_upper            = 131
-    iron_door_lower      = 131
-    gold_door_upper            = 132
-    gold_door_lower      = 132
-    platinum_door_upper        = 133
-    platinum_door_lower      = 133
+    wood_door_upper      = 80
+    wood_door_lower      = 81
+    iron_door_upper      = 82
+    iron_door_lower      = 83
+    gold_door_upper      = 84
+    gold_door_lower      = 85
+    platinum_door_upper  = 86
+    platinum_door_lower  = 87
 
     # bed
-    bed_head                  = 141
-    bed_tail            = 142
+    bed_head             = 88
+    bed_tail             = 89
 
-    torch                = 148
+    # torch
+    torch                = 90
 
-    crafting_table       = 149
-    furnace              = 150
-    chest                = 151
+    # interactable tiles
+    crafting_table       = 100
+    furnace              = 101
+    chest                = 102
 
 class item_attr( enum.Enum ):
 
-    MAX_STACK        = 1
-    L_USE            = 2
-    R_USE            = 3
-
+    MAX_STACK           = 1
+    L_USE               = 2
+    R_USE               = 3
+    DAMAGE              = 4
 
 class item_modifs( enum.Enum ):
     pass
 
 class items( enum.Enum ):
+
     # items for dirt and grass blocks
     grass                = 1
     browndirt            = 2
@@ -370,30 +337,102 @@ class items( enum.Enum ):
     furnace              = 150
     chest                = 151
 
-
+'''
 # Dictionary consisting of tile as key; name as a string
 TILE_NAMES = {
-    tiles.air             : "air",
-    tiles.bedrock         : "bedrock",
-    tiles.obsidian        : "obsidian",
-    tiles.hellstone       : "hellstone",
-    tiles.unobtanium_ore  : "unrefined unobtanium",
-    tiles.diamond_ore     : "diamond ore",
-    tiles.platinum_ore    : "platinum ore",
-    tiles.gold_ore        : "gold ore",
-    tiles.iron_ore        : "iron ore",
-    tiles.copper_ore      : "copper ore",
-    tiles.granite         : "granite",
-    tiles.quartz          : "quartz",
-    tiles.limestone       : "limestone",
-    tiles.greystone       : "stone",
-    tiles.sandstone       : "sandstone",
-    tiles.gravel          : "gravel",
-    tiles.coke            : "coke",
-    tiles.clay            : "clay",
-    tiles.red_clay        : "red clay",
-    tiles.brown_dirt      : "dirt"
+    tiles.air                   : "air",
+
+    # tiles for dirt and grass blocks
+    tiles.grass                 : "grass",
+    tiles.browndirt             : "dirt",
+    tiles.snowygrass            : "snowy grass",
+    tiles.leaves                : "leaves",
+
+    # wood
+    tiles.junglewood            : "jungle logs",
+    tiles.junglewood_plank      : "jungle planks",
+    tiles.oakwood               : "oak logs",
+    tiles.oakwood_plank         : "oak planks",
+    tiles.borealwood            : "boreal logs",
+    tiles.borealwood_plank      : "boreal planks",
+    tiles.pinewood              :
+    tiles.pinewood_plank        :
+    tiles.cactuswood            :
+    tiles.cactuswood_plank      :
+    tiles.palmwood              :
+    tiles.palmwood_plank        :
+
+    # metals
+    tiles.cosmonium_ore         :
+    tiles.cosmonium             :
+    tiles.unobtanium_ore        :
+    tiles.unobtanium            :
+    tiles.platinum_ore          :
+    tiles.platinum              :
+    tiles.gold_ore              :
+    tiles.gold                  :
+    tiles.iron_ore              :
+    tiles.iron                  :
+    tiles.copper_ore            :
+    tiles.copper                :
+
+    # non-metals
+    tiles.diamond_ore           :
+    tiles.diamond_block         :
+    tiles.hellstone             :
+    tiles.adamantite            :
+    tiles.obsidian              :
+    tiles.bedrock               :
+
+    # tiles for the stones
+    tiles.granite               :
+    tiles.quartz                :
+    tiles.limestone             :
+    tiles.greystone             :
+    tiles.sandstone             :
+
+    # tiles for transition blocks
+    tiles.gravel                :
+    tiles.coal                  :
+
+    # clay
+    tiles.clay                  :
+    tiles.red_clay              :
+
+    # sand
+    tiles.sand                  :
+
+    # snow
+    tiles.snow                  :
+    tiles.ice                   :
+
+    # glass tiles
+    tiles.glasspane             :
+    tiles.glasswindow           :
+
+    # door
+    tiles.wood_door_upper       :
+    tiles.wood_door_lower       :
+    tiles.iron_door_upper       :
+    tiles.iron_door_lower       :
+    tiles.gold_door_upper       :
+    tiles.gold_door_lower       :
+    tiles.platinum_door_upper   :
+    tiles.platinum_door_lower   :
+
+    # bed
+    tiles.bed_head              :
+    tiles.bed_tail              :
+
+    # torch
+    tiles.torch                 :
+
+    # interactable tiles
+    tiles.crafting_table        :
+    tiles.furnace               :
+    tiles.chest                 :
 }
+'''
 
 # Dictionary consisting of tile as key; list of surfaces of modifiers as value
 TILE_MODIFIERS = {

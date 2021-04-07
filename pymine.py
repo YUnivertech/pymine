@@ -76,20 +76,19 @@ cam_bound               = True
 # ---------- INITIALIZE MANAGERS ---------- #
 
 # Chunk Buffer
-# chunk_buffer.initialize( entity_buffer , renderer , serializer , player , camera , screen )
+chunk_buffer.initialize( entity_buffer , renderer , serializer , player , camera , screen )
 
 # Entity Buffer
 # entity_buffer.initialize( chunk_buffer , renderer , serializer , player , camera , screen )
 
 # Player
-# player.initialize( chunk_buffer , renderer , serializer , entity_buffer , camera , screen )
-# inventory_visible = False
+player.initialize( chunk_buffer , renderer , serializer , entity_buffer , camera , screen )
 
 # Renderer
-# renderer.initialize( entityBuffer , chunk_buffer , serializer , player , camera , screen , display_sz)
+renderer.initialize( entityBuffer , chunk_buffer , serializer , player , camera , screen , display_sz)
 
 # Serializer
-# serializer.initialize()
+serializer.initialize()
 
 # Main loop
 running                 = True
@@ -113,7 +112,34 @@ while running:
         elif    event.type == pygame.MOUSEBUTTONDOWN:   button_states[event.button] = True
         elif    event.type == pygame.MOUSEBUTTONUP:     button_states[event.button] = False
 
-        elif    event.type == pygame.VIDEORESIZE:   display_sz[0] , display_sz[1] = screen.get_width() , screen.get_height()
+        elif    event.type == pygame.VIDEORESIZE:
+
+            display_sz[0] , display_sz[1] = screen.get_width() , screen.get_height()
+            renderer.update_size()
+
+
+    now = time.time()
+    dt = now - prev
+    prev = now
+
+    #     player.driveUpdate( dt )
+
+    if cam_bound:
+        camera[0] += ( player.pos[0] - camera[0] ) * LERP_C
+        camera[1] += ( player.pos[1] - camera[1] ) * LERP_C
+    else :
+        pass # Move the camera around only
+
+    renderer.update_camera()
+
+    curr_chunk = math.floor( camera[0] / CHUNK_WIDTH_P )
+    delta_chunk = curr_chunk - prev_chunk
+    prev_chunk = curr_chunk
+
+    if delta_chunk:
+        pass # entity buffer and chunk_buffer must be notified
+
+    pygame.display.update()
 
 
 chunk_buffer.save()
@@ -122,17 +148,6 @@ serializer.stop()
 pygame.display.quit()
 
 # ! ------------------------------
-
-# while running:
-
-#     # event handling loop
-#     for event in pygame.event.get():
-
-#         if(event.type == pygame.QUIT):
-#             running = False
-
-#         elif(event.type == pygame.KEYDOWN):
-
 #             if      event.key == pygame.K_c :              Renderer.setShaders()
 #             elif    event.key == pygame.K_n :              cameraBound = not cameraBound # This should free the camera from being fixed to the player
 #             elif    event.key == pygame.K_SLASH :          takeCommand()
@@ -141,46 +156,6 @@ pygame.display.quit()
 #             elif    event.key == pygame.K_UP:              player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] - 1 + INV_ROWS) % INV_ROWS
 #             elif    event.key == pygame.K_RIGHT:           player.inventory.itemHeld[0] = (player.inventory.itemHeld[0] + 1) % INV_COLS
 #             elif    event.key == pygame.K_LEFT:            player.inventory.itemHeld[0] = (player.inventory.itemHeld[0] - 1 + INV_COLS) % INV_COLS
-
-#             else :                                         eventHandler.addKey( event.key )
-
-#         elif    event.type == pygame.KEYUP :               eventHandler.remKey( event.key )
-
-#         elif    event.type == pygame.MOUSEMOTION :         eventHandler.addMouseMotion( event, camera, displaySize )
-
-#         elif    event.type == pygame.MOUSEBUTTONDOWN :     eventHandler.addMouseButton( event.button )
-
-#         elif    event.type == pygame.MOUSEBUTTONUP :       eventHandler.remMouseButton( event.button )
-
-#         elif    event.type == pygame.VIDEORESIZE :         eventHandler.addWindowResize( )
-
-
-#     if cameraBound:
-#         player.run()
-#         camera[0] += ( player.pos[0] - camera[0] ) * LERP_C
-#         camera[1] += ( player.pos[1] - camera[1] ) * LERP_C
-#         eventHandler.cameraMovementFlag = True
-
-
-#     else:
-#         if      eventHandler.keyStates[pygame.K_a]  : camera[0] -= SCALE_VEL * dt
-#         elif    eventHandler.keyStates[pygame.K_d]  : camera[0] += SCALE_VEL * dt
-
-#         if      eventHandler.keyStates[pygame.K_w]  : camera[1] += SCALE_VEL * dt
-#         elif    eventHandler.keyStates[pygame.K_s]  : camera[1] -= SCALE_VEL * dt
-#         eventHandler.cameraMovementFlag = True
-
-#     now = time.time( )
-#     dt = now - prev
-#     prev = now
-#     if dt >= 0.15: print('dt:', dt)
-#     player.driveUpdate( dt )
-
-#     Renderer.updateCam()
-
-#     currChunk = math.floor(camera[0]/CHUNK_WIDTH_P)
-#     deltaChunk = currChunk - prevChunk
-#     prevChunk = currChunk
 
 #     if(deltaChunk != 0):
 #         #eventHandler.chunkShiftFlag = True # server must be notified
@@ -196,31 +171,3 @@ pygame.display.quit()
 #         chk_a = time.time()
 #         chunkBuffer.renderLightmap(eventHandler.loadChunkIndex)
 #         print('render light time:', (time.time()-chk_a)*1000)
-
-#     if eventHandler.tileBreakFlag :
-#         chunkBuffer[eventHandler.tileBreakIndex].draw((eventHandler.tileBreakPos[0], eventHandler.tileBreakPos[1], eventHandler.tileBreakPos[0] + 1, eventHandler.tileBreakPos[1] + 1))
-#         eventHandler.tileBreakFlag = False
-
-#     if eventHandler.tilePlaceFlag :
-#         chunkBuffer[eventHandler.tilePlaceIndex].draw((eventHandler.tilePlacePos[0], eventHandler.tilePlacePos[1], eventHandler.tilePlacePos[0] + 1, eventHandler.tilePlacePos[1] + 1))
-#         eventHandler.tilePlaceFlag = False
-
-#     if(eventHandler.windowResizeFlag):
-
-#         displaySize[0] = screen.get_width()
-#         displaySize[1] = screen.get_height()
-
-#         Renderer.updateRefs()
-
-#         eventHandler.windowResizeFlag = False
-
-#     if(eventHandler.cameraMovementFlag): Renderer.updateScreen()
-
-#     if(inventoryVisible):   player.inventory.draw()
-
-#     pygame.display.update()     # Updating the screen
-
-#     # Framerate calculation
-
-#     #framerate = 1 / max(dt, 0.001)
-#     #print(framerate)
