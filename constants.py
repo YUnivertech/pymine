@@ -346,7 +346,7 @@ class items( enum.Enum ):
     furnace              = 150
     chest                = 151
 
-
+slot = pygame.image.load("Resources/Default/InventorySpace.png")
 # Dictionary consisting of tile as key; name as a string
 TILE_NAMES = {
     tiles.air                   : "air",

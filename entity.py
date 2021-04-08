@@ -275,74 +275,9 @@ from game_utilities import *
 #         pass
 #
 #
-# class Inventory:
-#     def __init__( self, screen, cols:int, rows:int ):
-#         self.screen = screen
-#         self.items      = [ [ None for j in range( 0, cols ) ] for i in range( 0, rows ) ]
-#         self.quantities = [ [ 0 for j in range( 0, cols ) ] for i in range( 0, rows ) ]
-#         self.positions  = {}
-#         self.ITEM_TABLE_LOCAL = []
-#         self.selPos     = 0
-#         self.selItem    = [None, 0]
-#         self.itemHeld   = [0, 0]
-#         self.isEnabled = False
-#
-#     def addItem( self, i, q ):
-#         firstEmpty = None
-#         for x in range(INV_COLS):
-#             for y in range(INV_ROWS):
-#                 if firstEmpty is None and self.quantities[y][x] == 0: firstEmpty = [x, y]
-#                 if self.items[y][x] == i and self.quantities[y][x] < 64:
-#                     maxFit = min([q, 64 - self.quantities[y][x], 64])
-#                     self.quantities[y][x] += maxFit
-#                     q -= maxFit
-#                     if q == 0: return None
-#         if q > 0 and firstEmpty is not None:
-#             maxFit = min(64, q)
-#             q -= maxFit
-#             self.items[firstEmpty[1]][firstEmpty[0]] = i
-#             self.quantities[firstEmpty[1]][firstEmpty[0]] = maxFit
-#             if q > 0: self.addItem( i, q )
-#
-#     def remItemStack( self, item:int, quantity:int ):
-#         for x in range(INV_COLS):
-#             for y in range(INV_ROWS):
-#                 if self.items[y][x] == item:
-#                     toRemove = min(self.quantities[y][x], quantity)
-#                     print(toRemove)
-#                     self.quantities[y][x] -= toRemove
-#                     quantity -= toRemove
-#                     if self.quantities[y][x] <= 0: self.items[y][x] = None
-#                     if quantity <= 0: return True
-#
-#         if quantity != 0: return False
-#         return True
-#
-#     def remItemPos( self, quantity:int, pos:list):
-#         toRemove = min(self.quantities[pos[1]][pos[0]], quantity)
-#         self.quantities[pos[1]][pos[0]] -= toRemove
-#         if self.quantities[pos[1]][pos[0]] <= 0: self.items[pos[1]][pos[0]] = None
-#
-#     def getSelectedItem( self ):
-#         return self.items[self.itemHeld[1]][self.itemHeld[0]]
-#
-#     def getSelectedQuantity( self ):
-#         return self.quantities[self.itemHeld[1]][self.itemHeld[0]]
-#
-#     def draw( self ):
-#         slot = items.ITEM_TABLE[items.slot]
-#         coors = [16, 16]    # ! MAGIC NUMBERS
-#         for x in range(0, INV_COLS):
-#             for y in range(0, INV_ROWS):
-#                 self.screen.blit(slot, coors)
-#                 self.screen.blit( INV_FONT.render( str(self.quantities[y][x]), (0, 0, 0) )[0], coors )
-#                 self.screen.blit( INV_FONT.render( tiles.TILE_NAMES.get(self.items[y][x], 'X'), (0, 0, 0) )[0], [coors[0], coors[1] + 12] )
-#                 coors[1] += 40  # ! MAGIC NUMBER
-#             coors[1] = 16
-#             coors[0] += 40      # ! MAGIC NUMBER
-#
-#
+
 class EntityBuffer:
+
     def __init__( self ):
 
         # References to other managers (must be provided in main)
@@ -389,3 +324,99 @@ class EntityBuffer:
 
     def shift( self, d):
         pass
+
+
+class Inventory:
+
+    def __init__( self , _cols , _rows ):
+
+        # ! Magic numbers are being used here
+
+        self.items              = [ [ None for j in range( _cols ) ] for i in range( _rows ) ]
+        self.quantities         = [ [ 0 for j in range( _cols ) ] for i in range( _rows ) ]
+
+        self.positions          = {}
+        self.local_item_table   = []
+
+        self.sel_pos            = 0
+        self.sel_item           = [ None , 0 ]
+        self.item_held          = [ 0 , 0 ]
+
+        self.cols               = _cols
+        self.rows               = _rows
+
+        self.surf               = pygame.surface( ( 800 , 500 ) , flags = pygame.SRCALPHA )
+
+    def add_item( self, _item , _quantity ):
+
+        first_empty = None
+
+        for y in range( self._rows ):
+
+            for x in range( self._cols ):
+
+                if first_empty is None and self.quantities[y][x] == 0:
+                    first_empty = [x, y]
+
+                if self.items[y][x] == _item and self.quantities[y][x] < 64:
+                    max_fit = min( _quantity, 64 - self.quantities[y][x], 64 )
+                    self.quantities[y][x] += max_fit
+                    _quantity -= max_fit
+                    if not _quantity: return None
+
+        if _quantity > 0 and first_empty is not None:
+
+            max_fit = min( 64, _quantity )
+            _quantity -= max_fit
+
+            self.items[firstEmpty[1]][firstEmpty[0]] = _item
+            self.quantities[firstEmpty[1]][firstEmpty[0]] = max_fit
+
+            if _quantity: self.addItem( _item , _quantity )
+
+    def rem_item_stack( self , item , quantity ):
+
+        for x in range( self.cols ):
+
+            for y in range( self.rows ):
+
+                if self.items[y][x] == item:
+
+                    to_remove = min( self.quantities[y][x] , quantity )
+                    print(to_remove)
+                    self.quantities[y][x] -= to_remove
+                    quantity -= to_remove
+                    if self.quantities[y][x] <= 0: self.items[y][x] = None
+                    if quantity <= 0: return True
+
+        return quantity == 0
+
+    def rem_item_pos( self, _quantity, _pos ):
+
+        to_remove = min( self.quantities[_pos[1]][_pos[0]] , _quantity )
+        self.quantities[_pos[1]][_pos[0]] -= to_remove
+
+        if self.quantities[_pos[1]][_pos[0]] <= 0: self.items[_pos[1]][_pos[0]] = None
+
+    def get_selected_item( self ):
+
+        return self.items[self.itemHeld[1]][self.itemHeld[0]]
+
+    def get_selected_quantity( self ):
+
+        return self.quantities[self.itemHeld[1]][self.itemHeld[0]]
+
+    def draw( self ):
+
+        # ! LOTS OF MAGIC NUMBERS
+        slot    = ITEM_TABLE[ slot ]
+        coors   = [ 0 , 0 ]
+
+        for x , coors[0] in zip( range( self.cols ) , range( 40 * self.cols ) ):
+
+            for y , coors[1] in zip( range( self.rows ) , range( 40 * self.rows) ):
+
+                self.surf.blit( slot , coors )
+
+                # self.surf.blit( INV_FONT.render( str(self.quantities[y][x]), (0, 0, 0) )[0], coors )
+                # self.surf.blit( INV_FONT.render( tiles.TILE_NAMES.get(self.items[y][x], 'X'), (0, 0, 0) )[0], [coors[0], coors[1] + 12] )
