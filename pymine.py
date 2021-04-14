@@ -57,7 +57,7 @@ pygame.display.set_icon( pygame.image.load( "Resources/Default/gameIcon.png" ) )
 # Chunk Buffer
 buffer_width            = ( pygame.display.Info().current_w // CHUNK_WIDTH_P ) + 1
 buffer_width            = buffer_width if buffer_width % 2 else buffer_width + 1
-chunk_buffer = ChunkBuffer( buffer_width )
+chunk_buffer            = ChunkBuffer( buffer_width )
 
 # Entity Buffer
 entity_buffer           = EntityBuffer( buffer_width )
