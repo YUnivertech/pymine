@@ -34,7 +34,7 @@ def start_game():
                     # Just delete this world
 
 
-start_game()
+# start_game()
 
 key_states              = {}
 button_states           = {}
@@ -46,7 +46,7 @@ framerate               = 0
 # Create the main window
 screen                  = pygame.display.set_mode( display_sz , pygame.RESIZABLE )
 pygame.display.set_caption( "Pymine" )
-pygame.display.set_icon( pygame.image.load( "../Resources/Default/gameIcon.png" ) )
+pygame.display.set_icon( pygame.image.load( "Resources/Default/gameIcon.png" ) )
 
 # # Convert all images to optimized form
 # tiles.loadImageTable( )
