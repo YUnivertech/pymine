@@ -1,71 +1,45 @@
 from chunk import *
 from entity import *
-import time, pygame_gui, os
-from pygame_gui.elements import UIButton, UIPanel, UITextBox
-from pygame_gui.elements.ui_selection_list import UISelectionList
-
-# # Initalize pygame and start the clock
-# pygame.init()
-# clock = pygame.time.Clock()
-
-def start_game():
-    while 1:
-        mode = input("1 for singleplayer, 2 for multiplayer, 3 for settings, 4 for credits: ")
-        if mode != 1: print("Sorry, not yet implemented")
-        else:
-            world_list = []
-            print("Selected singplayer", "List of worlds:-", world_list, sep='\n')
-
-            while 1:
-                opt = input("1 to select world, 2 to create world, 3 to delete world: ")
-                name = input("Enter name of world: ")
-                if opt == 2:
-                    if name in world_list:
-                        print("World already exists")
-                        continue
-                    return name , opt
-                elif opt == 1:
-                    if name not in world_list:
-                        print("World does not exist")
-                        continue
-                    return name , opt
-                elif opt == 3:
-                    if name not in world_list:
-                        print("World does not exist")
-                        continue
-                    # Just delete this world
-
-
-# start_game()
+import time
 
 key_states              = {}
 button_states           = {}
 
 # Screen variables
-display_sz              = [ 400 , 300 ]
+display_sz              = [ 1200 , 600 ]
 framerate               = 0
 
 # Create the main window
 screen                  = pygame.display.set_mode( display_sz , pygame.RESIZABLE )
 pygame.display.set_caption( "Pymine" )
 pygame.display.set_icon( pygame.image.load( "Resources/Default/gameIcon.png" ) )
-background = pygame.Surface( display_sz )
-background.fill( pygame.Color( '#000050' ) )
-# # Convert all images to optimized form
-# tiles.loadImageTable( )
-# items.loadImageTable( )
-pygame.init()
-clock = pygame.time.Clock( )
+
+# Create GUI based menus
 worlds = os.listdir("Worlds") + ['hello', 'bye']*3
 gui_manager = pygame_gui.UIManager(display_sz)
 
-def menu1(display_size):
-    panel = UIPanel(pygame.Rect((100, 30), (200, 200)), 1, gui_manager)
-    btn_pos = (50, 10)
-    btn = UIButton( pygame.Rect( btn_pos, (100, 50) ), "Singleplayer", gui_manager, panel)
+# Start-up menu
+def init_menu_1( display_size, _manager ):
+    panel_topleft = ( 80 , 60 )
+    panel_dim = ( display_size[0] - 160 , display_size[1] - 120 )
+    panel_dim = (1000, 600)
+    print(display_size, panel_dim)
+
+    btn_topleft = ( 10 , 10 )
+    btn_dim = ( 100 , 50 )
+
+    # panel = UIPanel(pygame.Rect(( 100, 30 ), ( 200, 200 ) ), 1, gui_manager)
+    panel = UIPanel( pygame.Rect( panel_topleft, panel_dim ), 1, _manager)
+    btn = UIButton( pygame.Rect( btn_topleft, btn_dim ), 'Singleplayer' , _manager , panel)
     return panel, btn
 
-def menu2(display_size):
+# Singleplayer menu
+def init_menu_2( display_size ):
+    global gui_manager
+
+    panel_topleft = ( 80 , 60 )
+    panel_dim = ( display_size[0] - 80 , display_size[1] - 60 )
+
     panel = UIPanel( pygame.Rect( (100, 30), (200, 200) ), 1, gui_manager )
     pos = (25, 10)
     sel_list = UISelectionList( pygame.Rect( pos, (150, 100) ), worlds, gui_manager, container=panel )
@@ -74,8 +48,23 @@ def menu2(display_size):
     btn3 = UIButton( pygame.Rect( (50, 170), (100, 25) ), "Back", gui_manager, panel )
     return panel, sel_list, btn1, btn2, btn3
 
+# Create world menu
+def init_menu_3( display_size ):
+    panel = UIPanel( pygame.Rect( (100, 30), (200, 200) ), 1, gui_manager )
+    text_entry = UITextEntryLine(pygame.Rect((25, 10), (150, 100)), gui_manager, panel)
+    return panel, text_entry
+
+# Delete world menu
+def init_menu_4( display_size ):
+    pass
+
 menu_2, choice, btn_1, btn_2, btn_3 = None, None, None, None, None
-menu_1, btn = menu1(display_sz)
+menu_1, btn = init_menu_1(display_sz, gui_manager)
+
+menu_background = pygame.Surface( display_sz )
+menu_background.fill("#0000FF")
+
+# menu_3 , entry = init_menu_3(display_sz)
 running = True
 
 while running:
@@ -83,21 +72,36 @@ while running:
     for event in pygame.event.get( ):
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.VIDEORESIZE:
+            display_sz[0] , display_sz[1] = screen.get_width() , screen.get_height()
+
+            menu_background = pygame.Surface( display_sz )
+            menu_background.fill("#0000FF")
+
+            gui_manager.set_window_resolution( display_sz )
+            menu_1.kill()
+            menu_1, btn = init_menu_1(display_sz, gui_manager)
+
         elif event.type == pygame.USEREVENT:
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                 if event.ui_element == btn:
                     menu_1.kill()
-                    menu_2, choice, btn_1, btn_2, btn_3 = menu2(display_sz)
-                elif event.ui_element == btn_3:
+                    menu_2, choice, btn_1, btn_2, btn_3 = init_menu_2(display_sz)
+                elif event.ui_element == btn_1: # Create World button
+                    pass
+                elif event.ui_element == btn_2: # Delete World button
+                    pass
+                elif event.ui_element == btn_3: # Back button
                     menu_2.kill()
-                    menu_1, btn = menu1(display_sz)
+                    menu_1, btn = init_menu_1(display_sz)
+
             elif event.user_type == pygame_gui.UI_SELECTION_LIST_DOUBLE_CLICKED_SELECTION:
                 if event.ui_element == choice:
                     print( 'Test button pressed', event.text )
 
         gui_manager.process_events( event )
     gui_manager.update(dt)
-    screen.blit(background, (0, 0))
+    screen.blit( menu_background , (0,0))
     gui_manager.draw_ui(screen)
     pygame.display.update()
 

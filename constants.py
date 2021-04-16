@@ -4,6 +4,10 @@ import pygame.freetype
 import enum
 import pickle
 
+import pygame_gui, os
+from pygame_gui.elements import UIButton, UIPanel, UITextBox, UITextEntryLine
+from pygame_gui.elements.ui_selection_list import UISelectionList
+
 # Infinity
 INF                 = math.inf
 
@@ -1296,3 +1300,7 @@ def loadImageTable():
     for key in ITEM_TABLE:
 
         ITEM_TABLE[key] = ITEM_TABLE[key].convert_alpha()
+
+# Initalize pygame and start the clock
+pygame.init()
+clock = pygame.time.Clock()
