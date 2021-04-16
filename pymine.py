@@ -1,6 +1,8 @@
 from chunk import *
 from entity import *
-import time
+import time, pygame_gui, os
+from pygame_gui.elements import UIButton, UIPanel, UITextBox
+from pygame_gui.elements.ui_selection_list import UISelectionList
 
 # # Initalize pygame and start the clock
 # pygame.init()
@@ -47,10 +49,58 @@ framerate               = 0
 screen                  = pygame.display.set_mode( display_sz , pygame.RESIZABLE )
 pygame.display.set_caption( "Pymine" )
 pygame.display.set_icon( pygame.image.load( "Resources/Default/gameIcon.png" ) )
-
+background = pygame.Surface( display_sz )
+background.fill( pygame.Color( '#000050' ) )
 # # Convert all images to optimized form
 # tiles.loadImageTable( )
 # items.loadImageTable( )
+pygame.init()
+clock = pygame.time.Clock( )
+worlds = os.listdir("Worlds") + ['hello', 'bye']*3
+gui_manager = pygame_gui.UIManager(display_sz)
+
+def menu1(display_size):
+    panel = UIPanel(pygame.Rect((100, 30), (200, 200)), 1, gui_manager)
+    btn_pos = (50, 10)
+    btn = UIButton( pygame.Rect( btn_pos, (100, 50) ), "Singleplayer", gui_manager, panel)
+    return panel, btn
+
+def menu2(display_size):
+    panel = UIPanel( pygame.Rect( (100, 30), (200, 200) ), 1, gui_manager )
+    pos = (25, 10)
+    sel_list = UISelectionList( pygame.Rect( pos, (150, 100) ), worlds, gui_manager, container=panel )
+    btn1 = UIButton( pygame.Rect( (50, 110), (100, 25) ), "Create", gui_manager, panel )
+    btn2 = UIButton( pygame.Rect( (50, 140), (100, 25) ), "Delete", gui_manager, panel )
+    btn3 = UIButton( pygame.Rect( (50, 170), (100, 25) ), "Back", gui_manager, panel )
+    return panel, sel_list, btn1, btn2, btn3
+
+menu_2, choice, btn_1, btn_2, btn_3 = None, None, None, None, None
+menu_1, btn = menu1(display_sz)
+running = True
+
+while running:
+    dt = clock.tick( 60 ) / 1000.0
+    for event in pygame.event.get( ):
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.USEREVENT:
+            if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                if event.ui_element == btn:
+                    menu_1.kill()
+                    menu_2, choice, btn_1, btn_2, btn_3 = menu2(display_sz)
+                elif event.ui_element == btn_3:
+                    menu_2.kill()
+                    menu_1, btn = menu1(display_sz)
+            elif event.user_type == pygame_gui.UI_SELECTION_LIST_DOUBLE_CLICKED_SELECTION:
+                if event.ui_element == choice:
+                    print( 'Test button pressed', event.text )
+
+        gui_manager.process_events( event )
+    gui_manager.update(dt)
+    screen.blit(background, (0, 0))
+    gui_manager.draw_ui(screen)
+    pygame.display.update()
+
 
 # ---------- CREATION OF ALL MANAGERS ---------- #
 
