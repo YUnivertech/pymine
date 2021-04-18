@@ -1,4 +1,4 @@
-from shapely.geometry import Polygon
+# from shapely.geometry import Polygon
 
 from game_utilities import *
 
@@ -215,7 +215,9 @@ class Zombie(Entity):
 
 class EntityBuffer:
 
-    def __init__( self ):
+    def __init__( self , _len ):
+
+        self.len            = _len
 
         # References to other managers (must be provided in main)
         self.chunk_buffer   = None

@@ -132,6 +132,8 @@ from game_utilities import *
 #                 currChunkRef[y][x-1].lightval = 0.5     #some value
 #                 propagateRadial(y, x-1, left=True)
 
+def generate_chunk_temp( _chunk ):
+    pass
 
 class Chunk:
 

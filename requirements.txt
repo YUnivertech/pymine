@@ -1,3 +1,4 @@
 opensimplex>=0.3
-pygame>=2.0.0.dev12
+pygame>=2.0.1
 numpy>=1.18.5
+shapely>=1.7.1

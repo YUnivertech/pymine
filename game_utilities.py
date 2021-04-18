@@ -3,6 +3,25 @@ from functools import lru_cache
 
 from constants import *
 
+def populate_key_states( _key_states , _button_states ):
+    for i in range( pygame.K_a , pygame.K_z + 1 ):
+        _key_states[i] = 0
+    for i in range( pygame.K_0 , pygame.K_9 + 1 ):
+        _key_states[i] = 0
+
+    _key_states[pygame.K_UP]    = 0
+    _key_states[pygame.K_DOWN]  = 0
+    _key_states[pygame.K_LEFT]  = 0
+    _key_states[pygame.K_RIGHT] = 0
+
+    _key_states[pygame.K_SPACE] = 0
+
+    # 0 is for left, 1 is for middle and 2 is for right
+    _button_states[0] = 0
+    _button_states[1] = 0
+    _button_states[2] = 0
+
+
 # Translations
 #     From                        To
 # 1   array-space                 chunk-space
