@@ -51,7 +51,8 @@ class Renderer:
         self.window_size    = None
 
         # Index of the middle chunk (the chunk the camera is in)
-        self.middle         = None
+        # self.middle         = None
+        self.middle = 0
 
         # Indexes of the top and bottom most pixels of the chunk to be rendered
         self.up_index       = None
@@ -87,7 +88,7 @@ class Renderer:
 
         flag            = False
 
-        for right_walker in range( self.middle , self.chunk_buffer.length ):
+        for right_walker in range( self.middle , self.chunk_buffer.len ):
 
             slice_ind       = self.chunk_buffer[right_walker].index * CHUNK_WIDTH       # Absoulute index of current vertical slice
             slice_pos       = [ 0 , 0 ]                                                 # List containing coordinates of the location where the slice must be blit
@@ -98,7 +99,7 @@ class Renderer:
                 slice_pos[0]    = ( slice_ind + tile_walker ) * TILE_WIDTH - self.camera[0] + self.num_hor
                 slice_rect[0]   = tile_walker * TILE_WIDTH
 
-                slice_surf      = self.chunk_buffer[ right_walker ].surface.subsurface( slice_rect )            # Mini-surface containing the visible region of the chunk's surface
+                slice_surf      = self.chunk_buffer[ right_walker ].surf.subsurface( slice_rect )            # Mini-surface containing the visible region of the chunk's surface
 
                 if slice_pos[0] > self.window_size[0] :
                     flag = True
@@ -125,7 +126,7 @@ class Renderer:
                 slice_pos[0]    = ( slice_ind + tile_walker ) * TILE_WIDTH - self.camera[0] + self.num_hor
                 slice_rect[0]   = tile_walker * TILE_WIDTH
 
-                slice_surf      = self.chunk_buffer[ left_walker ].surface.subsurface( slice_rect )            # Mini-surface containing the visible region of the chunk's surface
+                slice_surf      = self.chunk_buffer[ left_walker ].surf.subsurface( slice_rect )            # Mini-surface containing the visible region of the chunk's surface
 
                 if slice_pos[0] < -TILE_WIDTH :
                     flag = True

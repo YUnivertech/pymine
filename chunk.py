@@ -133,7 +133,27 @@ from game_utilities import *
 #                 propagateRadial(y, x-1, left=True)
 
 def generate_chunk_temp( _chunk ):
-    pass
+    # one layer of bedrock
+    # one layer of obsidian
+    # one layer of hellstone
+    # 10 layers of stone
+    # 10 layers of limestone
+    # 10 layers of sandstone
+    # one layer of coal
+    # one layer of dirt
+    # one layer of grass
+    for i in range( CHUNK_WIDTH ):
+        _chunk.blocks[0][i] = tiles.bedrock
+        _chunk.blocks[1][i] = tiles.obsidian
+        _chunk.blocks[2][i] = tiles.hellstone
+        for j in range(10):
+            _chunk.blocks[j + 3][i] = tiles.greystone
+            _chunk.blocks[j + 13][i] = tiles.limestone
+            _chunk.blocks[j + 23][i] = tiles.sandstone
+        _chunk.blocks[32][i] = tiles.coal
+        _chunk.blocks[33][i] = tiles.browndirt
+        _chunk.blocks[34][i] = tiles.grass
+
 
 class Chunk:
 
@@ -147,7 +167,7 @@ class Chunk:
         # self.created            = _time
         self.active_time        = _active_time
 
-        self.surf               = pygame.surface( ( CHUNK_WIDTH_P , CHUNK_HEIGHT_P ) , flags = pygame.SRCALPHA )
+        self.surf               = pygame.Surface( ( CHUNK_WIDTH_P , CHUNK_HEIGHT_P ) , flags = pygame.SRCALPHA )
 
         if not self.blocks:
             self.blocks = [[ 0 for j in range(CHUNK_WIDTH)] for i in range(CHUNK_HEIGHT)]
@@ -218,7 +238,8 @@ class ChunkBuffer:
 
         # size and positions of chunks in the world
         self.len            = _len
-        self.positions      = [None] * 3
+        # self.positions      = [None] * 3
+        self.positions = [ -_len//2 , 0 , _len//2 ]
 
         # chunk and light surface data
         self.chunks         = [None] * _len
@@ -240,6 +261,8 @@ class ChunkBuffer:
         self.camera         = _camera
         self.screen         = _screen
 
+        self.load()
+
     def draw( self ):
 
         for chunk in self.chunks: chunk.draw()
@@ -253,7 +276,7 @@ class ChunkBuffer:
         for i , pos in enumerate( range( self.positions[2] , self.positions[2] - _delta , -1 ) ):
 
             li                      = [ self.chunks[self.len-1-i].blocks, self.chunks[self.len-1-i].walls ]
-            lo                      = self.chunk[self.len-1-i].local_tile_table
+            lo                      = self.chunks[self.len-1-i].local_tile_table
 
             self.serializer[pos]    = li, lo
 
@@ -277,7 +300,7 @@ class ChunkBuffer:
         for i , pos in enumerate( range( self.positions[0] , self.positions[0] + _delta ) ):
 
             li                      = [ self.chunks[i].blocks , self.chunks[i].walls ]
-            lo                      = self.chunk[i].local_tile_table
+            lo                      = self.chunks[i].local_tile_table
 
             self.serializer[pos]    = li , lo
 
@@ -305,7 +328,11 @@ class ChunkBuffer:
 
         for i in range( self.len ):
             self.chunks[i] = self.serializer[self.positions[0] + i]
-        # Now generate and process the chunks as much as required
+
+        for i in range( len( self.chunks ) ):
+            if( self.chunks[i] is None ):
+                self.chunks[i] = Chunk( _index = self.positions[0] + i )
+                generate_chunk_temp( self.chunks[i] )
 
     def __getitem__( self , _key ): return self.chunks[_key]
 

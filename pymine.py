@@ -83,7 +83,7 @@ def main_game_start( _world = 'World1' ):
     # player.initialize( chunk_buffer , renderer , serializer , entity_buffer , camera , screen )
 
     # Renderer
-    renderer.initialize( entity_buffer , chunk_buffer , serializer , player , camera , screen , display_sz)
+    renderer.initialize( chunk_buffer , entity_buffer , player , serializer , camera , screen , display_sz)
 
     # Serializer
     # serializer.initialize()
@@ -149,39 +149,27 @@ def main_game_start( _world = 'World1' ):
             camera[0] += ( player.pos[0] - camera[0] ) * LERP_C
             camera[1] += ( player.pos[1] - camera[1] ) * LERP_C
         else :
-            if key_states[pygame.K_a]:
-                camera[0] -= ( TILE_WIDTH * dt )
-                print('Moving left')
-            elif key_states[pygame.K_d]:
-                camera[0] += ( TILE_WIDTH * dt )
-                print('Moving right')
-            if key_states[pygame.K_s]:
-                camera[1] -= ( TILE_WIDTH * dt )
-                print("Moving down")
-            elif key_states[pygame.K_w]:
-                camera[1] += ( TILE_WIDTH * dt )
-                print('Moving Up')
-            # if key_states[pygame.K_a]:      camera[0] -= ( TILE_WIDTH * dt )
-            # elif key_states[pygame.K_d]:    camera[0] += ( TILE_WIDTH * dt )
-            # if key_states[pygame.K_s]:      camera[1] -= ( TILE_WIDTH * dt )
-            # elif key_states[pygame.K_w]:    camera[1] += ( TILE_WIDTH * dt )
+            if key_states[pygame.K_a]:      camera[0] -= ( TILE_WIDTH * dt )
+            elif key_states[pygame.K_d]:    camera[0] += ( TILE_WIDTH * dt )
+            if key_states[pygame.K_s]:      camera[1] -= ( TILE_WIDTH * dt )
+            elif key_states[pygame.K_w]:    camera[1] += ( TILE_WIDTH * dt )
 
         renderer.update_camera()
 
         curr_chunk = math.floor( camera[0] / CHUNK_WIDTH_P )
         delta_chunk = curr_chunk - prev_chunk
         prev_chunk = curr_chunk
-        print(curr_chunk)
 
         if delta_chunk:
-            new_index = chunk_buffer.shift_buffer(delta_chunk)
+            new_index = chunk_buffer.shift(delta_chunk)
             entity_buffer.shift(delta_chunk)
             chunk_buffer[new_index].draw()
 
+        renderer.paint_screen()
         pygame.display.update()
 
     chunk_buffer.save()
-    player.save( serializer )
+    player.save()
     serializer.stop()
 
 
