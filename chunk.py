@@ -170,9 +170,9 @@ class Chunk:
         self.surf               = pygame.Surface( ( CHUNK_WIDTH_P , CHUNK_HEIGHT_P ) , flags = pygame.SRCALPHA )
 
         if not self.blocks:
-            self.blocks = [[ 0 for j in range(CHUNK_WIDTH)] for i in range(CHUNK_HEIGHT)]
+            self.blocks = [[ tiles.air for j in range(CHUNK_WIDTH)] for i in range(CHUNK_HEIGHT)]
         if not self.walls:
-            self.walls = [[ 0 for j in range(CHUNK_WIDTH)] for i in range(CHUNK_HEIGHT)]
+            self.walls = [[ tiles.air for j in range(CHUNK_WIDTH)] for i in range(CHUNK_HEIGHT)]
         if not self.local_tile_table:
             self.local_tile_table = {}
 
@@ -185,7 +185,7 @@ class Chunk:
         y_span  = TILE_WIDTH * ( _rect[3] - _rect[1] )
 
         # make the region transparent
-        self.surface.fill( ( 0 , 0 , 0 , 0 ), [ x_start , y_start , x_span, y_span])
+        self.surf.fill( ( 0 , 0 , 0 , 0 ), [ x_start , y_start , x_span, y_span])
 
         # loop for blitting the tiles and walls
         for i in range( _rect[1] , _rect[3] ):
@@ -197,14 +197,14 @@ class Chunk:
                 coors[0]            = TILE_WIDTH * j
                 tile_ref , wall_ref = self.blocks[i][j] , self.walls[i][j]
 
-                if tile_ref > 0 :
+                if tile_ref != tiles.air :
 
-                    self.surface.blit( TILE_TABLE[tile_ref] , coors )
+                    self.surf.blit( TILE_TABLE[tile_ref] , coors )
                     if ( i , j , 1 ) in self.local_tile_table : pass
 
-                elif wall_ref > 0 :
+                elif wall_ref != tiles.air :
 
-                    self.surface.blit( TILE_TABLE[wall_ref] , coors )
+                    self.surf.blit( TILE_TABLE[wall_ref] , coors )
                     if ( i , j , 0 ) in self.local_tile_table : pass
 
         # Then we blit the tile modifiers (cracks, glows, etc.)
@@ -334,9 +334,22 @@ class ChunkBuffer:
             self.chunks[i] = self.serializer[self.positions[0] + i]
 
         for i in range( len( self.chunks ) ):
+
             if( self.chunks[i] is None ):
+
                 self.chunks[i] = Chunk( _index = self.positions[0] + i )
-                generate_chunk_temp( self.chunks[i] )
+
+            else:
+
+                li = pickle.loads( self.chunks[i][0] )
+                lo = pickle.loads( self.chunks[i][1] )
+
+                self.chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = self.positions[0] + i )
+
+            generate_chunk_temp( self.chunks[i] )
+            self.chunks[i].draw()
+
+        print(self.chunks)
 
     def __getitem__( self , _key ): return self.chunks[_key]
 

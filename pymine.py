@@ -67,7 +67,8 @@ def main_game_start( _world = 'World1' ):
     serializer              = Serializer( _world )
 
     # Camera
-    camera                  = [ 0, CHUNK_HEIGHT_P // 2 ]
+    # camera                  = [ 0, CHUNK_HEIGHT_P // 2 ]
+    camera                  = [ 0 , 0 ]
     prev_cam                = [ 0 , 0 ]
     cam_bound               = False
 
