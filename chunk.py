@@ -268,8 +268,8 @@ class ChunkBuffer:
         for chunk in self.chunks: chunk.draw()
 
     def shift( self , _delta ):
-        if _delta > 0:      self.shift_left( _delta )
-        elif _delta < 0:    self.shift_right( -_delta )
+        if _delta > 0:      return self.shift_left( _delta )
+        elif _delta < 0:    return self.shift_right( -_delta )
 
     def shift_right( self , _delta ):
 
@@ -278,7 +278,7 @@ class ChunkBuffer:
             li                      = [ self.chunks[self.len-1-i].blocks, self.chunks[self.len-1-i].walls ]
             lo                      = self.chunks[self.len-1-i].local_tile_table
 
-            self.serializer[pos]    = li, lo
+            self.serializer[pos]    = pickle.dumps( li ), pickle.dumps( lo )
 
         for i in range( self.len - 1, _delta - 1, -1 ):
 
@@ -295,6 +295,8 @@ class ChunkBuffer:
         self.positions[1] -= _delta
         self.positions[2] -= _delta
 
+        return self.positions[0]
+
     def shift_left( self , _delta ):
 
         for i , pos in enumerate( range( self.positions[0] , self.positions[0] + _delta ) ):
@@ -302,9 +304,9 @@ class ChunkBuffer:
             li                      = [ self.chunks[i].blocks , self.chunks[i].walls ]
             lo                      = self.chunks[i].local_tile_table
 
-            self.serializer[pos]    = li , lo
+            self.serializer[pos]    = pickle.dumps( li ), pickle.dumps( lo )
 
-        for i in range( self.length - _delta ):
+        for i in range( self.len - _delta ):
 
             self.chunks[i]          = self.chunks[i + _delta]
 
@@ -318,6 +320,8 @@ class ChunkBuffer:
         self.positions[0] += _delta
         self.positions[1] += _delta
         self.positions[2] += _delta
+
+        return self.positions[2]
 
     def save( self ):
 
