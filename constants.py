@@ -354,14 +354,10 @@ slot = pygame.image.load("Resources/Default/InventorySpace.png")
 # Dictionary consisting of tile as key; name as a string
 TILE_NAMES = {
     tiles.air                   : "air",
-
-    # tiles for dirt and grass blocks
     tiles.grass                 : "grass",
     tiles.browndirt             : "dirt",
     tiles.snowygrass            : "snowy grass",
     tiles.leaves                : "leaves",
-
-    # wood
     tiles.junglewood            : "jungle logs",
     tiles.junglewood_plank      : "jungle planks",
     tiles.oakwood               : "oak logs",
@@ -374,8 +370,6 @@ TILE_NAMES = {
     tiles.cactuswood_plank      : "cactus flesh",
     tiles.palmwood              : "palm logs",
     tiles.palmwood_plank        : "palm planks",
-
-    # metals
     tiles.cosmonium_ore         : "cosmonium ore",
     tiles.cosmonium             : "cosmonium block",
     tiles.unobtanium_ore        : "unobtanium ore",
@@ -388,42 +382,26 @@ TILE_NAMES = {
     tiles.iron                  : "iron block",
     tiles.copper_ore            : "copper ore",
     tiles.copper                : "copper block",
-
-    # non-metals
     tiles.diamond_ore           : "diamond ore",
     tiles.diamond_block         : "diamond block",
     tiles.hellstone             : "hellstone",
     tiles.adamantite            : "adamantite block",
     tiles.obsidian              : "obsidian",
     tiles.bedrock               : "bedrock",
-
-    # tiles for the stones
     tiles.granite               : "granite block",
     tiles.quartz                : "quartz block",
     tiles.limestone             : "limestone block",
     tiles.greystone             : "stone block",
     tiles.sandstone             : "sandstone block",
-
-    # tiles for transition blocks
     tiles.gravel                : "gravel",
     tiles.coal                  : "coke",
-
-    # clays
     tiles.clay                  : "clay",
     tiles.red_clay              : "red clay",
-
-    # sand
     tiles.sand                  : "sand",
-
-    # snow
     tiles.snow                  : "snow block",
     tiles.ice                   : "ice block",
-
-    # glass tiles
     tiles.glasspane             : "glass pane",
     tiles.glasswindow           : "glass window",
-
-    # door
     tiles.wood_door_upper       : "wooden door up",
     tiles.wood_door_lower       : "wooden door down",
     tiles.iron_door_upper       : "iron door up",
@@ -432,15 +410,9 @@ TILE_NAMES = {
     tiles.gold_door_lower       : "gold door down",
     tiles.platinum_door_upper   : "platinum door up",
     tiles.platinum_door_lower   : "platinum door down",
-
-    # bed
     tiles.bed_head              : "bed head",
     tiles.bed_tail              : "bed tail",
-
-    # torch
     tiles.torch                 : "torch",
-
-    # interactable tiles
     tiles.crafting_table        : "crafting table",
     tiles.furnace               : "furnace",
     tiles.chest                 : "chest"
@@ -459,14 +431,10 @@ TILE_MODIFIERS = {
 TILE_TABLE = {
 
     tiles.air                   : pygame.image.load("Resources/Default/tile_air.png"),
-
-    # tiles for dirt and grass blocks
     tiles.grass                 : pygame.image.load("Resources/Default/tile_grass.png"),
     tiles.browndirt             : pygame.image.load("Resources/Default/tile_browndirt.png"),
     tiles.snowygrass            : pygame.image.load("Resources/Default/tile_snowygrass.png"),
     tiles.leaves                : pygame.image.load("Resources/Default/tile_leaves.png"),
-
-    # wood
     tiles.junglewood            : pygame.image.load("Resources/Default/tile_junglewood.png"),
     tiles.junglewood_plank      : pygame.image.load("Resources/Default/tile_junglewood_plank.png"),
     tiles.oakwood               : pygame.image.load("Resources/Default/tile_oakwood.png"),
@@ -479,8 +447,6 @@ TILE_TABLE = {
     tiles.cactuswood_plank      : pygame.image.load("Resources/Default/tile_cactuswood_plank.png"),
     tiles.palmwood              : pygame.image.load("Resources/Default/tile_palmwood.png"),
     tiles.palmwood_plank        : pygame.image.load("Resources/Default/tile_palmwood_plank.png"),
-
-    # metals
     tiles.cosmonium_ore         : pygame.image.load("Resources/Default/tile_cosmonium_ore.png"),
     tiles.cosmonium             : pygame.image.load("Resources/Default/tile_cosmonium.png"),
     tiles.unobtanium_ore        : pygame.image.load("Resources/Default/tile_unobtanium_ore.png"),
@@ -493,42 +459,26 @@ TILE_TABLE = {
     tiles.iron                  : pygame.image.load("Resources/Default/tile_iron.png"),
     tiles.copper_ore            : pygame.image.load("Resources/Default/tile_copper_ore.png"),
     tiles.copper                : pygame.image.load("Resources/Default/tile_copper.png"),
-
-    # non-metals
     tiles.diamond_ore           : pygame.image.load("Resources/Default/tile_diamond_ore.png"),
     tiles.diamond_block         : pygame.image.load("Resources/Default/tile_diamond_block.png"),
     tiles.hellstone             : pygame.image.load("Resources/Default/tile_hellstone.png"),
     tiles.adamantite            : pygame.image.load("Resources/Default/tile_adamantite.png"),
     tiles.obsidian              : pygame.image.load("Resources/Default/tile_obsidian.png"),
     tiles.bedrock               : pygame.image.load("Resources/Default/tile_bedrock.png"),
-
-    # tiles for the stones
     tiles.granite               : pygame.image.load("Resources/Default/tile_granite.png"),
     tiles.quartz                : pygame.image.load("Resources/Default/tile_quartz.png"),
     tiles.limestone             : pygame.image.load("Resources/Default/tile_limestone.png"),
     tiles.greystone             : pygame.image.load("Resources/Default/tile_greystone.png"),
     tiles.sandstone             : pygame.image.load("Resources/Default/tile_sandstone.png"),
-
-    # tiles for transition blocks
     tiles.gravel                : pygame.image.load("Resources/Default/tile_gravel.png"),
     tiles.coal                  : pygame.image.load("Resources/Default/tile_coal.png"),
-
-    # clay
     tiles.clay                  : pygame.image.load("Resources/Default/tile_clay.png"),
     tiles.red_clay              : pygame.image.load("Resources/Default/tile_red_clay.png"),
-
-    # sand
     tiles.sand                  : pygame.image.load("Resources/Default/tile_sand.png"),
-
-    # snow
     tiles.snow                  : pygame.image.load("Resources/Default/tile_snow.png"),
     tiles.ice                   : pygame.image.load("Resources/Default/tile_ice.png"),
-
-    # glass tiles
     tiles.glasspane             : pygame.image.load("Resources/Default/tile_glasspane.png"),
     tiles.glasswindow           : pygame.image.load("Resources/Default/tile_glasswindow.png"),
-
-    # door
     tiles.wood_door_upper       : pygame.image.load("Resources/Default/tile_wood_door_upper.png"),
     tiles.wood_door_lower       : pygame.image.load("Resources/Default/tile_wood_door_lower.png"),
     tiles.iron_door_upper       : pygame.image.load("Resources/Default/tile_iron_door_upper.png"),
@@ -537,15 +487,9 @@ TILE_TABLE = {
     tiles.gold_door_lower       : pygame.image.load("Resources/Default/tile_gold_door_lower.png"),
     tiles.platinum_door_upper   : pygame.image.load("Resources/Default/tile_platinum_door_upper.png"),
     tiles.platinum_door_lower   : pygame.image.load("Resources/Default/tile_platinum_door_lower.png"),
-
-    # bed
     tiles.bed_head              : pygame.image.load("Resources/Default/tile_bed_head.png"),
     tiles.bed_tail              : pygame.image.load("Resources/Default/tile_bed_tail.png"),
-
-    # torch
     tiles.torch                 : pygame.image.load("Resources/Default/tile_torch.png"),
-
-    # interactable tiles
     tiles.crafting_table        : pygame.image.load("Resources/Default/tile_crafting_table.png"),
     tiles.furnace               : pygame.image.load("Resources/Default/tile_furnace.png"),
     tiles.chest                 : pygame.image.load("Resources/Default/tile_chest.png")
@@ -574,109 +518,78 @@ TILE_ATTR = {
     # tiles.redClay       : {tile_attr.FRICTION:0.9,  tile_attr.LUMINOSITY:0,   tile_attr.HEALTH:45,  tile_attr.INFLAMMABLE:None},
     # tiles.browndirt     : {tile_attr.FRICTION:0.8,  tile_attr.LUMINOSITY:0,   tile_attr.HEALTH:30,  tile_attr.INFLAMMABLE:None}
 
-    tiles.air                   : {},
-
-    # tiles for dirt and grass blocks
-    tiles.grass                 : {},
-    tiles.browndirt             : {},
-    tiles.snowygrass            : {},
-    tiles.leaves                : {},
-
-    # wood
-    tiles.junglewood            : {},
-    tiles.junglewood_plank      : {},
-    tiles.oakwood               : {},
-    tiles.oakwood_plank         : {},
-    tiles.borealwood            : {},
-    tiles.borealwood_plank      : {},
-    tiles.pinewood              : {},
-    tiles.pinewood_plank        : {},
-    tiles.cactuswood            : {},
-    tiles.cactuswood_plank      : {},
-    tiles.palmwood              : {},
-    tiles.palmwood_plank        : {},
-
-    # metals
-    tiles.cosmonium_ore         : {},
-    tiles.cosmonium             : {},
-    tiles.unobtanium_ore        : {},
-    tiles.unobtanium            : {},
-    tiles.platinum_ore          : {},
-    tiles.platinum              : {},
-    tiles.gold_ore              : {},
-    tiles.gold                  : {},
-    tiles.iron_ore              : {},
-    tiles.iron                  : {},
-    tiles.copper_ore            : {},
-    tiles.copper                : {},
-
-    # non-metals
-    tiles.diamond_ore           : {},
-    tiles.diamond_block         : {},
-    tiles.hellstone             : {},
-    tiles.adamantite            : {},
-    tiles.obsidian              : {},
-    tiles.bedrock               : {},
-
-    # tiles for the stones
-    tiles.granite               : {},
-    tiles.quartz                : {},
-    tiles.limestone             : {},
-    tiles.greystone             : {},
-    tiles.sandstone             : {},
-
-    # tiles for transition blocks
-    tiles.gravel                : {},
-    tiles.coal                  : {},
-
-    # clay
-    tiles.clay                  : {},
-    tiles.red_clay              : {},
-
-    # sand
-    tiles.sand                  : {},
-
-    # snow
-    tiles.snow                  : {},
-    tiles.ice                   : {},
-
-    # glass tiles
-    tiles.glasspane             : {},
-    tiles.glasswindow           : {},
-
-    # door
-    tiles.wood_door_upper       : {},
-    tiles.wood_door_lower       : {},
-    tiles.iron_door_upper       : {},
-    tiles.iron_door_lower       : {},
-    tiles.gold_door_upper       : {},
-    tiles.gold_door_lower       : {},
-    tiles.platinum_door_upper   : {},
-    tiles.platinum_door_lower   : {},
-
-    # bed
-    tiles.bed_head              : {},
-    tiles.bed_tail              : {},
-
-    # torch
-    tiles.torch                 : {},
-
-    # interactable tiles
-    tiles.crafting_table        : {},
-    tiles.furnace               : {},
-    tiles.chest                 : {},
+    tiles.air                 : {tile_attr.FRICTION:AIR_FRICTION, tile_attr.LUMINOSITY:255},
+    tiles.grass               : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.browndirt           : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.snowygrass          : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.leaves              : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.junglewood          : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.junglewood_plank    : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.oakwood             : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.oakwood_plank       : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.borealwood          : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.borealwood_plank    : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.pinewood            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.pinewood_plank      : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.cactuswood          : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.cactuswood_plank    : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.palmwood            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.palmwood_plank      : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.cosmonium_ore       : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.cosmonium           : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.unobtanium_ore      : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.unobtanium          : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.platinum_ore        : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.platinum            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.gold_ore            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.gold                : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.iron_ore            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.iron                : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.copper_ore          : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.copper              : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.diamond_ore         : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.diamond_block       : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.hellstone           : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.adamantite          : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.obsidian            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.bedrock             : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.granite             : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.quartz              : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.limestone           : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.greystone           : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.sandstone           : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.gravel              : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.coal                : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.clay                : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.red_clay            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.sand                : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.snow                : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.ice                 : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.glasspane           : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.glasswindow         : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.wood_door_upper     : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.wood_door_lower     : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.iron_door_upper     : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.iron_door_lower     : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.gold_door_upper     : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.gold_door_lower     : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.platinum_door_upper : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.platinum_door_lower : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.bed_head            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.bed_tail            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.torch               : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.crafting_table      : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.furnace             : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
+    tiles.chest               : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None}
 }
 
 # Dictionary consisting of item as key; name as a string
 ITEM_NAMES = {
-    # items for dirt and grass blocks
     items.grass                : "grass block",
     items.browndirt            : "dirt block",
     items.snowygrass           : "snow block",
     items.stick                : "sticks",
     items.leaves               : "leaves",
-
-    # wood
     items.junglewood           : "jungle logs",
     items.junglewood_plank     : "jungle planks",
     items.oakwood              : "oak logs",
@@ -689,8 +602,6 @@ ITEM_NAMES = {
     items.cactuswood_plank     : "cactus flesh",
     items.palmwood             : "palm logs",
     items.palmwood_plank       : "palm planks",
-
-    # metals
     items.cosmonium_ore        : "cosmonium ore",
     items.cosmonium_ingot      : "cosmonium ingot",
     items.cosmonium_block      : "cosmonium block",
@@ -709,8 +620,6 @@ ITEM_NAMES = {
     items.copper_ore           : "copper ore",
     items.copper_ingot         : "copper ingot",
     items.copper_block         : "copper block",
-
-    # non-metals
     items.diamond_ore          : "diamond ore",
     items.diamond_gem          : "diamond",
     items.diamond_block        : "diamond block",
@@ -719,44 +628,26 @@ ITEM_NAMES = {
     items.adamantite_block     : "adamantite block",
     items.obsidian             : "obsidian",
     items.bedrock              : "bedrock",
-
-    # items for the stones
     items.granite              : "granite",
     items.quartz               : "quartz",
     items.limestone            : "limestone",
     items.greystone            : "stone",
     items.sandstone            : "sandstone",
-
-    # items for transition blocks
     items.coal_ore             : "coke",
     items.gravel               : "gravel",
     items.coal                 : "coal",
-
-    # items for the clay blocks
     items.clay                 : "clay",
     items.red_clay             : "red clay",
-
-    # item for the sand block
     items.sand                 : "sand",
-
-    # items for snowy blocks
     items.snow                 : "snow",
     items.ice                  : "ice",
-
-    # items for the glass blocks
     items.glass                : "glass",
     items.glasspane            : "glass pane",
     items.glasswindow          : "glass window",
-
-    # bow and arrow
     items.bow                  : "bow",
     items.arrow                : "arrow",
-
-    # animal hides
     items.deerskin             : "deer skin",
     items.rottenleather        : "rotten leather",
-
-    # pickaxes
     items.wood_pickaxe         : "wood pickaxe",
     items.stone_pickaxe        : "stone pickaxe",
     items.copper_pickaxe       : "copper pickaxe",
@@ -767,8 +658,6 @@ ITEM_NAMES = {
     items.unobtanium_pickaxe   : "unobtanium pickaxe",
     items.hellstone_pickaxe    : "hellstone pickaxe",
     items.adamantite_pickaxe   : "adamantite pickaxe",
-
-    # axes
     items.wood_axe             : "wood axe",
     items.stone_axe            : "stone axe",
     items.copper_axe           : "copper axe",
@@ -779,8 +668,6 @@ ITEM_NAMES = {
     items.unobtanium_axe       : "unobtanium axe",
     items.hellstone_axe        : "hellstone axe",
     items.adamantite_axe       : "adamantite axe",
-
-    # battle axes
     items.wood_battleaxe       : "wood battle axe",
     items.stone_battleaxe      : "stone battle axe",
     items.copper_battleaxe     : "copper battle axe",
@@ -791,8 +678,6 @@ ITEM_NAMES = {
     items.unobtanium_battleaxe : "unobtanium battle axe",
     items.hellstone_battleaxe  : "hellstone battle axe",
     items.adamantite_battleaxe : "adamantite battle axe",
-
-    # swords
     items.wood_sword           : "wood sword",
     items.stone_sword          : "stone sword",
     items.copper_sword         : "copper sword",
@@ -803,31 +688,19 @@ ITEM_NAMES = {
     items.unobtanium_sword     : "unobtanium sword",
     items.hellstone_sword      : "hellstone sword",
     items.adamantite_sword     : "adamantite sword",
-
-    # door
     items.wood_door            : "wooden door",
     items.iron_door            : "iron door",
     items.gold_door            : "gold door",
     items.platinum_door        : "platinum door",
-
-    # lighter
     items.lighter              : "lighter",
-
-    # bed and bucket
     items.bed                  : "bed",
     items.iron_bucket          : "bucket",
-
-    # fruits
     items.berry                : "berry",
     items.apple                : "apple",
-
-    # meats
     items.chicken              : "chicken",
     items.deermeat             : "deer meat",
     items.rottenmeat           : "rotten meat",
-
     items.torch                : "torch",
-
     items.crafting_table       : "crafting table",
     items.furnace              : "furnace",
     items.chest                : "chest"
@@ -1004,283 +877,125 @@ ITEM_TABLE = {
 
 # Dictionary consisting of item as key; dictionary consisting of item attribute as key and attribute as value as value
 ITEM_ATTR = {
-    # grass                : {ID:grass               , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # browndirt            : {ID:browndirt           , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # snowygrass           : {ID:snowygrass          , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # stick                : {ID:stick               , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # junglewood           : {ID:junglewood          , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # junglewood_plank     : {ID:junglewood_plank    , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # oakwood              : {ID:oakwood             , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # oakwood_plank        : {ID:oakwood_plank       , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # borealwood           : {ID:borealwood          , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # borealwood_plank     : {ID:borealwood_plank    , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # pinewood             : {ID:pinewood            , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # pinewood_plank       : {ID:pinewood_plank      , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # cactuswood           : {ID:cactuswood          , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # cactuswood_plank     : {ID:cactuswood_plank    , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # palmwood             : {ID:palmwood            , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # palmwood_plank       : {ID:palmwood_plank      , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # cosmonium_ore        : {ID:cosmonium_ore       , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # cosmonium_ingot      : {ID:cosmonium_ingot     , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # cosmonium_block      : {ID:cosmonium_block     , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # unobtanium_ore       : {ID:unobtanium_ore      , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # unobtanium_ingot     : {ID:unobtanium_ingot    , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # unobtanium_block     : {ID:unobtanium_block    , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # platinum_ore         : {ID:platinum_ore        , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # platinum_ingot       : {ID:platinum_ingot      , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # platinum_block       : {ID:platinum_block      , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # gold_ore             : {ID:gold_ore            , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # gold_brick           : {ID:gold_brick          , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # gold_block           : {ID:gold_block          , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # iron_ore             : {ID:iron_ore            , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # iron_ingot           : {ID:iron_ingot          , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # iron_block           : {ID:iron_block          , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # copper_ore           : {ID:copper_ore          , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # copper_ingot         : {ID:copper_ingot        , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # copper_block         : {ID:copper_block        , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # diamond_ore          : {ID:diamond_ore         , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # diamond_gem          : {ID:diamond_gem         , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # diamond_block        : {ID:diamond_block       , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # hellstone            : {ID:hellstone           , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # adamantite           : {ID:adamantite          , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # adamantite_block     : {ID:adamantite_block    , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # obsidian             : {ID:obsidian            , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # bedrock              : {ID:bedrock             , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # granite              : {ID:granite             , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # quartz               : {ID:quartz              , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # limestone            : {ID:limestone           , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # greystone            : {ID:greystone           , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # sandstone            : {ID:sandstone           , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # gravel               : {ID:gravel              , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # coal                 : {ID:coal                , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # clay                 : {ID:clay                , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # redClay              : {ID:redClay             , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # sand                 : {ID:sand                , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # snow                 : {ID:snow                , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # ice                  : {ID:ice                 , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # glass                : {ID:glass               , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # glasswindow          : {ID:glasswindow         , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # bow                  : {ID:bow                 , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # arrow                : {ID:arrow               , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # deerskin             : {ID:deerskin            , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # rottenleather        : {ID:rottenleather       , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # wood_pickaxe         : {ID:wood_pickaxe        , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # stone_pickaxe        : {ID:stone_pickaxe       , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # copper_pickaxe       : {ID:copper_pickaxe      , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # iron_pickaxe         : {ID:iron_pickaxe        , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # gold_pickaxe         : {ID:gold_pickaxe        , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # diamond_pickaxe      : {ID:diamond_pickaxe     , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # platinum_pickaxe     : {ID:platinum_pickaxe    , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # unobtanium_pickaxe   : {ID:unobtanium_pickaxe  , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # hellstone_pickaxe    : {ID:hellstone_pickaxe   , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # adamantite_pickaxe   : {ID:adamantite_pickaxe  , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # wood_axe             : {ID:wood_axe            , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # stone_axe            : {ID:stone_axe           , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # copper_axe           : {ID:copper_axe          , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # iron_axe             : {ID:iron_axe            , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # gold_axe             : {ID:gold_axe            , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # diamond_axe          : {ID:diamond_axe         , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # platinum_axe         : {ID:platinum_axe        , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # unobtanium_axe       : {ID:unobtanium_axe      , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # hellstone_axe        : {ID:hellstone_axe       , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # adamantite_axe       : {ID:adamantite_axe      , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # wood_battleaxe       : {ID:wood_battleaxe      , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # stone_battleaxe      : {ID:stone_battleaxe     , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # copper_battleaxe     : {ID:copper_battleaxe    , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # iron_battleaxe       : {ID:iron_battleaxe      , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # gold_battleaxe       : {ID:gold_battleaxe      , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # diamond_battleaxe    : {ID:diamond_battleaxe   , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # platinum_battleaxe   : {ID:platinum_battleaxe  , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # unobtanium_battleaxe : {ID:unobtanium_battleaxe, WEIGHT:100, DAMAGE: 100        , USE:None },
-    # hellstone_battleaxe  : {ID:hellstone_battleaxe , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # adamantite_battleaxe : {ID:adamantite_battleaxe, WEIGHT:100, DAMAGE: 100        , USE:None },
-    # wood_sword           : {ID:wood_sword          , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # stone_sword          : {ID:stone_sword         , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # copper_sword         : {ID:copper_sword        , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # iron_sword           : {ID:iron_sword          , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # gold_sword           : {ID:gold_sword          , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # diamond_sword        : {ID:diamond_sword       , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # platinum_sword       : {ID:platinum_sword      , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # unobtanium_sword     : {ID:unobtanium_sword    , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # hellstone_sword      : {ID:hellstone_sword     , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # adamantite_sword     : {ID:adamantite_sword    , WEIGHT:100, DAMAGE: 100        , USE:None },
-    # wood_door            : {ID:wood_door           , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # iron_door            : {ID:iron_door           , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # gold_door            : {ID:gold_door           , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # platinum_door        : {ID:platinum_door       , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # lighter              : {ID:lighter             , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # bed                  : {ID:bed                 , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # iron_bucket          : {ID:iron_bucket         , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # berry                : {ID:berry               , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # apple                : {ID:apple               , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # chicken              : {ID:chicken             , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # deermeat             : {ID:deermeat            , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # rottenmeat           : {ID:rottenmeat          , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # torch                : {ID:torch               , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # crafting_table       : {ID:crafting_table      , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None },
-    # furnace              : {ID:furnace             , WEIGHT:100, DAMAGE: HAND_DAMAGE, USE:None }
-    # items for dirt and grass blocks
-    items.grass                : {},
-    items.browndirt            : {},
-    items.snowygrass           : {},
-    items.stick                : {},
-    items.leaves               : {},
-
-    # wood
-    items.junglewood           : {},
-    items.junglewood_plank     : {},
-    items.oakwood              : {},
-    items.oakwood_plank        : {},
-    items.borealwood           : {},
-    items.borealwood_plank     : {},
-    items.pinewood             : {},
-    items.pinewood_plank       : {},
-    items.cactuswood           : {},
-    items.cactuswood_plank     : {},
-    items.palmwood             : {},
-    items.palmwood_plank       : {},
-
-    # metals
-    items.cosmonium_ore        : {},
-    items.cosmonium_ingot      : {},
-    items.cosmonium_block      : {},
-    items.unobtanium_ore       : {},
-    items.unobtanium_ingot     : {},
-    items.unobtanium_block     : {},
-    items.platinum_ore         : {},
-    items.platinum_ingot       : {},
-    items.platinum_block       : {},
-    items.gold_ore             : {},
-    items.gold_brick           : {},
-    items.gold_block           : {},
-    items.iron_ore             : {},
-    items.iron_ingot           : {},
-    items.iron_block           : {},
-    items.copper_ore           : {},
-    items.copper_ingot         : {},
-    items.copper_block         : {},
-
-    # non-metals
-    items.diamond_ore          : {},
-    items.diamond_gem          : {},
-    items.diamond_block        : {},
-    items.hellstone            : {},
-    items.adamantite           : {},
-    items.adamantite_block     : {},
-    items.obsidian             : {},
-    items.bedrock              : {},
-
-    # items for the stones
-    items.granite              : {},
-    items.quartz               : {},
-    items.limestone            : {},
-    items.greystone            : {},
-    items.sandstone            : {},
-
-    # items for transition blocks
-    items.coal_ore             : {},
-    items.gravel               : {},
-    items.coal                 : {},
-
-    # items for the clay blocks
-    items.clay                 : {},
-    items.red_clay             : {},
-
-    # item for the sand block
-    items.sand                 : {},
-
-    # items for snowy blocks
-    items.snow                 : {},
-    items.ice                  : {},
-
-    # items for the glass blocks
-    items.glass                : {},
-    items.glasspane            : {},
-    items.glasswindow          : {},
-
-    # bow and arrow
-    items.bow                  : {},
-    items.arrow                : {},
-
-    # animal hides
-    items.deerskin             : {},
-    items.rottenleather        : {},
-
-    # pickaxes
-    items.wood_pickaxe         : {},
-    items.stone_pickaxe        : {},
-    items.copper_pickaxe       : {},
-    items.iron_pickaxe         : {},
-    items.gold_pickaxe         : {},
-    items.diamond_pickaxe      : {},
-    items.platinum_pickaxe     : {},
-    items.unobtanium_pickaxe   : {},
-    items.hellstone_pickaxe    : {},
-    items.adamantite_pickaxe   : {},
-
-    # axes
-    items.wood_axe             : {},
-    items.stone_axe            : {},
-    items.copper_axe           : {},
-    items.iron_axe             : {},
-    items.gold_axe             : {},
-    items.diamond_axe          : {},
-    items.platinum_axe         : {},
-    items.unobtanium_axe       : {},
-    items.hellstone_axe        : {},
-    items.adamantite_axe       : {},
-
-    # battle axes
-    items.wood_battleaxe       : {},
-    items.stone_battleaxe      : {},
-    items.copper_battleaxe     : {},
-    items.iron_battleaxe       : {},
-    items.gold_battleaxe       : {},
-    items.diamond_battleaxe    : {},
-    items.platinum_battleaxe   : {},
-    items.unobtanium_battleaxe : {},
-    items.hellstone_battleaxe  : {},
-    items.adamantite_battleaxe : {},
-
-    # swords
-    items.wood_sword           : {},
-    items.stone_sword          : {},
-    items.copper_sword         : {},
-    items.iron_sword           : {},
-    items.gold_sword           : {},
-    items.diamond_sword        : {},
-    items.platinum_sword       : {},
-    items.unobtanium_sword     : {},
-    items.hellstone_sword      : {},
-    items.adamantite_sword     : {},
-
-    # door
-    items.wood_door            : {},
-    items.iron_door            : {},
-    items.gold_door            : {},
-    items.platinum_door        : {},
-
-    # lighter
-    items.lighter              : {},
-
-    # bed and bucket
-    items.bed                  : {},
-    items.iron_bucket          : {},
-
-    # fruits
-    items.berry                : {},
-    items.apple                : {},
-
-    # meats
-    items.chicken              : {},
-    items.deermeat             : {},
-    items.rottenmeat           : {},
-
-    items.torch                : {},
-
-    items.crafting_table       : {},
-    items.furnace              : {},
-    items.chest                : {}
+    items.grass                : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.browndirt            : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.snowygrass           : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.stick                : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.leaves               : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.junglewood           : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.junglewood_plank     : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.oakwood              : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.oakwood_plank        : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.borealwood           : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.borealwood_plank     : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.pinewood             : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.pinewood_plank       : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.cactuswood           : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.cactuswood_plank     : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.palmwood             : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.palmwood_plank       : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.cosmonium_ore        : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.cosmonium_ingot      : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.cosmonium_block      : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.unobtanium_ore       : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.unobtanium_ingot     : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.unobtanium_block     : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.platinum_ore         : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.platinum_ingot       : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.platinum_block       : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.gold_ore             : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.gold_brick           : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.gold_block           : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.iron_ore             : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.iron_ingot           : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.iron_block           : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.copper_ore           : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.copper_ingot         : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.copper_block         : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.diamond_ore          : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.diamond_gem          : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.diamond_block        : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.hellstone            : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.adamantite           : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.adamantite_block     : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.obsidian             : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.bedrock              : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.granite              : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.quartz               : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.limestone            : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.greystone            : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.sandstone            : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.coal_ore             : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.gravel               : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.coal                 : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.clay                 : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.red_clay             : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.sand                 : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.snow                 : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.ice                  : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.glass                : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.glasspane            : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.glasswindow          : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.bow                  : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.arrow                : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.deerskin             : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.rottenleather        : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.wood_pickaxe         : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.stone_pickaxe        : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.copper_pickaxe       : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.iron_pickaxe         : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.gold_pickaxe         : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.diamond_pickaxe      : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.platinum_pickaxe     : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.unobtanium_pickaxe   : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.hellstone_pickaxe    : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.adamantite_pickaxe   : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.wood_axe             : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.stone_axe            : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.copper_axe           : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.iron_axe             : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.gold_axe             : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.diamond_axe          : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.platinum_axe         : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.unobtanium_axe       : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.hellstone_axe        : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.adamantite_axe       : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.wood_battleaxe       : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.stone_battleaxe      : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.copper_battleaxe     : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.iron_battleaxe       : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.gold_battleaxe       : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.diamond_battleaxe    : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.platinum_battleaxe   : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.unobtanium_battleaxe : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.hellstone_battleaxe  : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.adamantite_battleaxe : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.wood_sword           : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.stone_sword          : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.copper_sword         : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.iron_sword           : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.gold_sword           : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.diamond_sword        : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.platinum_sword       : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.unobtanium_sword     : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.hellstone_sword      : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.adamantite_sword     : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.wood_door            : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.iron_door            : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.gold_door            : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.platinum_door        : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.lighter              : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.bed                  : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.iron_bucket          : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.berry                : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.apple                : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.chicken              : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.deermeat             : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.rottenmeat           : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.torch                : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.crafting_table       : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.furnace              : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.chest                : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None}
 }
 
 def loadImageTable():

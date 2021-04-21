@@ -1,5 +1,4 @@
 # from shapely.geometry import Polygon
-
 from game_utilities import *
 
 # ! def initialize( self , _renderer , _chunk_buffer , _serializer , _player , _camera , _screen ):
@@ -21,32 +20,30 @@ class ItemEntity:
 
 
 class Entity:
-    def __init__(self, _pos, _chunkBuffer, _entityBuffer, _width, _height, _hitbox, _health=100):
+    def __init__(self, _pos, _entity_buffer, _width, _height, _hitbox, _health=100):
         self.pos          = _pos
-        self.chunk_buffer = _chunkBuffer
-        self.entity_buffer = _entityBuffer
+        self.entity_buffer = _entity_buffer
         self.health       = _health
-        self.grounded     = True
         self.friction     = DEFAULT_FRICTION
         self.vel          = [0.0, 0.0]
         self.acc          = [0.0, 0.0]
         self.width        = _width
         self.height       = _height
-        self.hitbox       = Polygon(_hitbox)
+        self.rel_hitbox   = _hitbox
         self.surf         = pygame.Surface((self.width, self.height))
-        self.surfPos      = lambda: [ self.pos[0] - (PLYR_WIDTH*0.5), self.pos[1] + (PLYR_HEIGHT*0.5) ]
+        self.surf_pos     = lambda: [self.pos[0] - (PLYR_WIDTH * 0.5), self.pos[1] + (PLYR_HEIGHT * 0.5)]
         self.hitting      = False
         self.placing      = False
 
         # In the following lambda functions, 'p' means position which is a tuple
-        self.currChunk    = lambda p: int(math.floor(p[0] / CHUNK_WIDTH_P))
-        self.currChunkInd = lambda p: int( self.currChunk(p) - self.chunk_buffer.positions[0] )
-        self.xPosChunk    = lambda p: int(p[0] // TILE_WIDTH - self.currChunk(p) * CHUNK_WIDTH)
-        self.yPosChunk    = lambda p: int(p[1] // TILE_WIDTH)
-        self.tile         = lambda p: self.chunk_buffer[self.currChunkInd( p )][self.yPosChunk( p )][self.xPosChunk( p )]
+        self.hitbox         = lambda p: [p+i for i in self.rel_hitbox]
+        self.tile           = lambda p: self.entity_buffer.get_tile(p)
+
+    def collide( self, p1, p2 ):
+        return False
 
     def calc_friction(self):
-        return TILE_ATTR[self.tile((self.pos[0], self.pos[1] - 16))][FRICTION]
+        return TILE_ATTR[self.tile((self.pos[0], self.pos[1] - 16))][tile_attr.FRICTION]
 
     def move_left(self):
         self.acc[0] = -self.friction * 2
@@ -62,20 +59,26 @@ class Entity:
         self.acc[1] = -GRAVITY_ACC
         self.grounded = False
 
-    def checkUp(self, pos):
+    def check_up(self, pos):
         pass
 
-    def checkLeft(self, pos):
+    def check_left(self, pos):
         pass
 
-    def checkRight(self, pos):
+    def check_right(self, pos):
         pass
 
-    def checkGround(self, pos):
+    def check_ground(self, pos):
         pass
 
-    def check(self, i, dt, pos):
-        pass
+    def check(self, pos):
+        # For every corresponding tile between hitbox endpoints including the endpoints,
+        # check that the hitbox and the tile don't intersect
+        hitbox = self.hitbox( pos )
+        for point in hitbox:
+            if self.collide( self.tile( point ), hitbox ):
+                return False
+        return True
 
     def hit( self ):
         pass
@@ -86,14 +89,15 @@ class Entity:
 
 class Player(Entity):
 
-    def __init__( self, screen, pos, chunkBuffer, entityBuffer, eventHandler, keyState, mouseState, cursorPos, friction):
-        super().__init__(pos, chunkBuffer, entityBuffer, PLYR_WIDTH, PLYR_HEIGHT, friction)
+    def __init__( self, _screen, _chunk_buffer, _entity_buffer, key_state, mouse_state, cursor_pos):
+        hitbox = []
+        pos = [0,0]
+        super().__init__(pos, _entity_buffer, PLYR_WIDTH, PLYR_HEIGHT, hitbox)
 
-        self.eventHandler = eventHandler
-        self.keyState = keyState
-        self.mouseState = mouseState
-        self.cursorPos = cursorPos
-        self.inventory = Inventory(screen, INV_COLS, INV_ROWS)
+        self.keyState = key_state
+        self.mouseState = mouse_state
+        self.cursorPos = cursor_pos
+        self.inventory = Inventory(_screen, INV_COLS, INV_ROWS)
         self.tangibility = 0
 
     def run( self ):
@@ -116,61 +120,72 @@ class Player(Entity):
             self.keyState[pygame.K_e] = False
 
     def update( self, dt ):
-        nextPos = self.pos.copy( )
-        self.calc_friction( )
-        self.checkGround( self.pos )
-        if not self.grounded: self.acc[1] = -GRAVITY_ACC
-        for i in range( 0, 2 ):
-            nextVel = self.vel[i] + self.acc[i] * dt
-            if nextVel >= abs( self.friction * dt ):
-                self.vel[i] -= self.friction * dt
-            elif nextVel <= -abs( self.friction * dt ):
-                self.vel[i] += self.friction * dt
-            else:
-                self.vel[i] = 0
-                self.acc[i] = 0
+        dt2 = dt
+        dt = 16 / (MAX_VEL * SCALE_VEL)
+        while dt2 > 0:
+            if dt2 <= dt:
+                dt = dt2
+                dt2 = 0
+            if self.vel == [0, 0]: break
+            dt2 -= dt
+            self.calc_friction( )
+            # self.check_ground( self.pos )
+            # if not self.grounded: self.acc[1] = -GRAVITY_ACC
+            for i in range( 0, 2 ):
+                next_pos = self.pos.copy( )
+                next_vel = self.vel[i] + self.acc[i] * dt
+                if next_vel >= abs( self.friction * dt ):
+                    self.vel[i] -= self.friction * dt
+                elif next_vel <= -abs( self.friction * dt ):
+                    self.vel[i] += self.friction * dt
+                else:
+                    self.vel[i] = 0
+                    self.acc[i] = 0
 
-            self.acc[i] = MAX_ACC * 2 if (self.acc[i] > MAX_ACC * 2) else -MAX_ACC * 2 if (self.acc[i] < -MAX_ACC * 2) else self.acc[i]
-            self.vel[i] += self.acc[i] * dt
-            if self.vel[i] < -MAX_VEL * (1 - self.friction * 0.2):
-                self.vel[i] = -MAX_VEL * (1 - self.friction * 0.2)
-            elif self.vel[i] > MAX_VEL * (1 - self.friction * 0.2):
-                self.vel[i] = MAX_VEL * (1 - self.friction * 0.2)
-            nextPos[i] += self.vel[i] * SCALE_VEL * dt
-            move = self.check( i, dt, nextPos )
-            nextPos = self.pos.copy( )
-            if move:    self.pos[i] += self.vel[i] * SCALE_VEL * dt
-            else:       self.vel[i] = 0
+                self.acc[i] = MAX_ACC * 2 if (self.acc[i] > MAX_ACC * 2) else -MAX_ACC * 2
 
-        if self.hitting and not self.placing :
-            chunk = math.floor(self.cursorPos[0] / CHUNK_WIDTH_P)
-            chunkInd = chunk - self.chunk_buffer.positions[0]
-            x = (self.cursorPos[0] // TILE_WIDTH) - chunk * CHUNK_WIDTH
-            y = (self.cursorPos[1] // TILE_WIDTH)
-            block = self.chunk_buffer[ chunkInd][ y][ x]
-            state = self.chunk_buffer[ chunkInd].breakBlockAt( x, y, 10, dt )
-            self.eventHandler.tileBreakFlag = True
-            self.eventHandler.tileBreakIndex = chunkInd
-            self.eventHandler.tileBreakPos[0] = x
-            self.eventHandler.tileBreakPos[1] = y
-            if state:   # The block was broken
-                self.entity_buffer.addItem( block, self.cursorPos.copy( ), chunkInd )
+                self.vel[i] += self.acc[i] * dt
+                if self.vel[i] < -MAX_VEL * (1 - self.friction * 0.2):
+                    self.vel[i] = -MAX_VEL * (1 - self.friction * 0.2)
+                elif self.vel[i] > MAX_VEL * (1 - self.friction * 0.2):
+                    self.vel[i] = MAX_VEL * (1 - self.friction * 0.2)
 
-        elif self.placing:
-            chunk = math.floor(self.cursorPos[0] / CHUNK_WIDTH_P)
-            chunkInd = chunk - self.chunk_buffer.positions[0]
-            x = (self.cursorPos[0] // TILE_WIDTH) - chunk * CHUNK_WIDTH
-            y = (self.cursorPos[1] // TILE_WIDTH)
-            toPlace = self.inventory.getSelectedItem()
-            dist = math.sqrt(pow(self.pos[0]-self.cursorPos[0], 2)+pow(self.pos[1]-self.cursorPos[1], 2))
-            if toPlace and dist > PLYR_HEIGHT:
-                res = self.chunk_buffer[chunkInd].placeBlockAt( x, y, toPlace )
-                if res: self.inventory.remItemPos( 1, self.inventory.itemHeld )
+                next_pos[i] += self.vel[i] * SCALE_VEL * dt
+                move = self.check( next_pos )
+                if move:
+                    self.pos[i] += self.vel[i] * SCALE_VEL * dt
+                else:
+                    self.vel[i] = 0
 
-            self.eventHandler.tilePlaceFlag = True
-            self.eventHandler.tilePlaceIndex = chunkInd
-            self.eventHandler.tilePlacePos[0] = x
-            self.eventHandler.tilePlacePos[1] = y
+        # if self.hitting and not self.placing :
+        #     chunk = math.floor(self.cursorPos[0] / CHUNK_WIDTH_P)
+        #     chunkInd = chunk - self.chunk_buffer.positions[0]
+        #     x = (self.cursorPos[0] // TILE_WIDTH) - chunk * CHUNK_WIDTH
+        #     y = (self.cursorPos[1] // TILE_WIDTH)
+        #     block = self.chunk_buffer[ chunkInd][ y][ x]
+        #     state = self.chunk_buffer[ chunkInd].breakBlockAt( x, y, 10, dt )
+        #     self.eventHandler.tileBreakFlag = True
+        #     self.eventHandler.tileBreakIndex = chunkInd
+        #     self.eventHandler.tileBreakPos[0] = x
+        #     self.eventHandler.tileBreakPos[1] = y
+        #     if state:   # The block was broken
+        #         self.entity_buffer.addItem( block, self.cursorPos.copy( ), chunkInd )
+        #
+        # elif self.placing:
+        #     chunk = math.floor(self.cursorPos[0] / CHUNK_WIDTH_P)
+        #     chunkInd = chunk - self.chunk_buffer.positions[0]
+        #     x = (self.cursorPos[0] // TILE_WIDTH) - chunk * CHUNK_WIDTH
+        #     y = (self.cursorPos[1] // TILE_WIDTH)
+        #     toPlace = self.inventory.getSelectedItem()
+        #     dist = math.sqrt(pow(self.pos[0]-self.cursorPos[0], 2)+pow(self.pos[1]-self.cursorPos[1], 2))
+        #     if toPlace and dist > PLYR_HEIGHT:
+        #         res = self.chunk_buffer[chunkInd].placeBlockAt( x, y, toPlace )
+        #         if res: self.inventory.remItemPos( 1, self.inventory.itemHeld )
+        #
+        #     self.eventHandler.tilePlaceFlag = True
+        #     self.eventHandler.tilePlaceIndex = chunkInd
+        #     self.eventHandler.tilePlacePos[0] = x
+        #     self.eventHandler.tilePlacePos[1] = y
 
     def pick( self ):
         l = self.entity_buffer.pickItem( )
@@ -190,14 +205,14 @@ class Player(Entity):
 
 
 class Projectile(Entity):
-    def __init__( self, pos, chunkBuffer, entityBuffer, width, height ):
-        super( ).__init__( pos, chunkBuffer, entityBuffer, width, height )
+    def __init__( self, pos, _entity_buffer, width, height ):
+        super( ).__init__( pos, _entity_buffer, width, height )
         pass
 
 
 class Slime(Entity):
-    def __init__( self, pos, chunkBuffer, entityBuffer, width, height ):
-        super( ).__init__( pos, chunkBuffer, entityBuffer, width, height )
+    def __init__( self, pos, _entity_buffer, width, height ):
+        super( ).__init__( pos, _entity_buffer, width, height )
         pass
 
     def run( self ):
@@ -205,8 +220,8 @@ class Slime(Entity):
 
 
 class Zombie(Entity):
-    def __init__( self, pos, chunkBuffer, entityBuffer, width, height ):
-        super( ).__init__( pos, chunkBuffer, entityBuffer, width, height )
+    def __init__( self, pos, _entity_buffer, width, height ):
+        super( ).__init__( pos, _entity_buffer, width, height )
         pass
 
     def run( self ):
@@ -229,6 +244,12 @@ class EntityBuffer:
         # Reference to camera and screen surface
         self.camera         = None
         self.screen         = None
+
+        self.get_curr_chunk = lambda p: int( math.floor( p[0] / CHUNK_WIDTH_P ) )
+        self.get_curr_chunk_ind = lambda p: int( self.get_curr_chunk( p ) - self.chunk_buffer.positions[0] )
+        self.get_x_pos_chunk = lambda p: int( p[0] // TILE_WIDTH - self.get_curr_chunk( p ) * CHUNK_WIDTH )
+        self.get_y_pos_chunk = lambda p: int( p[1] // TILE_WIDTH )
+        self.get_tile = lambda p: self.chunk_buffer[self.get_curr_chunk_ind( p )][self.get_y_pos_chunk( p )][self.get_x_pos_chunk( p )]
 
     def initialize( self , _chunk_buffer , _player , _renderer , _serializer , _camera , _screen ):
 
