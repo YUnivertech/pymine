@@ -66,8 +66,11 @@ def main_game_start( _world = 'World1' ):
     # Serializer
     serializer              = Serializer( _world )
 
+    # Noise generator
+    noise_gen               = opensimplex.OpenSimplex( seed = 0 )
+
     # Camera
-    # camera                  = [ 0, CHUNK_HEIGHT_P // 2 ]
+    # camera                  =  0, CHUNK_HEIGHT_P // 2 ]
     camera                  = [ 0 , 0 ]
     prev_cam                = [ 0 , 0 ]
     cam_bound               = False
@@ -75,7 +78,7 @@ def main_game_start( _world = 'World1' ):
     # ---------- INITIALIZE MANAGERS ---------- #
 
     # Chunk Buffer
-    chunk_buffer.initialize( entity_buffer , renderer , serializer , player , camera , screen )
+    chunk_buffer.initialize( entity_buffer , renderer , serializer , player , camera , screen , noise_gen )
 
     # Entity Buffer
     # entity_buffer.initialize( chunk_buffer , renderer , serializer , player , camera , screen )
@@ -150,10 +153,10 @@ def main_game_start( _world = 'World1' ):
             camera[0] += ( player.pos[0] - camera[0] ) * LERP_C
             camera[1] += ( player.pos[1] - camera[1] ) * LERP_C
         else :
-            if key_states[pygame.K_a]:      camera[0] -= ( 4 * TILE_WIDTH * dt )
-            elif key_states[pygame.K_d]:    camera[0] += ( 4 * TILE_WIDTH * dt )
-            if key_states[pygame.K_s]:      camera[1] -= ( 4 * TILE_WIDTH * dt )
-            elif key_states[pygame.K_w]:    camera[1] += ( 4 * TILE_WIDTH * dt )
+            if key_states[pygame.K_a]:      camera[0] -= ( 8 * TILE_WIDTH * dt )
+            elif key_states[pygame.K_d]:    camera[0] += ( 8 * TILE_WIDTH * dt )
+            if key_states[pygame.K_s]:      camera[1] -= ( 8 * TILE_WIDTH * dt )
+            elif key_states[pygame.K_w]:    camera[1] += ( 8 * TILE_WIDTH * dt )
 
         renderer.update_camera()
 
@@ -162,10 +165,11 @@ def main_game_start( _world = 'World1' ):
         prev_chunk = curr_chunk
 
         if delta_chunk:
-            print('OH NO')
             new_index = chunk_buffer.shift(delta_chunk)
+            new_index_inbuffer = new_index - chunk_buffer.positions[0]
+
             entity_buffer.shift(delta_chunk)
-            chunk_buffer[new_index].draw()
+            chunk_buffer[new_index_inbuffer].draw()
 
         renderer.paint_screen()
         pygame.display.update()
@@ -225,7 +229,7 @@ while menu_running:
             menu_running = False
         elif event.type == pygame.VIDEORESIZE:
             display_sz[0] = screen.get_width()
-            displau_sz[1] = screen.get_height()
+            display_sz[1] = screen.get_height()
 
             menu_background = pygame.Surface( display_sz )
             menu_background.fill("#0000FF")

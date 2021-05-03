@@ -141,16 +141,19 @@ class Renderer:
 
             if flag : break
 
-        # # Temporary player crosshair rendering
-        # playerCoors = [cls.player.pos[0], cls.player.pos[1]]
+        # Temporary rendering of camera
+        camera_coors = [self.camera[0], self.camera[1]]
 
-        # # Translate to be in camera space
-        # playerCoors[0] -= cls.camera[0]
-        # playerCoors[1] -= cls.camera[1]
+        # Translate to camera's space
+        camera_coors[0] -= self.camera[0]
+        camera_coors[1] -= self.camera[1]
 
-        # # Translate to be in screen space
-        # playerCoors[0] += cls.numHor
-        # playerCoors[1] =  cls.numVer - playerCoors[1]
+        # Translate to screen's space
+        camera_coors[0] += self.num_hor
+        camera_coors[1] = self.num_ver - camera_coors[1]
+
+        # Blit a small rectangle
+        pygame.draw.rect(self.screen, (255, 50, 50), pygame.Rect(camera_coors[0]-2, camera_coors[1]-2, 5, 5))
 
         # item = cls.player.inventory.getSelectedItem()
         # name, quantity = 'Nothing', cls.player.inventory.getSelectedQuantity()
@@ -164,7 +167,6 @@ class Renderer:
         # xVal = cls.screen.get_width() - toShow.get_width() - 8
         # cls.screen.blit(toShow, [xVal, 16])
 
-        # pygame.draw.rect(cls.screen, (255,50,50), pygame.Rect(playerCoors[0]-PLYR_WIDTH//2, playerCoors[1]-PLYR_HEIGHT//2, PLYR_WIDTH, PLYR_HEIGHT))
         # cls.entityBuffer.draw()
         # for group in cls.entityBuffer.entities:
         #     for entity in group:
@@ -175,6 +177,8 @@ class Renderer:
         #         cls.screen.blit( entity.surf, coors )
 
     def update_size( self ):
+
+        print(self.window_size)
 
         # Number of pixels to paint on either side of the camera (centred on the screen) after screen has been resized
         self.num_hor        = self.window_size[0] // 2

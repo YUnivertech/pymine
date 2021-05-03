@@ -3,6 +3,7 @@ import pygame
 import pygame.freetype
 import enum
 import pickle
+import opensimplex
 
 import pygame_gui, os
 from pygame_gui.elements import UIButton, UIPanel, UITextBox, UITextEntryLine

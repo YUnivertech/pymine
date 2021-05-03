@@ -132,32 +132,42 @@ from game_utilities import *
 #                 currChunkRef[y][x-1].lightval = 0.5     #some value
 #                 propagateRadial(y, x-1, left=True)
 
-def generate_chunk_temp( _chunk ):
-    # one layer of bedrock
-    # one layer of obsidian
-    # one layer of hellstone
-    # 10 layers of stone
-    # 10 layers of limestone
-    # 10 layers of sandstone
-    # one layer of coal
-    # one layer of dirt
-    # one layer of grass
+def generate_chunk_temp( _chunk , noise_gen ):
+    # # one layer of bedrock
+    # # one layer of obsidian
+    # # one layer of hellstone
+    # # 10 layers of stone
+    # # 10 layers of limestone
+    # # 10 layers of sandstone
+    # # one layer of coal
+    # # one layer of dirt
+    # # one layer of grass
+    # for i in range( CHUNK_WIDTH ):
+    #     _chunk.blocks[0][i] = tiles.bedrock
+    #     _chunk.blocks[1][i] = tiles.obsidian
+    #     _chunk.blocks[2][i] = tiles.hellstone
+    #     for j in range(10):
+    #         _chunk.blocks[j + 3][i] = tiles.greystone
+    #         _chunk.blocks[j + 13][i] = tiles.limestone
+    #         _chunk.blocks[j + 23][i] = tiles.sandstone
+    #     _chunk.blocks[32][i] = tiles.coal
+    #     _chunk.blocks[33][i] = tiles.browndirt
+    #     _chunk.blocks[34][i] = tiles.grass
+
     for i in range( CHUNK_WIDTH ):
-        _chunk.blocks[0][i] = tiles.bedrock
-        _chunk.blocks[1][i] = tiles.obsidian
-        _chunk.blocks[2][i] = tiles.hellstone
-        for j in range(10):
-            _chunk.blocks[j + 3][i] = tiles.greystone
-            _chunk.blocks[j + 13][i] = tiles.limestone
-            _chunk.blocks[j + 23][i] = tiles.sandstone
-        _chunk.blocks[32][i] = tiles.coal
-        _chunk.blocks[33][i] = tiles.browndirt
-        _chunk.blocks[34][i] = tiles.grass
+        for j in range( CHUNK_HEIGHT ):
+            _chunk.blocks[j][i] = tiles.bedrock
+
+    for i in range( CHUNK_WIDTH ):
+        x_coor = i + ( CHUNK_WIDTH * _chunk.index )
+        my_height = int( ( noise_gen.noise2d( x = 0.0075 * x_coor, y = 0 ) + 1 ) * 32 ) # Value will be from 0 to 64
+        for j in range( my_height ):
+            _chunk.blocks[j][i] = tiles.browndirt
 
 
 class Chunk:
 
-    def __init__( self , _blocks = None , _walls = None , _local_tile_table = None , _index = None , _created = None , _active_time = None ):
+    def __init__( self , _blocks = None , _walls = None , _local_tile_table = None , _index = None , _active_time = None ):
 
         self.blocks             = _blocks
         self.walls              = _walls
@@ -239,7 +249,7 @@ class ChunkBuffer:
         # size and positions of chunks in the world
         self.len            = _len
         # self.positions      = [None] * 3
-        self.positions = [ -_len//2 , 0 , _len//2 ]
+        self.positions = [ -_len//2 + 1, 0 , _len//2 ]
 
         # chunk and light surface data
         self.chunks         = [None] * _len
@@ -251,7 +261,7 @@ class ChunkBuffer:
         self.serializer     = None
         self.player         = None
 
-    def initialize( self , _entity_buffer , _renderer , _serializer , _player , _camera , _screen ):
+    def initialize( self , _entity_buffer , _renderer , _serializer , _player , _camera , _screen , _noise_gen ):
 
         # Set all references to main managers
         self.entity_buffer  = _entity_buffer
@@ -260,6 +270,7 @@ class ChunkBuffer:
         self.player         = _player
         self.camera         = _camera
         self.screen         = _screen
+        self.noise_gen      = _noise_gen
 
         self.load()
 
@@ -284,12 +295,20 @@ class ChunkBuffer:
 
             self.chunks[i]          = self.chunks[i - _delta]
 
-        loadedChunks =  [None] * _delta
+        loaded_chunks =  [None] * _delta
         for i , pos in enumerate( range( self.positions[0] - _delta , self.positions[0] ) ):
 
-            loadedChunks[i]         = self.serializer[pos]
-            self.chunks[i]          = loadedChunks[i]
-            # Process the chunks before putting it in however
+            loaded_chunks[i]         = self.serializer[pos]
+
+            if loaded_chunks[i] is None:
+                loaded_chunks[i] = Chunk( _index = pos )
+                generate_chunk_temp( loaded_chunks[i] , self.noise_gen )
+            else:
+                li = pickle.loads( loaded_chunks[i][0] )
+                lo = pickle.loads( loaded_chunks[i][1] )
+                loaded_chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = pos )
+
+            self.chunks[i]          = loaded_chunks[i]
 
         self.positions[0] -= _delta
         self.positions[1] -= _delta
@@ -314,8 +333,16 @@ class ChunkBuffer:
         for i , pos in enumerate( range( self.len - _delta , self.len ) ):
 
             loaded_chunks[i]        = self.serializer[self.positions[2] + i + 1]
+
+            if loaded_chunks[i] is None:
+                loaded_chunks[i] = Chunk( _index = self.positions[2] + i + 1 )
+                generate_chunk_temp( loaded_chunks[i] , self.noise_gen )
+            else:
+                li = pickle.loads( loaded_chunks[i][0] )
+                lo = pickle.loads( loaded_chunks[i][1] )
+                loaded_chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = i )
+
             self.chunks[pos]        = loaded_chunks[i]
-            # Process the chunks before putting it in however
 
         self.positions[0] += _delta
         self.positions[1] += _delta
@@ -346,10 +373,8 @@ class ChunkBuffer:
 
                 self.chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = self.positions[0] + i )
 
-            generate_chunk_temp( self.chunks[i] )
+            generate_chunk_temp( self.chunks[i] , self.noise_gen )
             self.chunks[i].draw()
-
-        print(self.chunks)
 
     def __getitem__( self , _key ): return self.chunks[_key]
 
