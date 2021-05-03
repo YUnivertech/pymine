@@ -1,3 +1,5 @@
+# todo Need to optimize the shift left and shift right methods
+
 from game_utilities import *
 
 # class Shader:
@@ -340,7 +342,7 @@ class ChunkBuffer:
             else:
                 li = pickle.loads( loaded_chunks[i][0] )
                 lo = pickle.loads( loaded_chunks[i][1] )
-                loaded_chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = i )
+                loaded_chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = self.positions[2] + i + 1 )
 
             self.chunks[pos]        = loaded_chunks[i]
 

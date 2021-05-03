@@ -49,7 +49,7 @@ def main_game_start( _world = 'World1' ):
     # ---------- CREATION OF ALL MANAGERS ---------- #
 
     # Chunk Buffer
-    buffer_width            = ( pygame.display.Info().current_w // CHUNK_WIDTH_P ) + 1
+    buffer_width            = ( pygame.display.Info().current_w // CHUNK_WIDTH_P ) + 6
     buffer_width            = buffer_width if buffer_width % 2 else buffer_width + 1
     chunk_buffer            = ChunkBuffer( buffer_width )
 
