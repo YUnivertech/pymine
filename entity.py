@@ -308,65 +308,120 @@ class Inventory:
         self.surf               = pygame.surface( ( 800 , 500 ) , flags = pygame.SRCALPHA )
 
     def add_item( self, _item , _quantity ):
+        """ Adds the supplied item to the inventory the supplied number of items homogenously
+            Priority is given to the slots which already contain the specified item
+            The amount left over is returned
 
-        first_empty = None
+        Args:
+            _item (int): The ID of the item to be added
+            _quantity (int): The quantity of the item to be added
 
-        for y in range( self._rows ):
+        Returns:
+            int: The number of items left over at the end
+        """
 
-            for x in range( self._cols ):
+        empty_slots = []
 
-                if first_empty is None and self.quantities[y][x] == 0:
-                    first_empty = [x, y]
+        for y in range( self.rows ):
+
+            for x in range( self.cols ):
+
+                if self.quantities[y][x] is 0: empty_slots.append( [ x , y ] )
 
                 if self.items[y][x] == _item and self.quantities[y][x] < 64:
-                    max_fit = min( _quantity, 64 - self.quantities[y][x], 64 )
+                    max_fit = min( _quantity, 64 - self.quantities[y][x] )
                     self.quantities[y][x] += max_fit
                     _quantity -= max_fit
-                    if not _quantity: return None
+                    if _quantity is 0: return None
 
-        if _quantity > 0 and first_empty is not None:
+        if _quantity:
 
-            max_fit = min( 64, _quantity )
-            _quantity -= max_fit
+            num_slots = min( len( empty_slots ) , ( _quantity >> 6 ) )
+            _quantity -= ( num_slots << 6 )
 
-            self.items[firstEmpty[1]][firstEmpty[0]] = _item
-            self.quantities[firstEmpty[1]][firstEmpty[0]] = max_fit
+            for i in range( num_slots ):
+                x , y = empty_slots[i]
+                self.items[y][x]        = _item
+                self.quantities[y][x]   = 64
 
-            if _quantity: self.addItem( _item , _quantity )
+            if _quantity:
+                if len( empty_slots ) <= num_slots: return _quantity
+                x , y = empty_slots[num_slots]
+                self.items[y][x]        = _item
+                self.quantities[y][x]   = _quantity
 
-    def rem_item_stack( self , item , quantity ):
+        return _quantity
+
+    def rem_item_stack( self , _item , _quantity ):
+        """ Removes the supplied number of occourences of the supplied item from the inventory from all around
+            If the supplied count exceeds the total count, then only the total count is removed
+            The number of items which could successfully be removed are returned
+
+        Args:
+            _item (int): The item which is to be removed
+            _quantity (int): The quantity of the item to be removed
+
+        Returns:
+            int: The number of items which could succesfully be removed
+        """
 
         for x in range( self.cols ):
 
             for y in range( self.rows ):
 
-                if self.items[y][x] == item:
+                if self.items[y][x] == _item:
 
-                    to_remove = min( self.quantities[y][x] , quantity )
+                    to_remove = min( self.quantities[y][x] , _quantity )
                     print(to_remove)
                     self.quantities[y][x] -= to_remove
-                    quantity -= to_remove
+                    _quantity -= to_remove
                     if self.quantities[y][x] <= 0: self.items[y][x] = None
-                    if quantity <= 0: return True
+                    if _quantity <= 0: return True
 
-        return quantity == 0
+        return _quantity
 
     def rem_item_pos( self, _quantity, _pos ):
+        """ Removes a given quantity of items from a given position
+            If the supplied quantity is equal to/exceeds the present quantity, only the present quantity is removed
+            The number of items which could succesfully be removed are returned
+
+        Args:
+            _quantity (int): The number of items to be removed
+            _pos (list): The position from which to remove the given quantity (in coloumn , row  format)
+
+        Returns:
+            int: The count of the items which were succesfully removed
+        """
 
         to_remove = min( self.quantities[_pos[1]][_pos[0]] , _quantity )
         self.quantities[_pos[1]][_pos[0]] -= to_remove
 
         if self.quantities[_pos[1]][_pos[0]] <= 0: self.items[_pos[1]][_pos[0]] = None
 
+        return to_remove
+
     def get_selected_item( self ):
+        """Returns the ID of the item which is currently selected
+
+        Returns:
+            int: The ID of the item which is currently selected
+        """
+
 
         return self.items[self.itemHeld[1]][self.itemHeld[0]]
 
     def get_selected_quantity( self ):
+        """Returns the quantity of the item at the position currently being selected (not held)
+
+        Returns:
+            int: The quantity of the items being held
+        """
 
         return self.quantities[self.itemHeld[1]][self.itemHeld[0]]
 
     def draw( self ):
+        """ Draws the Inventory on to its own surface
+        """
 
         # ! LOTS OF MAGIC NUMBERS
         slot    = ITEM_TABLE[ slot ]

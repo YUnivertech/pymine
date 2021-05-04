@@ -17,27 +17,13 @@ pygame.display.set_caption( "Pymine" )
 pygame.display.set_icon( pygame.image.load( "Resources/Default/gameIcon.png" ) )
 
 populate_key_states( key_states , button_states )
+loadImageTable()
 
 # Create GUI based menus
 if not os.path.isdir("Worlds"): os.mkdir("Worlds") # Create worlds folder if it doesnt exist
 worlds = os.listdir("Worlds")
 for i in range(len(worlds)): worlds[i] = worlds[:-3] # remove .db extension
 gui_manager = pygame_gui.UIManager(display_sz, "temptheme.json")
-
-#     if(deltaChunk != 0):
-#         #eventHandler.chunkShiftFlag = True # server must be notified
-#         chk_a = time.time()
-#         eventHandler.loadChunkIndex = chunkBuffer.shiftBuffer(deltaChunk)
-#         print(entityBuffer.entities)
-#         entityBuffer.shift(deltaChunk)
-#         print(entityBuffer.entities)
-#         print('shift buffer time:', (time.time()-chk_a)*1000)
-#         chk_a = time.time()
-#         chunkBuffer[eventHandler.loadChunkIndex].draw()
-#         print('draw time:', (time.time()-chk_a)*1000)
-#         chk_a = time.time()
-#         chunkBuffer.renderLightmap(eventHandler.loadChunkIndex)
-#         print('render light time:', (time.time()-chk_a)*1000)
 
 # Main Game function
 def main_game_start( _world = 'World1' ):
@@ -70,8 +56,8 @@ def main_game_start( _world = 'World1' ):
     noise_gen               = opensimplex.OpenSimplex( seed = 0 )
 
     # Camera
-    # camera                  =  0, CHUNK_HEIGHT_P // 2 ]
-    camera                  = [ 0 , 0 ]
+    camera                  =  [ 0, CHUNK_HEIGHT_P - 800 ]
+    # camera                  = [ 0 , 0 ]
     prev_cam                = [ 0 , 0 ]
     cam_bound               = False
 
@@ -153,10 +139,17 @@ def main_game_start( _world = 'World1' ):
             camera[0] += ( player.pos[0] - camera[0] ) * LERP_C
             camera[1] += ( player.pos[1] - camera[1] ) * LERP_C
         else :
-            if key_states[pygame.K_a]:      camera[0] -= ( 8 * TILE_WIDTH * dt )
-            elif key_states[pygame.K_d]:    camera[0] += ( 8 * TILE_WIDTH * dt )
-            if key_states[pygame.K_s]:      camera[1] -= ( 8 * TILE_WIDTH * dt )
-            elif key_states[pygame.K_w]:    camera[1] += ( 8 * TILE_WIDTH * dt )
+            if key_states[pygame.K_a]:      camera[0] -= ( 96 * TILE_WIDTH * dt )
+            elif key_states[pygame.K_d]:    camera[0] += ( 96 * TILE_WIDTH * dt )
+            if key_states[pygame.K_s]:      camera[1] -= ( 96 * TILE_WIDTH * dt )
+            elif key_states[pygame.K_w]:    camera[1] += ( 96 * TILE_WIDTH * dt )
+
+
+        # The maximum height the camera is allowed to go to is CHUNK_HEIGHT_P - display_sz[1]//2
+        # The minimum height the camera is allowed to go to is display_sz[1]//2
+        if      camera[1] >= renderer.camera_upper :    camera[1] = renderer.camera_upper
+        elif    camera[1] <= renderer.num_ver :         camera[1] = renderer.num_ver
+
 
         renderer.update_camera()
 

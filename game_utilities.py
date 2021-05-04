@@ -62,6 +62,8 @@ class Renderer:
         self.num_hor        = None
         self.num_ver        = None
 
+        self.camera_upper   = None
+
     def initialize( self , _chunk_buffer , _entity_buffer , _player , _serializer , _camera , _screen , _window_size ):
 
         # Set all references to main managers
@@ -178,11 +180,12 @@ class Renderer:
 
     def update_size( self ):
 
-        print(self.window_size)
-
         # Number of pixels to paint on either side of the camera (centred on the screen) after screen has been resized
         self.num_hor        = self.window_size[0] // 2
         self.num_ver        = self.window_size[1] // 2
+
+
+        self.camera_upper   = CHUNK_HEIGHT_P - self.num_ver
 
     def update_camera( self ):
 
