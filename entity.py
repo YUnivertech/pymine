@@ -249,7 +249,7 @@ class EntityBuffer:
         self.screen         = None
 
         self.other_plyrs    = []
-        self.len            = _len
+        self.len            = None
 
         self.get_curr_chunk = lambda p: int( math.floor( p[0] / CHUNK_WIDTH_P ) )
         self.get_curr_chunk_ind = lambda p: int( self.get_curr_chunk( p ) - self.chunk_buffer.positions[0] )
