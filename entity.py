@@ -20,7 +20,7 @@ class ItemEntity:
 
 
 class Entity:
-    def __init__(self, _pos, _entity_buffer, _width, _height, _hitbox, _health=100):
+    def __init__( self, _pos, _entity_buffer, _width, _height, _hitbox, _health=100 ):
         self.pos          = _pos
         self.entity_buffer = _entity_buffer
         self.health       = _health
@@ -89,16 +89,39 @@ class Entity:
 
 class Player(Entity):
 
-    def __init__( self, _screen, _chunk_buffer, _entity_buffer, key_state, mouse_state, cursor_pos):
-        hitbox = []
-        pos = [0,0]
-        super().__init__(pos, _entity_buffer, PLYR_WIDTH, PLYR_HEIGHT, hitbox)
+    def __init__( self ):
 
-        self.keyState = key_state
-        self.mouseState = mouse_state
-        self.cursorPos = cursor_pos
-        self.inventory = Inventory(_screen, INV_COLS, INV_ROWS)
-        self.tangibility = 0
+        # Set all references to main managers
+        self.chunk_buffer   = None
+        self.entity_buffer  = None
+        self.renderer       = None
+        self.serializer     = None
+        self.camera         = None
+
+        self.key_state      = None
+        self.mouse_state    = None
+        self.cursor_pos     = None
+        self.inventory      = None
+
+        self.tangibility    = None
+        self.hitbox         = []
+        self.pos            = [ 0, 0 ]  # World pos of surface in x-y-z coords
+
+    def initialize( self, _chunk_buffer, _entity_buffer, _renderer, _serializer, _key_state, _mouse_state, _cursor_pos ):
+
+        # Set all references to main managers
+        self.chunk_buffer   = _chunk_buffer
+        self.entity_buffer  = _entity_buffer
+        self.renderer       = _renderer
+        self.serializer     = _serializer
+
+        self.key_state       = _key_state
+        self.mouse_state     = _mouse_state
+        self.cursor_pos      = _cursor_pos
+
+        self.tangibilty     = 0
+        self.inventory      = Inventory(  INV_COLS, INV_ROWS )
+        super().__init__( self.pos, self.entity_buffer, PLYR_WIDTH, PLYR_HEIGHT, self.hitbox )
 
     def run( self ):
         self.acc[0] = 0
@@ -197,7 +220,7 @@ class Player(Entity):
         li = pickle.dumps(li)
         serializer.savePlayer(1, li)
 
-    def load( self, serializer):
+    def load( self, serializer ):
         li = serializer.loadPlayer(1)
         if li:
             li = pickle.loads(li)
@@ -311,7 +334,7 @@ class Inventory:
         self.cols               = _cols
         self.rows               = _rows
 
-        self.surf               = pygame.surface( ( 800 , 500 ) , flags = pygame.SRCALPHA )
+        self.surf               = pygame.Surface( ( 800 , 500 ) , flags = pygame.SRCALPHA )
 
     def add_item( self, _item , _quantity ):
         """ Adds the supplied item to the inventory the supplied number of items homogenously

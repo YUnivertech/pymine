@@ -40,11 +40,10 @@ def main_game_start( _world = 'World1' ):
     chunk_buffer            = ChunkBuffer( buffer_width )
 
     # Entity Buffer
-    entity_buffer           = EntityBuffer( )
+    entity_buffer           = EntityBuffer()
 
     # Player
-    # player                  = Player( screen , pos , chunk_buffer , entity_buffer , key_states , button_states , [] )
-    player = None
+    player                  = Player()
 
     # Renderer
     renderer                = Renderer()
@@ -59,7 +58,7 @@ def main_game_start( _world = 'World1' ):
     camera                  =  [ 0, CHUNK_HEIGHT_P - 800 ]
     # camera                  = [ 0 , 0 ]
     prev_cam                = [ 0 , 0 ]
-    cam_bound               = False
+    cam_bound               = True
 
     # ---------- INITIALIZE MANAGERS ---------- #
 
@@ -67,13 +66,13 @@ def main_game_start( _world = 'World1' ):
     chunk_buffer.initialize( entity_buffer , renderer , serializer , player , camera , screen , noise_gen )
 
     # Entity Buffer
-    # entity_buffer.initialize( chunk_buffer , renderer , serializer , player , camera , screen )
+    entity_buffer.initialize( chunk_buffer , renderer , serializer , player , camera , screen )
 
     # Player
-    # player.initialize( chunk_buffer , renderer , serializer , entity_buffer , camera , screen )
+    player.initialize( chunk_buffer , entity_buffer , renderer , serializer , key_states , button_states , cursor_pos )
 
     # Renderer
-    renderer.initialize( chunk_buffer , entity_buffer , player , serializer , camera , screen , display_sz)
+    renderer.initialize( chunk_buffer , entity_buffer , player , serializer , camera , screen , display_sz )
 
     # Serializer
     # serializer.initialize()
@@ -133,7 +132,8 @@ def main_game_start( _world = 'World1' ):
         dt = now - prev
         prev = now
 
-        #     player.driveUpdate( dt )
+        player.update( dt )
+        print("PLAYER POS:", player.pos)
 
         if cam_bound:
             camera[0] += ( player.pos[0] - camera[0] ) * LERP_C
@@ -149,7 +149,6 @@ def main_game_start( _world = 'World1' ):
         # The minimum height the camera is allowed to go to is display_sz[1]//2
         if      camera[1] >= renderer.camera_upper :    camera[1] = renderer.camera_upper
         elif    camera[1] <= renderer.num_ver :         camera[1] = renderer.num_ver
-
 
         renderer.update_camera()
 
@@ -168,7 +167,7 @@ def main_game_start( _world = 'World1' ):
         pygame.display.update()
 
     chunk_buffer.save()
-    player.save()
+    # player.save()
     serializer.stop()
 
 

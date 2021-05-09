@@ -135,36 +135,36 @@ from game_utilities import *
 #                 propagateRadial(y, x-1, left=True)
 
 def generate_chunk_temp( _chunk , noise_gen ):
-    # # one layer of bedrock
-    # # one layer of obsidian
-    # # one layer of hellstone
-    # # 10 layers of stone
-    # # 10 layers of limestone
-    # # 10 layers of sandstone
-    # # one layer of coal
-    # # one layer of dirt
-    # # one layer of grass
+    # one layer of bedrock
+    # one layer of obsidian
+    # one layer of hellstone
+    # 10 layers of stone
+    # 10 layers of limestone
+    # 10 layers of sandstone
+    # one layer of coal
+    # one layer of dirt
+    # one layer of grass
+    for i in range( CHUNK_WIDTH ):
+        _chunk.blocks[0][i] = tiles.bedrock
+        _chunk.blocks[1][i] = tiles.obsidian
+        _chunk.blocks[2][i] = tiles.hellstone
+        for j in range(10):
+            _chunk.blocks[j + 3][i] = tiles.greystone
+            _chunk.blocks[j + 13][i] = tiles.limestone
+            _chunk.blocks[j + 23][i] = tiles.sandstone
+        _chunk.blocks[32][i] = tiles.coal
+        _chunk.blocks[33][i] = tiles.browndirt
+        _chunk.blocks[34][i] = tiles.grass
+
     # for i in range( CHUNK_WIDTH ):
-    #     _chunk.blocks[0][i] = tiles.bedrock
-    #     _chunk.blocks[1][i] = tiles.obsidian
-    #     _chunk.blocks[2][i] = tiles.hellstone
-    #     for j in range(10):
-    #         _chunk.blocks[j + 3][i] = tiles.greystone
-    #         _chunk.blocks[j + 13][i] = tiles.limestone
-    #         _chunk.blocks[j + 23][i] = tiles.sandstone
-    #     _chunk.blocks[32][i] = tiles.coal
-    #     _chunk.blocks[33][i] = tiles.browndirt
-    #     _chunk.blocks[34][i] = tiles.grass
+    #     for j in range( CHUNK_HEIGHT ):
+    #         _chunk.blocks[j][i] = tiles.bedrock
 
-    for i in range( CHUNK_WIDTH ):
-        for j in range( CHUNK_HEIGHT ):
-            _chunk.blocks[j][i] = tiles.bedrock
-
-    for i in range( CHUNK_WIDTH ):
-        x_coor = i + ( CHUNK_WIDTH * _chunk.index )
-        my_height = int( ( noise_gen.noise2d( x = 0.0075 * x_coor, y = 0 ) + 1 ) * 32 ) # Value will be from 0 to 64
-        for j in range( my_height ):
-            _chunk.blocks[j][i] = tiles.browndirt
+    # for i in range( CHUNK_WIDTH ):
+    #     x_coor = i + ( CHUNK_WIDTH * _chunk.index )
+    #     my_height = int( ( noise_gen.noise2d( x = 0.0075 * x_coor, y = 0 ) + 1 ) * 32 ) # Value will be from 0 to 64
+    #     for j in range( my_height ):
+    #         _chunk.blocks[j][i] = tiles.browndirt
 
 
 class Chunk:
@@ -179,7 +179,8 @@ class Chunk:
         # self.created            = _time
         self.active_time        = _active_time
 
-        self.surf               = pygame.Surface( ( CHUNK_WIDTH_P , CHUNK_HEIGHT_P ) , flags = pygame.SRCALPHA )
+        # self.surf               = pygame.Surface( ( CHUNK_WIDTH_P , CHUNK_HEIGHT_P ) , flags = pygame.SRCALPHA )
+        self.surf               = pygame.Surface( ( CHUNK_WIDTH_P , CHUNK_HEIGHT_P ) )
 
         if not self.blocks:
             self.blocks = [[ tiles.air for j in range(CHUNK_WIDTH)] for i in range(CHUNK_HEIGHT)]

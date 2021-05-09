@@ -145,17 +145,25 @@ class Renderer:
 
         # Temporary rendering of camera
         camera_coors = [self.camera[0], self.camera[1]]
+        plyr_coors    = [self.player.pos[0], self.player.pos[1]]
 
         # Translate to camera's space
         camera_coors[0] -= self.camera[0]
         camera_coors[1] -= self.camera[1]
 
+        plyr_coors[0] -= self.camera[0]
+        plyr_coors[1] -= self.camera[1]
+
         # Translate to screen's space
         camera_coors[0] += self.num_hor
         camera_coors[1] = self.num_ver - camera_coors[1]
 
+        plyr_coors[0] += self.num_hor
+        plyr_coors[1] = self.num_ver - plyr_coors[1]
+
         # Blit a small rectangle
-        pygame.draw.rect(self.screen, (255, 50, 50), pygame.Rect(camera_coors[0]-2, camera_coors[1]-2, 5, 5))
+        pygame.draw.rect( self.screen, (50, 50, 255), pygame.Rect(plyr_coors[0]-8, plyr_coors[1]-8, 17, 17))
+        pygame.draw.rect( self.screen, (255, 50, 50), pygame.Rect(camera_coors[0]-2, camera_coors[1]-2, 5, 5))
 
         # item = cls.player.inventory.getSelectedItem()
         # name, quantity = 'Nothing', cls.player.inventory.getSelectedQuantity()
