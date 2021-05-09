@@ -20,7 +20,7 @@ populate_key_states( key_states , button_states )
 loadImageTable()
 
 # Create GUI based menus
-if not os.path.isdir("Worlds"): os.mkdir("Worlds") # Create worlds folder if it doesnt exist
+if not os.path.isdir("Worlds"): os.mkdir("Worlds") # Create worlds folder if it does not exist
 worlds = os.listdir("Worlds")
 for i in range(len(worlds)): worlds[i] = worlds[:-3] # remove .db extension
 gui_manager = pygame_gui.UIManager(display_sz, "temptheme.json")

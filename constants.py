@@ -1017,6 +1017,6 @@ def loadImageTable():
 
         ITEM_TABLE[key] = ITEM_TABLE[key].convert_alpha()
 
-# Initalize pygame and start the clock
+# Initialize pygame and start the clock
 pygame.init()
 clock = pygame.time.Clock()
