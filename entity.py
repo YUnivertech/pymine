@@ -1,4 +1,4 @@
-# from shapely.geometry import Polygon
+from shapely.geometry import Polygon
 from game_utilities import *
 
 # ! def initialize( self , _renderer , _chunk_buffer , _serializer , _player , _camera , _screen ):
