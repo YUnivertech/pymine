@@ -40,7 +40,7 @@ def main_game_start( _world = 'World1' ):
     chunk_buffer            = ChunkBuffer( buffer_width )
 
     # Entity Buffer
-    entity_buffer           = EntityBuffer( buffer_width )
+    entity_buffer           = EntityBuffer( )
 
     # Player
     # player                  = Player( screen , pos , chunk_buffer , entity_buffer , key_states , button_states , [] )
