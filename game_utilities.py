@@ -92,7 +92,7 @@ class Renderer:
 
         for right_walker in range( self.middle , self.chunk_buffer.len ):
 
-            slice_ind       = self.chunk_buffer[right_walker].index * CHUNK_WIDTH       # Absoulute index of current vertical slice
+            slice_ind       = self.chunk_buffer[right_walker].index * CHUNK_WIDTH       # Absolute index of current vertical slice
             slice_pos       = [ 0 , 0 ]                                                 # List containing coordinates of the location where the slice must be blit
             slice_rect      = [ 0 , self.up_index , TILE_WIDTH , self.down_index ]      # Rectangular region containing the "visible" area of the chunk's surface
 
@@ -119,7 +119,7 @@ class Renderer:
 
         for left_walker in range( self.middle - 1, -1 , -1 ):
 
-            slice_ind       = self.chunk_buffer[left_walker].index * CHUNK_WIDTH        # Absoulute index of current vertical slice
+            slice_ind       = self.chunk_buffer[left_walker].index * CHUNK_WIDTH        # Absolute index of current vertical slice
             slice_pos       = [ 0 , 0 ]                                                 # List containing coordinates of the location where the slice must be blit
             slice_rect      = [ 0 , self.up_index , TILE_WIDTH , self.down_index ]      # Rectangular region containing the "visible" area of the chunk's surface
 

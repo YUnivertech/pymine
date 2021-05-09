@@ -153,7 +153,8 @@ class Player(Entity):
                 next_pos[i] += self.vel[i] * SCALE_VEL * dt
                 move = self.check( next_pos )
                 if move:
-                    self.pos[i] += self.vel[i] * SCALE_VEL * dt
+                    if (i == 0) or (i == 1 and self.pos[i] <= CHUNK_HEIGHT_P):
+                        self.pos[i] += self.vel[i] * SCALE_VEL * dt
                 else:
                     self.vel[i] = 0
 
@@ -203,6 +204,9 @@ class Player(Entity):
             self.inventory.items = li[0]
             self.inventory.quantities = li[1]
 
+    def end( self ):
+        pass
+
 
 class Projectile(Entity):
     def __init__( self, pos, _entity_buffer, width, height ):
@@ -230,9 +234,8 @@ class Zombie(Entity):
 
 class EntityBuffer:
 
-    def __init__( self , _len ):
+    def __init__( self ):
 
-        self.len            = _len
 
         # References to other managers (must be provided in main)
         self.chunk_buffer   = None
@@ -244,6 +247,9 @@ class EntityBuffer:
         # Reference to camera and screen surface
         self.camera         = None
         self.screen         = None
+
+        self.other_plyrs    = []
+        self.len            = _len
 
         self.get_curr_chunk = lambda p: int( math.floor( p[0] / CHUNK_WIDTH_P ) )
         self.get_curr_chunk_ind = lambda p: int( self.get_curr_chunk( p ) - self.chunk_buffer.positions[0] )
@@ -353,7 +359,7 @@ class Inventory:
         return _quantity
 
     def rem_item_stack( self , _item , _quantity ):
-        """ Removes the supplied number of occourences of the supplied item from the inventory from all around
+        """ Removes the supplied number of occurrences of the supplied item from the inventory from all around
             If the supplied count exceeds the total count, then only the total count is removed
             The number of items which could successfully be removed are returned
 
@@ -362,7 +368,7 @@ class Inventory:
             _quantity (int): The quantity of the item to be removed
 
         Returns:
-            int: The number of items which could succesfully be removed
+            int: The number of items which could successfully be removed
         """
 
         for x in range( self.cols ):
@@ -383,14 +389,14 @@ class Inventory:
     def rem_item_pos( self, _quantity, _pos ):
         """ Removes a given quantity of items from a given position
             If the supplied quantity is equal to/exceeds the present quantity, only the present quantity is removed
-            The number of items which could succesfully be removed are returned
+            The number of items which could successfully be removed are returned
 
         Args:
             _quantity (int): The number of items to be removed
-            _pos (list): The position from which to remove the given quantity (in coloumn , row  format)
+            _pos (list): The position from which to remove the given quantity (in column , row  format)
 
         Returns:
-            int: The count of the items which were succesfully removed
+            int: The count of the items which were successfully removed
         """
 
         to_remove = min( self.quantities[_pos[1]][_pos[0]] , _quantity )
