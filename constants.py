@@ -9,6 +9,24 @@ import pygame_gui, os
 from pygame_gui.elements import UIButton, UIPanel, UITextBox, UITextEntryLine
 from pygame_gui.elements.ui_selection_list import UISelectionList
 
+# The debug verbosity level, can be from 0 to 4 (both inclusive)
+DBG                 = 0
+
+def dbg_verbose( *args , **kwargs ):  # Messages which the commong users can see (always printed)
+    dbg_generic( 0 , *args , **kwargs )
+
+def dbg_info( *args , **kwargs ):     # Messages which more technical users can see
+    dbg_generic( 1 , *args , **kwargs )
+
+def dbg_debug( *args , **kwargs ):    # Messages which devs can see during debug
+    dbg_generic( 2 , *args , **kwargs )
+
+def dbg_warning( *args , **kwargs ):  # Messages which devs can see for critical information
+    dbg_generic( 3 , *args , **kwargs )
+
+def dbg_generic( msg_priority , *args , **kwargs ):
+    if( msg_priority <= DBG ): print( *args , **kwargs )
+
 # Infinity
 INF                 = math.inf
 
@@ -24,7 +42,7 @@ CHUNK_WIDTH_P       = TILE_WIDTH * CHUNK_WIDTH
 CHUNK_HEIGHT_P      = TILE_WIDTH * CHUNK_HEIGHT
 
 # Constant to determine the linear interpolation of the camera
-LERP_C              = 0.025
+LERP_C              = 0.02
 
 # Constants for entity and physics (time_unit = seconds, length_unit = points)
 GRAVITY_ACC         = 0.98
@@ -472,7 +490,7 @@ TILE_TABLE = {
     tiles.greystone             : pygame.image.load("Resources/Default/tile_greystone.png"),
     tiles.sandstone             : pygame.image.load("Resources/Default/tile_sandstone.png"),
     tiles.gravel                : pygame.image.load("Resources/Default/tile_gravel.png"),
-    tiles.coal                  : pygame.image.load("Resources/Default/tile_coal.png"),
+    tiles.coal                  : pygame.image.load("Resources/Default/tile_coal_ore.png"),
     tiles.clay                  : pygame.image.load("Resources/Default/tile_clay.png"),
     tiles.red_clay              : pygame.image.load("Resources/Default/tile_red_clay.png"),
     tiles.sand                  : pygame.image.load("Resources/Default/tile_sand.png"),

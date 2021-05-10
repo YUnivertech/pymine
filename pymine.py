@@ -120,14 +120,8 @@ def main_game_start( _world = 'World1' ):
         try:
             if key_states[pygame.K_b]:
                 prev_debug = DEBUG
-                if key_states[pygame.K_0]:
-                    DEBUG = 0
-                elif key_states[pygame.K_1]:
-                    DEBUG = 1
-                elif key_states[pygame.K_2]:
-                    DEBUG = 2
-                if DEBUG != prev_debug:
-                    print("---------------DEBUG = ", DEBUG, "---------------")
+                DEBUG = 0 if key_states[pygame.K_0] else 1 if key_states[pygame.K_1] else 2 if key_states[pygame.K_2] else DEBUG
+                if DEBUG != prev_debug: print("--------------- DEBUG :", DEBUG, "---------------")
             if      key_states[pygame.K_c] :              Renderer.setShaders()
             elif    key_states[pygame.K_n] :              cam_bound = not cam_bound
             elif    key_states[pygame.K_e] :              inventoryVisible = not inventoryVisible
