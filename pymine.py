@@ -30,7 +30,7 @@ def main_game_start( _world = 'World1' ):
 
     global key_states , button_states
     global display_sz , screen
-    global framerate
+    global framerate , DEBUG
 
     # ---------- CREATION OF ALL MANAGERS ---------- #
 
@@ -118,6 +118,16 @@ def main_game_start( _world = 'World1' ):
                 renderer.update_size()
 
         try:
+            if key_states[pygame.K_b]:
+                prev_debug = DEBUG
+                if key_states[pygame.K_0]:
+                    DEBUG = 0
+                elif key_states[pygame.K_1]:
+                    DEBUG = 1
+                elif key_states[pygame.K_2]:
+                    DEBUG = 2
+                if DEBUG != prev_debug:
+                    print("---------------DEBUG = ", DEBUG, "---------------")
             if      key_states[pygame.K_c] :              Renderer.setShaders()
             elif    key_states[pygame.K_n] :              cam_bound = not cam_bound
             elif    key_states[pygame.K_e] :              inventoryVisible = not inventoryVisible
@@ -132,8 +142,16 @@ def main_game_start( _world = 'World1' ):
         dt = now - prev
         prev = now
 
+        player.run()
+        if DEBUG > 0:
+            if player.pos != [0,0]: print("IN MAIN LOOP - AFTER PLAYER RUN - PLAYER POS:", player.pos)
+            if player.vel != [0,0]: print("IN MAIN LOOP - AFTER PLAYER RUN - PLAYER VEL:", player.vel)
+            if player.acc != [0,0]: print("IN MAIN LOOP - AFTER PLAYER RUN - PLAYER ACC:", player.acc)
         player.update( dt )
-        print("PLAYER POS:", player.pos)
+        if DEBUG > 0:
+            if player.pos != [0,0]: print("IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER POS:", player.pos)
+            if player.vel != [0,0]: print("IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER VEL:", player.vel)
+            if player.acc != [0,0]: print("IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER ACC:", player.acc)
 
         if cam_bound:
             camera[0] += ( player.pos[0] - camera[0] ) * LERP_C
@@ -167,7 +185,7 @@ def main_game_start( _world = 'World1' ):
         pygame.display.update()
 
     chunk_buffer.save()
-    # player.save()
+    player.save()
     serializer.stop()
 
 
