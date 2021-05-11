@@ -179,7 +179,8 @@ class Chunk:
         # self.created            = _time
         self.active_time        = _active_time
 
-        self.surf               = pygame.Surface( ( CHUNK_WIDTH_P , CHUNK_HEIGHT_P ) , flags = pygame.SRCALPHA )
+        # self.surf               = pygame.Surface( ( CHUNK_WIDTH_P , CHUNK_HEIGHT_P ) , flags = pygame.SRCALPHA )
+        self.surf               = pygame.Surface( ( CHUNK_WIDTH_P , CHUNK_HEIGHT_P ) )
 
         if not self.blocks:
             self.blocks = [[ tiles.air for j in range(CHUNK_WIDTH)] for i in range(CHUNK_HEIGHT)]
@@ -281,8 +282,20 @@ class ChunkBuffer:
         for chunk in self.chunks: chunk.draw()
 
     def shift( self , _delta ):
-        if _delta > 0:      return self.shift_left( _delta )
-        elif _delta < 0:    return self.shift_right( -_delta )
+
+        flag ,_delta = (True, _delta) if _delta > 0 else (False, -_delta)
+        num_times , extra = _delta // self.len , _delta % self.len
+
+        for i in range( num_times ):
+            if flag: self.shift_left( self.len )
+            else: self.shift_right( self.len )
+
+        if extra:
+            if flag: self.shift_left( extra )
+            else: self.shift_right( extra )
+
+        if num_times: return ( 0 , self.len )
+        else:         return ( self.len - extra if flag else 0 , extra )
 
     def shift_right( self , _delta ):
 

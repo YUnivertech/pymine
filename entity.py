@@ -171,7 +171,7 @@ class Player(Entity):
 
         self.tangibility     = 0
         self.inventory       = Inventory(  INV_COLS, INV_ROWS )
-        # self.load()
+        self.load()
         super().__init__( self.pos, self.entity_buffer, PLYR_WIDTH, PLYR_HEIGHT, self.hitbox )
 
     def run( self ):

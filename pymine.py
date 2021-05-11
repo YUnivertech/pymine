@@ -55,8 +55,8 @@ def main_game_start( _world = 'World1' ):
     noise_gen               = opensimplex.OpenSimplex( seed = 0 )
 
     # Camera
-    camera                  =  [ 0, CHUNK_HEIGHT_P - 800 ]
-    # camera                  = [ 0 , 0 ]
+    # camera                  =  [ 0, CHUNK_HEIGHT_P - 800 ]
+    camera                  = [ 0 , 0 ]
     prev_cam                = [ 0 , 0 ]
     cam_bound               = True
 
@@ -145,6 +145,17 @@ def main_game_start( _world = 'World1' ):
         dt = now - prev
         prev = now
 
+        curr_chunk = math.floor( camera[0] / CHUNK_WIDTH_P )
+        delta_chunk = curr_chunk - prev_chunk
+        prev_chunk = curr_chunk
+
+        if delta_chunk:
+            new_side , num_chunks = chunk_buffer.shift(delta_chunk)
+            entity_buffer.shift(delta_chunk)
+
+            for i in range( num_chunks ):
+                chunk_buffer[new_side + i].draw()
+
         player.run()
         if player.pos != [0,0]: dbg(0, "IN MAIN LOOP - AFTER PLAYER RUN - PLAYER POS:", player.pos)
         if player.vel != [0,0]: dbg(0, "IN MAIN LOOP - AFTER PLAYER RUN - PLAYER VEL:", player.vel)
@@ -155,8 +166,8 @@ def main_game_start( _world = 'World1' ):
         if player.acc != [0,0]: dbg(0, "IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER ACC:", player.acc)
 
         if cam_bound:
-            camera[0] += ( player.pos[0] - camera[0] ) * LERP_C # * dt * 100
-            camera[1] += ( player.pos[1] - camera[1] ) * LERP_C # * dt * 100
+            camera[0] += ( player.pos[0] - camera[0] ) * LERP_C # * dt
+            camera[1] += ( player.pos[1] - camera[1] ) * LERP_C # * dt
         else :
             if key_states[pygame.K_a]:      camera[0] -= ( 96 * TILE_WIDTH * dt )
             elif key_states[pygame.K_d]:    camera[0] += ( 96 * TILE_WIDTH * dt )
@@ -169,17 +180,6 @@ def main_game_start( _world = 'World1' ):
         elif    camera[1] <= renderer.num_ver :         camera[1] = renderer.num_ver
 
         renderer.update_camera()
-
-        curr_chunk = math.floor( camera[0] / CHUNK_WIDTH_P )
-        delta_chunk = curr_chunk - prev_chunk
-        prev_chunk = curr_chunk
-
-        if delta_chunk:
-            new_index = chunk_buffer.shift(delta_chunk)
-            new_index_inbuffer = new_index - chunk_buffer.positions[0]
-
-            entity_buffer.shift(delta_chunk)
-            chunk_buffer[new_index_inbuffer].draw()
 
         renderer.paint_screen()
         if( player.inventory.enabled ): renderer.paint_inventory()
