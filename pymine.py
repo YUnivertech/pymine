@@ -22,7 +22,7 @@ loadImageTable()
 # Create GUI based menus
 if not os.path.isdir("Worlds"): os.mkdir("Worlds") # Create worlds folder if it does not exist
 worlds = os.listdir("Worlds")
-for i in range(len(worlds)): worlds[i] = worlds[:-3] # remove .db extension
+for i in range(len(worlds)): worlds[i] = worlds[i][:-3] # remove .db extension
 gui_manager = pygame_gui.UIManager(display_sz, "temptheme.json")
 
 # Main Game function
@@ -30,7 +30,7 @@ def main_game_start( _world = 'World1' ):
 
     global key_states , button_states
     global display_sz , screen
-    global framerate , DEBUG
+    global framerate
 
     # ---------- CREATION OF ALL MANAGERS ---------- #
 
@@ -43,7 +43,7 @@ def main_game_start( _world = 'World1' ):
     entity_buffer           = EntityBuffer()
 
     # Player
-    player                  = Player()
+    player                  = Player([0, 600])
 
     # Renderer
     renderer                = Renderer()
@@ -78,6 +78,8 @@ def main_game_start( _world = 'World1' ):
     # serializer.initialize()
 
     # Main loop
+    camera[0]               = player.pos[0]
+    camera[1]               = player.pos[1]
     running                 = True
     prev                    = time.time()
     dt                      = 0
@@ -89,6 +91,9 @@ def main_game_start( _world = 'World1' ):
     running = True
 
     while running:
+        dbg(0, "")
+        clock = pygame.time.Clock()
+        clock.tick(60)
 
         for event in pygame.event.get():
 
@@ -124,32 +129,30 @@ def main_game_start( _world = 'World1' ):
 
         try:
             if key_states[pygame.K_b]:
-                prev_debug = DEBUG
-                DEBUG = 0 if key_states[pygame.K_0] else 1 if key_states[pygame.K_1] else 2 if key_states[pygame.K_2] else DEBUG
-                if DEBUG != prev_debug: print("--------------- DEBUG :", DEBUG, "---------------")
+                prev_debug = DBG[0]
+                DBG[0] = 0 if key_states[pygame.K_0] else 1 if key_states[pygame.K_1] else 2 if key_states[pygame.K_2] else DBG[0]
+                if DBG[0] != prev_debug: dbg(0, "--------------- DEBUG :", DBG[0], "---------------")
             if      key_states[pygame.K_c] :              Renderer.setShaders()
             elif    key_states[pygame.K_n] :              cam_bound = not cam_bound
             elif    key_states[pygame.K_DOWN]:            player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] + 1) % INV_ROWS
             elif    key_states[pygame.K_UP]:              player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] - 1 + INV_ROWS) % INV_ROWS
             elif    key_states[pygame.K_RIGHT]:           player.inventory.itemHeld[0] = (player.inventory.itemHeld[0] + 1) % INV_COLS
             elif    key_states[pygame.K_LEFT]:            player.inventory.itemHeld[0] = (player.inventory.itemHeld[0] - 1 + INV_COLS) % INV_COLS
-        except:
-            pass
+        except Exception as e:
+            dbg(0, "IN MAIN LOOP - EXCEPTION:", e)
 
         now = time.time()
         dt = now - prev
         prev = now
 
         player.run()
-        if DEBUG > 0:
-            if player.pos != [0,0]: print("IN MAIN LOOP - AFTER PLAYER RUN - PLAYER POS:", player.pos)
-            if player.vel != [0,0]: print("IN MAIN LOOP - AFTER PLAYER RUN - PLAYER VEL:", player.vel)
-            if player.acc != [0,0]: print("IN MAIN LOOP - AFTER PLAYER RUN - PLAYER ACC:", player.acc)
+        if player.pos != [0,0]: dbg(0, "IN MAIN LOOP - AFTER PLAYER RUN - PLAYER POS:", player.pos)
+        if player.vel != [0,0]: dbg(0, "IN MAIN LOOP - AFTER PLAYER RUN - PLAYER VEL:", player.vel)
+        if player.acc != [0,0]: dbg(0, "IN MAIN LOOP - AFTER PLAYER RUN - PLAYER ACC:", player.acc)
         player.update( dt )
-        if DEBUG > 0:
-            if player.pos != [0,0]: print("IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER POS:", player.pos)
-            if player.vel != [0,0]: print("IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER VEL:", player.vel)
-            if player.acc != [0,0]: print("IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER ACC:", player.acc)
+        if player.pos != [0,0]: dbg(0, "IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER POS:", player.pos)
+        if player.vel != [0,0]: dbg(0, "IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER VEL:", player.vel)
+        if player.acc != [0,0]: dbg(0, "IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER ACC:", player.acc)
 
         if cam_bound:
             camera[0] += ( player.pos[0] - camera[0] ) * LERP_C # * dt * 100
@@ -159,7 +162,6 @@ def main_game_start( _world = 'World1' ):
             elif key_states[pygame.K_d]:    camera[0] += ( 96 * TILE_WIDTH * dt )
             if key_states[pygame.K_s]:      camera[1] -= ( 96 * TILE_WIDTH * dt )
             elif key_states[pygame.K_w]:    camera[1] += ( 96 * TILE_WIDTH * dt )
-
 
         # The maximum height the camera is allowed to go to is CHUNK_HEIGHT_P - display_sz[1]//2
         # The minimum height the camera is allowed to go to is display_sz[1]//2

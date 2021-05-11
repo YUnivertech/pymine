@@ -11,7 +11,6 @@ from game_utilities import *
 # !    self.screen         = _screen
 
 
-DEBUG = 0
 class ItemEntity:
     def __init__( self ):
         pass
@@ -38,20 +37,19 @@ class Entity:
         self.grounded     = True
 
         # In the following lambda functions, 'p' means position which is a tuple
-        self.hitbox         = lambda p: [p+i for i in self.rel_hitbox]
-        # self.tile           = lambda p: self.entity_buffer.get_tile(p)
+        self.hitbox         = lambda p: [(p[0]+i[0], p[1]+i[1]) for i in self.rel_hitbox]
+        self.tile           = lambda p: self.entity_buffer.get_tile(p)
 
         # The index of the held item in the inventory
         self.held_item_index    = 0
         # The selected item and its quantity
         self.sel_item           = [ None , 0 ]
 
-    def collide( self, p1, p2 ):
+    def collide( self, _hitbox_1, _hitbox_2 ):
         return False
 
     def calc_friction(self):
-        self.friction = DEFAULT_FRICTION
-        # return TILE_ATTR[self.tile((self.pos[0], self.pos[1] - 16))][tile_attr.FRICTION]
+        self.friction = TILE_ATTR[self.tile((self.pos[0], self.pos[1] - 16))][tile_attr.FRICTION]
 
     def move_left(self):
         self.acc[0] = -self.friction * 2
@@ -68,29 +66,39 @@ class Entity:
     def jump(self):
         self.vel[1] = JUMP_VEL
         self.acc[1] = -GRAVITY_ACC
-        # self.grounded = False
+        self.grounded = False
 
     def check_up(self, pos):
+        # May not be required
         pass
 
     def check_left(self, pos):
+        # May not be required
         pass
 
     def check_right(self, pos):
+        # May not be required
         pass
 
-    def check_ground(self, pos):
-        pass
+    def check_ground(self, _pos):
+        hitbox = self.hitbox(_pos)
+        for point in hitbox:
+            point2 = (point[0], point[1] - 1)
+            if self.tile(point2) != tiles.air:
+                self.grounded = True
+                return None
+        self.grounded = False
 
-    def check(self, pos):
+    def check(self, _pos):
         # For every corresponding tile between hitbox endpoints including the endpoints,
         # check that the hitbox and the tile don't intersect
-        # hitbox = self.hitbox( pos )
-        # for point in hitbox:
-        #     if self.collide( self.tile( point ), hitbox ):
-        #         return False
-        if DEBUG > 1:
-            print("CHECK RETURNED TRUE")
+        hitbox = self.hitbox( _pos )
+        for point in hitbox:
+            dbg(1, "IN CHECK - ENTERED FOR LOOP")
+            if self.tile(point) != tiles.air:
+                dbg(1, "CHECK RETURNED FALSE")
+                return False
+        dbg(1, "CHECK RETURNED TRUE")
         return True
 
     def hit( self ):
@@ -131,7 +139,7 @@ class Entity:
 
 class Player(Entity):
 
-    def __init__( self ):
+    def __init__( self, _pos ):
 
         # Set all references to main managers
         self.chunk_buffer   = None
@@ -146,8 +154,8 @@ class Player(Entity):
         self.inventory      = None
 
         self.tangibility    = None
-        self.hitbox         = []
-        self.pos            = [ 0, 0 ]  # World pos of surface in x-y-z coords
+        self.hitbox         = [(0, 0), (HITBOX_WIDTH, 0), (HITBOX_WIDTH, -HITBOX_HEIGHT), (0, -HITBOX_HEIGHT)]
+        self.pos            = _pos  # World pos of surface in x-y-z coords
 
     def initialize( self, _chunk_buffer, _entity_buffer, _renderer, _serializer, _key_state, _mouse_state, _cursor_pos ):
 
@@ -163,8 +171,8 @@ class Player(Entity):
 
         self.tangibility     = 0
         self.inventory       = Inventory(  INV_COLS, INV_ROWS )
+        # self.load()
         super().__init__( self.pos, self.entity_buffer, PLYR_WIDTH, PLYR_HEIGHT, self.hitbox )
-        self.load()
 
     def run( self ):
         self.acc[0] = 0
@@ -172,26 +180,21 @@ class Player(Entity):
         self.hitting = False
         self.placing = False
         if self.key_state[pygame.K_a] and not self.key_state[pygame.K_d]:
-            if DEBUG > 1:
-                print("IN RUN - MOVING LEFT")
+            dbg(1, "IN RUN - MOVING LEFT")
             self.move_left( )
         elif self.key_state[pygame.K_d] and not self.key_state[pygame.K_a]:
-            if DEBUG > 1:
-                print("IN RUN - MOVING RIGHT")
+            dbg(1, "IN RUN - MOVING RIGHT")
             self.move_right( )
 
         if self.key_state[pygame.K_s] and not self.key_state[pygame.K_w]:
-            if DEBUG > 1:
-                print("IN RUN - MOVING UP")
+            dbg(1, "IN RUN - MOVING DOWN")
             self.move_down( )
         elif self.grounded and self.key_state[pygame.K_w] and not self.key_state[pygame.K_s]:
-            if DEBUG > 1:
-                print("IN RUN - MOVING DOWN")
-            self.move_up( )
+            dbg(1, "IN RUN - MOVING UP")
+            self.jump( )
 
     def update( self, dt ):
-        if DEBUG > 1:
-            print("ENTERING UPDATE")
+        dbg(1, "ENTERING UPDATE")
         dt2 = dt
         dt = 16 / (MAX_VEL * SCALE_VEL)
         while dt2 > 0:
@@ -200,18 +203,14 @@ class Player(Entity):
                 dt2 = 0
             else:
                 dt2 -= dt
-            if DEBUG > 0:
-                print("IN UPDATE WHILE LOOP - AFTER CALCULATING - DT:", dt)
-            if DEBUG > 0:
-                print("IN UPDATE WHILE LOOP - AFTER CALCULATING - DT2:", dt2)
-            if DEBUG > 1:
-                print("INSIDE UPDATE WHILE LOOP")
+            dbg(0, "IN UPDATE WHILE LOOP - AFTER CALCULATING - DT:", dt)
+            dbg(0, "IN UPDATE WHILE LOOP - AFTER CALCULATING - DT2:", dt2)
+            dbg(1, "INSIDE UPDATE WHILE LOOP")
             self.calc_friction( )
-            # self.check_ground( self.pos )
-            # if not self.grounded: self.acc[1] = -GRAVITY_ACC
-            if DEBUG > 0:
-                print("IN UPDATE - AT START - PLAYER VEL:", self.vel)
-                print("IN UPDATE - AT START - PLAYER ACC:", self.acc)
+            self.check_ground( self.pos )
+            if not self.grounded: self.acc[1] = -GRAVITY_ACC
+            dbg(0, "IN UPDATE - AT START - PLAYER VEL:", self.vel)
+            dbg(0, "IN UPDATE - AT START - PLAYER ACC:", self.acc)
             for i in range( 0, 2 ):
                 next_pos = self.pos.copy( )
                 next_vel = self.vel[i] + self.acc[i] * dt
@@ -223,7 +222,10 @@ class Player(Entity):
                     self.vel[i] = 0
                     self.acc[i] = 0
 
-                self.acc[i] = MAX_ACC * 2 if (self.acc[i] > MAX_ACC * 2) else -MAX_ACC * 2 if (self.acc[i] < -MAX_ACC * 2) else self.acc[i]
+                    if self.acc[ i ] > MAX_ACC * 2:
+                        self.acc[ i ] = MAX_ACC * 2
+                    elif self.acc[ i ] < -MAX_ACC * 2:
+                        self.acc[ i ] = -MAX_ACC * 2
 
                 self.vel[i] += self.acc[i] * dt
                 if self.vel[i] < -MAX_VEL * (1 - self.friction * 0.2):
@@ -234,8 +236,14 @@ class Player(Entity):
                 next_pos[i] += self.vel[i] * SCALE_VEL * dt
                 move = self.check( next_pos )
                 if move:
-                    if (i == 0) or (i == 1 and next_pos[i] <= CHUNK_HEIGHT_P and next_pos[i] >= 0):
+                    if (i == 0) or (i == 1 and CHUNK_HEIGHT_P >= next_pos[ i ] >= 0):
                         self.pos[i] += self.vel[i] * SCALE_VEL * dt
+                    if CHUNK_HEIGHT_P < self.pos[1]:
+                        self.pos[1] = CHUNK_HEIGHT_P
+                        dbg(0, "IN UPDATE WHILE LOOP - IN MOVE - POS > MAX HEIGHT")
+                    elif 0 > self.pos[1]:
+                        self.pos[1] = 0
+                        dbg(0, "IN UPDATE WHILE LOOP - IN MOVE - POS < MIN HEIGHT")
                 else:
                     self.vel[i] = 0
             if self.vel == [0, 0]: break
@@ -269,8 +277,10 @@ class Projectile(Entity):
 
 
 class Slime(Entity):
-    def __init__( self, pos, _entity_buffer, width, height ):
-        super( ).__init__( pos, _entity_buffer, width, height )
+    def __init__( self, _pos, _entity_buffer ):
+        self.width = 15
+        self.height = 15
+        super( ).__init__( _pos, _entity_buffer, self.width, self.height )
         pass
 
     def run( self ):
@@ -278,8 +288,10 @@ class Slime(Entity):
 
 
 class Zombie(Entity):
-    def __init__( self, pos, _entity_buffer, width, height ):
-        super( ).__init__( pos, _entity_buffer, width, height )
+    def __init__( self, _pos, _entity_buffer ):
+        self.width = 10
+        self.height = 10
+        super( ).__init__( _pos, _entity_buffer, self.width, self.height )
         pass
 
     def run( self ):
@@ -289,7 +301,6 @@ class Zombie(Entity):
 class EntityBuffer:
 
     def __init__( self ):
-
 
         # References to other managers (must be provided in main)
         self.chunk_buffer   = None
@@ -309,7 +320,7 @@ class EntityBuffer:
         self.get_curr_chunk_ind = lambda p: int( self.get_curr_chunk( p ) - self.chunk_buffer.positions[0] )
         self.get_x_pos_chunk = lambda p: int( p[0] // TILE_WIDTH - self.get_curr_chunk( p ) * CHUNK_WIDTH )
         self.get_y_pos_chunk = lambda p: int( p[1] // TILE_WIDTH )
-        # self.get_tile = lambda p: self.chunk_buffer[self.get_curr_chunk_ind( p )][self.get_y_pos_chunk( p )][self.get_x_pos_chunk( p )]
+        self.get_tile = lambda p: self.chunk_buffer[self.get_curr_chunk_ind( p )].blocks[self.get_y_pos_chunk( p )][self.get_x_pos_chunk( p )]
 
     def initialize( self , _chunk_buffer , _player , _renderer , _serializer , _camera , _screen ):
 
@@ -325,6 +336,18 @@ class EntityBuffer:
         pass
 
     def add_entity( self ):
+        pass
+
+    def load_entity( self ):
+        pass
+
+    def save_entity( self ):
+        pass
+
+    def load_player( self ):
+        pass
+
+    def save_player( self ):
         pass
 
     def hit( self ):
@@ -366,7 +389,7 @@ class Inventory:
         self.enabled            = False
 
     def add_item( self, _item , _quantity ):
-        """ Adds the supplied item to the inventory the supplied number of items homogenously
+        """ Adds the supplied item to the inventory the supplied number of items homogeneously
             Priority is given to the slots which already contain the specified item
             The amount left over is returned
 
@@ -384,13 +407,13 @@ class Inventory:
 
             for x in range( self.cols ):
 
-                if self.quantities[y][x] is 0: empty_slots.append( [ x , y ] )
+                if self.quantities[y][x] == 0: empty_slots.append( [ x , y ] )
 
                 if self.items[y][x] == _item and self.quantities[y][x] < 64:
                     max_fit = min( _quantity, 64 - self.quantities[y][x] )
                     self.quantities[y][x] += max_fit
                     _quantity -= max_fit
-                    if _quantity is 0: return None
+                    if _quantity == 0: return None
 
         if _quantity:
 
