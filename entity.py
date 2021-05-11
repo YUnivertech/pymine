@@ -41,6 +41,11 @@ class Entity:
         self.hitbox         = lambda p: [p+i for i in self.rel_hitbox]
         # self.tile           = lambda p: self.entity_buffer.get_tile(p)
 
+        # The index of the held item in the inventory
+        self.held_item_index    = 0
+        # The selected item and its quantity
+        self.sel_item           = [ None , 0 ]
+
     def collide( self, p1, p2 ):
         return False
 
@@ -244,7 +249,7 @@ class Player(Entity):
         for item in l: self.inventory.addItem(item, 1)
 
     def save( self ):
-        li = [self.inventory.items, self.inventory.quantities, self.pos]
+        li = [self.inventory.items, self.inventory.quantities, self.inventory.local_item_table, self.pos]
         li = pickle.dumps(li)
         self.serializer.savePlayer(1, li)
 
@@ -254,7 +259,8 @@ class Player(Entity):
             li = pickle.loads(li)
             self.inventory.items = li[0]
             self.inventory.quantities = li[1]
-            self.pos = li[2]
+            self.inventory.local_item_table = li[2]
+            self.pos = li[3]
 
     def end( self ):
         pass
@@ -350,15 +356,11 @@ class Inventory:
 
         # ! Magic numbers are being used here
 
-        self.items              = [ [ None for j in range( _cols ) ] for i in range( _rows ) ]
-        self.quantities         = [ [ 0 for j in range( _cols ) ] for i in range( _rows ) ]
+        self.items              = [ [ items.diamond_pickaxe for j in range( _cols ) ] for i in range( _rows ) ]
+        self.quantities         = [ [ 128 for j in range( _cols ) ] for i in range( _rows ) ]
 
         self.positions          = {}
         self.local_item_table   = []
-
-        self.sel_pos            = 0
-        self.sel_item           = [ None , 0 ]
-        self.item_held          = [ 0 , 0 ]
 
         self.cols               = _cols
         self.rows               = _rows
@@ -481,15 +483,17 @@ class Inventory:
         """ Draws the Inventory on to its own surface
         """
 
-        # ! LOTS OF MAGIC NUMBERS
-        slot    = ITEM_TABLE[ slot ]
+        self.surf.fill( ( 0 , 0 , 0 , 0 ), [ 0 , 0 , 800 , 500 ])
         coors   = [ 0 , 0 ]
 
-        for x , coors[0] in zip( range( self.cols ) , range( 40 * self.cols ) ):
+        for x , coors[0] in enumerate( range( 0 , 40 * self.cols , 40 ) ):
 
-            for y , coors[1] in zip( range( self.rows ) , range( 40 * self.rows) ):
+            for y , coors[1] in enumerate( range( 0 , 40 * self.rows , 40 ) ):
 
-                self.surf.blit( slot , coors )
+                self.surf.blit( inventory_slot , coors )
 
-                # self.surf.blit( INV_FONT.render( str(self.quantities[y][x]), (0, 0, 0) )[0], coors )
-                # self.surf.blit( INV_FONT.render( tiles.TILE_NAMES.get(self.items[y][x], 'X'), (0, 0, 0) )[0], [coors[0], coors[1] + 12] )
+                if self.quantities[y][x]:
+
+                    quantity_text , quantity_rect = INV_FONT.render( str( self.quantities[y][x] ) , INV_COLOR )
+                    self.surf.blit( ITEM_TABLE[self.items[y][x]] , ( coors[0] + 4 , coors[1] + 4 ) )
+                    self.surf.blit( quantity_text , ( coors[0] - 4 , coors[1] - 4 ) )

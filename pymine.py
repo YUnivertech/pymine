@@ -148,8 +148,8 @@ def main_game_start( _world = 'World1' ):
             if player.acc != [0,0]: print("IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER ACC:", player.acc)
 
         if cam_bound:
-            camera[0] += ( player.pos[0] - camera[0] ) * LERP_C
-            camera[1] += ( player.pos[1] - camera[1] ) * LERP_C
+            camera[0] += ( player.pos[0] - camera[0] ) * LERP_C # * dt * 100
+            camera[1] += ( player.pos[1] - camera[1] ) * LERP_C # * dt * 100
         else :
             if key_states[pygame.K_a]:      camera[0] -= ( 96 * TILE_WIDTH * dt )
             elif key_states[pygame.K_d]:    camera[0] += ( 96 * TILE_WIDTH * dt )
@@ -176,6 +176,7 @@ def main_game_start( _world = 'World1' ):
             chunk_buffer[new_index_inbuffer].draw()
 
         renderer.paint_screen()
+        renderer.paint_inventory()
         pygame.display.update()
 
     chunk_buffer.save()

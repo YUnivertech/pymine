@@ -61,9 +61,11 @@ INV_COLS            = 10
 INV_ROWS            = 3
 HAND_DAMAGE         = 30
 
+pygame.freetype.init()
 # # entities
 # WEIGHT           = 12
-# INV_FONT         = pygame.freetype.SysFont('Consolas', size=16, bold=True)
+INV_FONT         = pygame.freetype.SysFont('Consolas', size=16, bold=True)
+INV_COLOR        = ( 0 , 0 , 0 )
 # SC_DISPLAY_FONT  = pygame.freetype.SysFont('Consolas', size=20, bold=True)
 
 
@@ -369,7 +371,7 @@ class items( enum.Enum ):
     furnace              = 150
     chest                = 151
 
-slot = pygame.image.load("Resources/Default/InventorySpace.png")
+inventory_slot = pygame.image.load("Resources/Default/InventorySpace.png")
 # Dictionary consisting of tile as key; name as a string
 TILE_NAMES = {
     tiles.air                   : "air",

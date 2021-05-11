@@ -186,6 +186,10 @@ class Renderer:
         #         coors[0] += cls.numHor - cls.camera[0]
         #         cls.screen.blit( entity.surf, coors )
 
+    def paint_inventory( self ):
+        self.player.inventory.draw()
+        self.screen.blit( self.player.inventory.surf , [ 20 , 20 ] )
+
     def update_size( self ):
 
         # Number of pixels to paint on either side of the camera (centred on the screen) after screen has been resized

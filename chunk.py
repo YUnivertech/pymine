@@ -179,8 +179,7 @@ class Chunk:
         # self.created            = _time
         self.active_time        = _active_time
 
-        # self.surf               = pygame.Surface( ( CHUNK_WIDTH_P , CHUNK_HEIGHT_P ) , flags = pygame.SRCALPHA )
-        self.surf               = pygame.Surface( ( CHUNK_WIDTH_P , CHUNK_HEIGHT_P ) )
+        self.surf               = pygame.Surface( ( CHUNK_WIDTH_P , CHUNK_HEIGHT_P ) , flags = pygame.SRCALPHA )
 
         if not self.blocks:
             self.blocks = [[ tiles.air for j in range(CHUNK_WIDTH)] for i in range(CHUNK_HEIGHT)]
