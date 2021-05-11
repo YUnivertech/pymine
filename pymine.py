@@ -94,7 +94,12 @@ def main_game_start( _world = 'World1' ):
 
             if      event.type == pygame.QUIT:      running = False
 
-            elif    event.type == pygame.KEYDOWN:   key_states[event.key] = True
+            elif    event.type == pygame.KEYDOWN:
+
+                # The inventory state must only be toggled when the key is pressed (not while it is being held down)
+                if event.key == pygame.K_e: player.inventory.enabled = not player.inventory.enabled
+                key_states[event.key] = True
+
             elif    event.type == pygame.KEYUP:     key_states[event.key] = False
 
             elif    event.type == pygame.MOUSEMOTION:
@@ -124,7 +129,6 @@ def main_game_start( _world = 'World1' ):
                 if DEBUG != prev_debug: print("--------------- DEBUG :", DEBUG, "---------------")
             if      key_states[pygame.K_c] :              Renderer.setShaders()
             elif    key_states[pygame.K_n] :              cam_bound = not cam_bound
-            elif    key_states[pygame.K_e] :              inventoryVisible = not inventoryVisible
             elif    key_states[pygame.K_DOWN]:            player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] + 1) % INV_ROWS
             elif    key_states[pygame.K_UP]:              player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] - 1 + INV_ROWS) % INV_ROWS
             elif    key_states[pygame.K_RIGHT]:           player.inventory.itemHeld[0] = (player.inventory.itemHeld[0] + 1) % INV_COLS
@@ -176,7 +180,7 @@ def main_game_start( _world = 'World1' ):
             chunk_buffer[new_index_inbuffer].draw()
 
         renderer.paint_screen()
-        renderer.paint_inventory()
+        if( player.inventory.enabled ): renderer.paint_inventory()
         pygame.display.update()
 
     chunk_buffer.save()

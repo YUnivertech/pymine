@@ -189,10 +189,6 @@ class Player(Entity):
                 print("IN RUN - MOVING DOWN")
             self.move_up( )
 
-        if self.key_state[pygame.K_e]:
-            self.inventory.isEnabled = not self.inventory.isEnabled
-            self.key_state[pygame.K_e] = False
-
     def update( self, dt ):
         if DEBUG > 1:
             print("ENTERING UPDATE")
@@ -366,6 +362,8 @@ class Inventory:
         self.rows               = _rows
 
         self.surf               = pygame.Surface( ( 800 , 500 ) , flags = pygame.SRCALPHA )
+
+        self.enabled            = False
 
     def add_item( self, _item , _quantity ):
         """ Adds the supplied item to the inventory the supplied number of items homogenously
