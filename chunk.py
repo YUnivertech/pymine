@@ -247,12 +247,12 @@ class Chunk:
 
 class ChunkBuffer:
 
-    def __init__( self , _len , _middle = 0 ):
+    def __init__( self , _len ):
 
         # size and positions of chunks in the world
         self.len            = _len
         # self.positions      = [None] * 3
-        self.positions = [ -_len//2 + 1, 0 , _len//2 ]
+        self.positions      = [ 0, 0, 0 ]
 
         # chunk and light surface data
         self.chunks         = [None] * _len
@@ -274,6 +274,11 @@ class ChunkBuffer:
         self.camera         = _camera
         self.screen         = _screen
         self.noise_gen      = _noise_gen
+
+        self.positions[1]   = math.floor( self.player.pos[0] / CHUNK_WIDTH_P )
+
+        self.positions[0]   = self.positions[1] - ( self.len // 2)
+        self.positions[2]   = self.positions[1] + ( self.len // 2)
 
         self.load()
 
@@ -375,11 +380,12 @@ class ChunkBuffer:
         for i in range( self.len ):
             self.chunks[i] = self.serializer[self.positions[0] + i]
 
-        for i in range( len( self.chunks ) ):
+        for i in range( self.len ):
 
             if( self.chunks[i] is None ):
 
                 self.chunks[i] = Chunk( _index = self.positions[0] + i )
+                generate_chunk_temp( self.chunks[i] , self.noise_gen )
 
             else:
 
@@ -388,8 +394,11 @@ class ChunkBuffer:
 
                 self.chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = self.positions[0] + i )
 
-            generate_chunk_temp( self.chunks[i] , self.noise_gen )
             self.chunks[i].draw()
+
+    def show_indices( self ):
+        for c in self.chunks: print(c.index, end=' ')
+        print()
 
     def __getitem__( self , _key ): return self.chunks[_key]
 

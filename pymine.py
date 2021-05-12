@@ -55,12 +55,14 @@ def main_game_start( _world = 'World1' ):
     noise_gen               = opensimplex.OpenSimplex( seed = 0 )
 
     # Camera
-    # camera                  =  [ 0, CHUNK_HEIGHT_P - 800 ]
     camera                  = [ 0 , 0 ]
     prev_cam                = [ 0 , 0 ]
     cam_bound               = True
 
     # ---------- INITIALIZE MANAGERS ---------- #
+
+    # Player
+    player.initialize( chunk_buffer , entity_buffer , renderer , serializer , key_states , button_states , cursor_pos )
 
     # Chunk Buffer
     chunk_buffer.initialize( entity_buffer , renderer , serializer , player , camera , screen , noise_gen )
@@ -68,14 +70,12 @@ def main_game_start( _world = 'World1' ):
     # Entity Buffer
     entity_buffer.initialize( chunk_buffer , renderer , serializer , player , camera , screen )
 
-    # Player
-    player.initialize( chunk_buffer , entity_buffer , renderer , serializer , key_states , button_states , cursor_pos )
-
     # Renderer
     renderer.initialize( chunk_buffer , entity_buffer , player , serializer , camera , screen , display_sz )
 
-    # Serializer
-    # serializer.initialize()
+    curr_chunk              = chunk_buffer.positions[1]
+    prev_chunk              = curr_chunk
+    delta_chunk             = 0
 
     # Main loop
     camera[0]               = player.pos[0]
@@ -83,10 +83,6 @@ def main_game_start( _world = 'World1' ):
     running                 = True
     prev                    = time.time()
     dt                      = 0
-
-    curr_chunk              = 0
-    prev_chunk              = 0
-    delta_chunk             = 0
 
     running = True
 
@@ -145,17 +141,6 @@ def main_game_start( _world = 'World1' ):
         dt = now - prev
         prev = now
 
-        curr_chunk = math.floor( camera[0] / CHUNK_WIDTH_P )
-        delta_chunk = curr_chunk - prev_chunk
-        prev_chunk = curr_chunk
-
-        if delta_chunk:
-            new_side , num_chunks = chunk_buffer.shift(delta_chunk)
-            entity_buffer.shift(delta_chunk)
-
-            for i in range( num_chunks ):
-                chunk_buffer[new_side + i].draw()
-
         player.run()
         if player.pos != [0,0]: dbg(0, "IN MAIN LOOP - AFTER PLAYER RUN - PLAYER POS:", player.pos)
         if player.vel != [0,0]: dbg(0, "IN MAIN LOOP - AFTER PLAYER RUN - PLAYER VEL:", player.vel)
@@ -174,12 +159,22 @@ def main_game_start( _world = 'World1' ):
             if key_states[pygame.K_s]:      camera[1] -= ( 96 * TILE_WIDTH * dt )
             elif key_states[pygame.K_w]:    camera[1] += ( 96 * TILE_WIDTH * dt )
 
-        # The maximum height the camera is allowed to go to is CHUNK_HEIGHT_P - display_sz[1]//2
-        # The minimum height the camera is allowed to go to is display_sz[1]//2
         if      camera[1] >= renderer.camera_upper :    camera[1] = renderer.camera_upper
         elif    camera[1] <= renderer.num_ver :         camera[1] = renderer.num_ver
 
         renderer.update_camera()
+
+        curr_chunk = math.floor( camera[0] / CHUNK_WIDTH_P )
+        delta_chunk = curr_chunk - prev_chunk
+        prev_chunk = curr_chunk
+
+        if delta_chunk:
+
+            new_side , num_chunks = chunk_buffer.shift(delta_chunk)
+            entity_buffer.shift(delta_chunk)
+
+            for i in range( num_chunks ):
+                chunk_buffer[new_side + i].draw()
 
         renderer.paint_screen()
         if( player.inventory.enabled ): renderer.paint_inventory()
