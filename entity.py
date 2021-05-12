@@ -15,41 +15,41 @@ class ItemEntity:
     def __init__( self ):
         pass
 
+    def update( self ):
+        pass
+
     def draw( self ):
         pass
 
 
 class Entity:
     def __init__( self, _pos, _entity_buffer, _width, _height, _hitbox, _health=100 ):
-        self.pos          = _pos
-        self.entity_buffer = _entity_buffer
-        self.health       = _health
-        self.friction     = DEFAULT_FRICTION
-        self.vel          = [0.0, 0.0]
-        self.acc          = [0.0, 0.0]
-        self.width        = _width
-        self.height       = _height
-        self.rel_hitbox   = _hitbox
-        self.surf         = pygame.Surface((self.width, self.height))
-        self.surf_pos     = lambda: [self.pos[0] - (PLYR_WIDTH * 0.5), self.pos[1] + (PLYR_HEIGHT * 0.5)]
-        self.hitting      = False
-        self.placing      = False
-        self.grounded     = True
+        self.pos             = _pos
+        self.entity_buffer   = _entity_buffer
+        self.health          = _health
+        self.friction        = DEFAULT_FRICTION
+        self.vel             = [0.0, 0.0]
+        self.acc             = [0.0, 0.0]
+        self.width           = _width
+        self.height          = _height
+        self.rel_hitbox      = _hitbox
+        self.surf            = pygame.Surface((self.width, self.height))
+        self.surf_pos        = lambda: [self.pos[0] - (PLYR_WIDTH * 0.5), self.pos[1] + (PLYR_HEIGHT * 0.5)]
+        self.hitting         = False
+        self.placing         = False
+        self.grounded        = True
+        self.tangibility     = False
 
         # In the following lambda functions, 'p' means position which is a tuple
-        self.hitbox         = lambda p: [(p[0]+i[0], p[1]+i[1]) for i in self.rel_hitbox]
-        self.tile           = lambda p: self.entity_buffer.get_tile(p)
+        self.hitbox          = lambda p: [(p[0]+i[0], p[1]+i[1]) for i in self.rel_hitbox]
+        self.tile            = lambda p: self.entity_buffer.get_tile(p)
 
-        # The index of the held item in the inventory
-        self.held_item_index    = 0
-        # The selected item and its quantity
-        self.sel_item           = [ None , 0 ]
-
-    def collide( self, _hitbox_1, _hitbox_2 ):
-        return False
+        self.held_item_index = 0        # The index of the held item in the inventory
+        self.sel_item        = [ None , 0 ]     # The selected item and its quantity
 
     def calc_friction(self):
-        self.friction = TILE_ATTR[self.tile((self.pos[0], self.pos[1] - 16))][tile_attr.FRICTION]
+        dbg( 0, "IN CALC FRICTION - TILE:", self.tile( (self.pos[ 0 ], self.pos[ 1 ] - 16) ) )
+        self.friction = TILE_ATTR[ self.tile( (self.pos[ 0 ], self.pos[ 1 ] - 16) ) ][ tile_attr.FRICTION ]
 
     def move_left(self):
         self.acc[0] = -self.friction * 2
@@ -64,21 +64,9 @@ class Entity:
         self.acc[1] = -self.friction * 2
 
     def jump(self):
-        self.vel[1] = JUMP_VEL
-        self.acc[1] = -GRAVITY_ACC
+        self.vel[1]   = JUMP_VEL
+        self.acc[1]   = -GRAVITY_ACC
         self.grounded = False
-
-    def check_up(self, pos):
-        # May not be required
-        pass
-
-    def check_left(self, pos):
-        # May not be required
-        pass
-
-    def check_right(self, pos):
-        # May not be required
-        pass
 
     def check_ground(self, _pos):
         hitbox = self.hitbox(_pos)
@@ -92,6 +80,8 @@ class Entity:
     def check(self, _pos):
         # For every corresponding tile between hitbox endpoints including the endpoints,
         # check that the hitbox and the tile don't intersect
+        if self.tangibility:
+            return True
         hitbox = self.hitbox( _pos )
         for point in hitbox:
             dbg(1, "IN CHECK - ENTERED FOR LOOP")
@@ -142,41 +132,48 @@ class Player(Entity):
     def __init__( self, _pos ):
 
         # Set all references to main managers
-        self.chunk_buffer   = None
-        self.entity_buffer  = None
-        self.renderer       = None
-        self.serializer     = None
-        self.camera         = None
+        self.chunk_buffer  = None
+        self.entity_buffer = None
+        self.renderer      = None
+        self.serializer    = None
+        self.camera        = None
 
-        self.key_state      = None
-        self.mouse_state    = None
-        self.cursor_pos     = None
-        self.inventory      = None
+        self.key_state     = None
+        self.mouse_state   = None
+        self.cursor_pos    = None
+        self.inventory     = None
 
-        self.tangibility    = None
-        self.hitbox         = [(0, 0), (HITBOX_WIDTH, 0), (HITBOX_WIDTH, -HITBOX_HEIGHT), (0, -HITBOX_HEIGHT)]
-        self.pos            = _pos  # World pos of surface in x-y-z coords
+        self.tangibility   = False
+        x_off              = 0
+        y_off              = 0
+        self.up            = [ (x + x_off, y_off) for x in range( 0, HITBOX_WIDTH - 1, 16 ) ] + [ (HITBOX_WIDTH - 1 + x_off, y_off) ]
+        self.left          = [ (x_off, -y + y_off) for y in range( 0, HITBOX_HEIGHT - 1, 16 ) ] + [ (x_off, -HITBOX_HEIGHT + 1 + y_off) ]
+        self.right         = [ (HITBOX_WIDTH - 1 + x_off, -y + y_off) for y in range( 0, HITBOX_HEIGHT - 1, 16 ) ] + [ (HITBOX_WIDTH - 1 + x_off, -HITBOX_HEIGHT + 1 + y_off) ]
+        self.bottom        = [ (x + x_off, -HITBOX_HEIGHT + 1 + y_off) for x in range( 0, HITBOX_WIDTH - 1, 16 ) ] + [ (HITBOX_WIDTH - 1 + x_off, -HITBOX_HEIGHT + 1 + y_off) ]
+        self.hitbox        = self.up + self.right + self.bottom + self.left
+        self.pos           = _pos  # World pos of surface in x-y-z coords
+        # self.hitbox        = [(0, 0), (HITBOX_WIDTH, 0), (HITBOX_WIDTH, -HITBOX_HEIGHT), (0, -HITBOX_HEIGHT)]
 
     def initialize( self, _chunk_buffer, _entity_buffer, _renderer, _serializer, _key_state, _mouse_state, _cursor_pos ):
 
         # Set all references to main managers
-        self.chunk_buffer    = _chunk_buffer
-        self.entity_buffer   = _entity_buffer
-        self.renderer        = _renderer
-        self.serializer      = _serializer
+        self.chunk_buffer  = _chunk_buffer
+        self.entity_buffer = _entity_buffer
+        self.renderer      = _renderer
+        self.serializer    = _serializer
 
-        self.key_state       = _key_state
-        self.mouse_state     = _mouse_state
-        self.cursor_pos      = _cursor_pos
+        self.key_state     = _key_state
+        self.mouse_state   = _mouse_state
+        self.cursor_pos    = _cursor_pos
 
-        self.tangibility     = 0
-        self.inventory       = Inventory(  INV_COLS, INV_ROWS )
+        self.tangibility   = False
+        self.inventory     = Inventory(  INV_COLS, INV_ROWS )
         self.load()
         super().__init__( self.pos, self.entity_buffer, PLYR_WIDTH, PLYR_HEIGHT, self.hitbox )
 
     def run( self ):
-        self.acc[0] = 0
-        self.acc[1] = 0
+        self.acc[0]  = 0
+        self.acc[1]  = 0
         self.hitting = False
         self.placing = False
         if self.key_state[pygame.K_a] and not self.key_state[pygame.K_d]:
@@ -189,17 +186,17 @@ class Player(Entity):
         if self.key_state[pygame.K_s] and not self.key_state[pygame.K_w]:
             dbg(1, "IN RUN - MOVING DOWN")
             self.move_down( )
-        elif self.grounded and self.key_state[pygame.K_w] and not self.key_state[pygame.K_s]:
+        elif (self.tangibility or self.grounded) and self.key_state[pygame.K_w] and not self.key_state[pygame.K_s]:
             dbg(1, "IN RUN - MOVING UP")
             self.jump( )
 
     def update( self, dt ):
         dbg(1, "ENTERING UPDATE")
         dt2 = dt
-        dt = 16 / (MAX_VEL * SCALE_VEL)
+        dt  = 16 / (MAX_VEL * SCALE_VEL)
         while dt2 > 0:
             if dt2 <= dt:
-                dt = dt2
+                dt  = dt2
                 dt2 = 0
             else:
                 dt2 -= dt
@@ -207,6 +204,7 @@ class Player(Entity):
             dbg(0, "IN UPDATE WHILE LOOP - AFTER CALCULATING - DT2:", dt2)
             dbg(1, "INSIDE UPDATE WHILE LOOP")
             self.calc_friction( )
+            dbg( 0, "IN UPDATE WHILE LOOP - AFTER CALCULATING - FRICTION:", self.friction )
             self.check_ground( self.pos )
             if not self.grounded: self.acc[1] = -GRAVITY_ACC
             dbg(0, "IN UPDATE - AT START - PLAYER VEL:", self.vel)
@@ -260,9 +258,9 @@ class Player(Entity):
     def load( self ):
         li = self.serializer.loadPlayer(1)
         if li:
-            li = pickle.loads(li)
-            self.inventory.items = li[0]
-            self.inventory.quantities = li[1]
+            li                              = pickle.loads(li)
+            self.inventory.items            = li[0]
+            self.inventory.quantities       = li[1]
             self.inventory.local_item_table = li[2]
             self.pos = li[3]
 
@@ -272,29 +270,43 @@ class Player(Entity):
 
 class Projectile(Entity):
     def __init__( self, pos, _entity_buffer, width, height ):
-        super( ).__init__( pos, _entity_buffer, width, height )
+        self.width  = width
+        self.height = height
+        self.hitbox = [ ]
+        super( ).__init__( pos, _entity_buffer, width, height, self.hitbox )
+        pass
+
+    def update( self ):
         pass
 
 
 class Slime(Entity):
     def __init__( self, _pos, _entity_buffer ):
-        self.width = 15
+        self.width  = 15
         self.height = 15
-        super( ).__init__( _pos, _entity_buffer, self.width, self.height )
+        self.hitbox = [ ]
+        super( ).__init__( _pos, _entity_buffer, self.width, self.height, self.hitbox )
         pass
 
     def run( self ):
+        pass
+
+    def update( self ):
         pass
 
 
 class Zombie(Entity):
     def __init__( self, _pos, _entity_buffer ):
-        self.width = 10
+        self.width  = 10
         self.height = 10
-        super( ).__init__( _pos, _entity_buffer, self.width, self.height )
+        self.hitbox = [ ]
+        super( ).__init__( _pos, _entity_buffer, self.width, self.height, self.hitbox)
         pass
 
     def run( self ):
+        pass
+
+    def update( self ):
         pass
 
 
@@ -303,46 +315,54 @@ class EntityBuffer:
     def __init__( self ):
 
         # References to other managers (must be provided in main)
-        self.chunk_buffer   = None
-        self.player         = None
-        self.renderer       = None
-        self.serializer     = None
-        self.player         = None
+        self.chunk_buffer       = None
+        self.player             = None
+        self.renderer           = None
+        self.serializer         = None
+        self.player             = None
 
         # Reference to camera and screen surface
-        self.camera         = None
-        self.screen         = None
+        self.camera             = None
+        self.screen             = None
 
-        self.other_plyrs    = []
-        self.len            = None
+        self.entities           = []
+        self.other_plyrs        = []
+        self.len                = None
 
-        self.get_curr_chunk = lambda p: int( math.floor( p[0] / CHUNK_WIDTH_P ) )
+        self.get_curr_chunk     = lambda p: int( math.floor( p[0] / CHUNK_WIDTH_P ) )
         self.get_curr_chunk_ind = lambda p: int( self.get_curr_chunk( p ) - self.chunk_buffer.positions[0] )
-        self.get_x_pos_chunk = lambda p: int( p[0] // TILE_WIDTH - self.get_curr_chunk( p ) * CHUNK_WIDTH )
-        self.get_y_pos_chunk = lambda p: int( p[1] // TILE_WIDTH )
-        self.get_tile = lambda p: self.chunk_buffer[self.get_curr_chunk_ind( p )].blocks[self.get_y_pos_chunk( p )][self.get_x_pos_chunk( p )]
+        self.get_x_pos_chunk    = lambda p: int( p[0] // TILE_WIDTH - self.get_curr_chunk( p ) * CHUNK_WIDTH )
+        self.get_y_pos_chunk    = lambda p: int( p[1] // TILE_WIDTH )
+        self.get_tile           = lambda p: self.chunk_buffer[self.get_curr_chunk_ind( p )].blocks[self.get_y_pos_chunk( p )][self.get_x_pos_chunk( p )]
 
-    def initialize( self , _chunk_buffer , _player , _renderer , _serializer , _camera , _screen ):
+    def initialize( self , _chunk_buffer, _player , _renderer , _serializer , _camera , _screen ):
 
         # Set all references to main managers
-        self.chunk_buffer   = _chunk_buffer
-        self.player         = _player
-        self.renderer       = _renderer
-        self.serializer     = _serializer
-        self.camera         = _camera
-        self.screen         = _screen
+        self.chunk_buffer = _chunk_buffer
+        self.player       = _player
+        self.renderer     = _renderer
+        self.serializer   = _serializer
+        self.camera       = _camera
+        self.screen       = _screen
+
+        self.len          = self.chunk_buffer.len
+        self.entities     = [[] for _i in range(self.len)]
 
     def add_player( self ):
+        # To be implemented in multiplayer
         pass
 
-    def add_entity( self ):
-        pass
+    def add_entity( self, _ind, _entity):
+        self.entities[_ind].append(_entity)
 
     def load_entity( self ):
         pass
 
     def save_entity( self ):
-        pass
+        li = [[] for _i in range(self.len)]
+        for _i in range(len(self.entities)):
+            for entity in self.entities[_i]:
+                li[_i].append(entity.save())
 
     def load_player( self ):
         pass
@@ -360,12 +380,14 @@ class EntityBuffer:
         pass
 
     def update( self ):
-        pass
+        for _i in self.entities:
+            for _entity in _i:
+                _entity.update()
 
     def draw( self ):
         pass
 
-    def shift( self, d):
+    def shift( self, _dt):
         pass
 
 
