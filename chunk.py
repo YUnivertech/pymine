@@ -1,6 +1,12 @@
 # todo Need to optimize the shift left and shift right methods
 
-from game_utilities import *
+import math
+import pickle
+import pygame
+import pygame.freetype
+
+import constants as consts
+
 
 # class Shader:
 
@@ -144,17 +150,17 @@ def generate_chunk_temp( _chunk , noise_gen ):
     # one layer of coal
     # one layer of dirt
     # one layer of grass
-    for i in range( CHUNK_WIDTH ):
-        _chunk.blocks[0][i] = tiles.bedrock
-        _chunk.blocks[1][i] = tiles.obsidian
-        _chunk.blocks[2][i] = tiles.hellstone
+    for i in range( consts.CHUNK_WIDTH ):
+        _chunk.blocks[0][i] = consts.tiles.bedrock
+        _chunk.blocks[1][i] = consts.tiles.obsidian
+        _chunk.blocks[2][i] = consts.tiles.hellstone
         for j in range(10):
-            _chunk.blocks[j + 3][i] = tiles.greystone
-            _chunk.blocks[j + 13][i] = tiles.limestone
-            _chunk.blocks[j + 23][i] = tiles.sandstone
-        _chunk.blocks[32][i] = tiles.coal
-        _chunk.blocks[33][i] = tiles.browndirt
-        _chunk.blocks[34][i] = tiles.grass
+            _chunk.blocks[j + 3][i] = consts.tiles.greystone
+            _chunk.blocks[j + 13][i] = consts.tiles.limestone
+            _chunk.blocks[j + 23][i] = consts.tiles.sandstone
+        _chunk.blocks[32][i] = consts.tiles.coal
+        _chunk.blocks[33][i] = consts.tiles.browndirt
+        _chunk.blocks[34][i] = consts.tiles.grass
 
     # for i in range( CHUNK_WIDTH ):
     #     for j in range( CHUNK_HEIGHT ):
@@ -180,22 +186,22 @@ class Chunk:
         self.active_time        = _active_time
 
         # self.surf               = pygame.Surface( ( CHUNK_WIDTH_P , CHUNK_HEIGHT_P ) , flags = pygame.SRCALPHA )
-        self.surf               = pygame.Surface( ( CHUNK_WIDTH_P , CHUNK_HEIGHT_P ) )
+        self.surf               = pygame.Surface( (consts.CHUNK_WIDTH_P , consts.CHUNK_HEIGHT_P) )
 
         if not self.blocks:
-            self.blocks = [[ tiles.air for j in range(CHUNK_WIDTH)] for i in range(CHUNK_HEIGHT)]
+            self.blocks = [ [ consts.tiles.air for j in range( consts.CHUNK_WIDTH ) ] for i in range( consts.CHUNK_HEIGHT ) ]
         if not self.walls:
-            self.walls = [[ tiles.air for j in range(CHUNK_WIDTH)] for i in range(CHUNK_HEIGHT)]
+            self.walls = [ [ consts.tiles.air for j in range( consts.CHUNK_WIDTH ) ] for i in range( consts.CHUNK_HEIGHT ) ]
         if not self.local_tile_table:
             self.local_tile_table = {}
 
-    def draw( self , _rect = [ 0 , 0 , CHUNK_WIDTH , CHUNK_HEIGHT ] ):
+    def draw( self, _rect = [ 0 , 0 , consts.CHUNK_WIDTH , consts.CHUNK_HEIGHT ] ):
 
-        x_start = TILE_WIDTH * ( _rect[0] )
-        y_start = TILE_WIDTH * ( CHUNK_HEIGHT - _rect[3] )
+        x_start = consts.TILE_WIDTH * ( _rect[0 ])
+        y_start = consts.TILE_WIDTH * (consts.CHUNK_HEIGHT - _rect[3 ])
 
-        x_span  = TILE_WIDTH * ( _rect[2] - _rect[0] )
-        y_span  = TILE_WIDTH * ( _rect[3] - _rect[1] )
+        x_span  = consts.TILE_WIDTH * (_rect[2 ] - _rect[0 ])
+        y_span  = consts.TILE_WIDTH * (_rect[3 ] - _rect[1 ])
 
         # make the region transparent
         self.surf.fill( ( 0 , 0 , 0 , 0 ), [ x_start , y_start , x_span, y_span])
@@ -203,21 +209,21 @@ class Chunk:
         # loop for blitting the tiles and walls
         for i in range( _rect[1] , _rect[3] ):
 
-            coors = [ 0 , TILE_WIDTH * ( CHUNK_HEIGHT - i - 1 ) ]
+            coors = [ 0 , consts.TILE_WIDTH * (consts.CHUNK_HEIGHT - i - 1) ]
 
             for j in range( _rect[0] , _rect[2] ):
 
-                coors[0]            = TILE_WIDTH * j
+                coors[0]            = consts.TILE_WIDTH * j
                 tile_ref , wall_ref = self.blocks[i][j] , self.walls[i][j]
 
-                if tile_ref != tiles.air :
+                if tile_ref != consts.tiles.air :
 
-                    self.surf.blit( TILE_TABLE[tile_ref] , coors )
+                    self.surf.blit( consts.TILE_TABLE[tile_ref ], coors )
                     if ( i , j , 1 ) in self.local_tile_table : pass
 
-                elif wall_ref != tiles.air :
+                elif wall_ref != consts.tiles.air :
 
-                    self.surf.blit( TILE_TABLE[wall_ref] , coors )
+                    self.surf.blit( consts.TILE_TABLE[wall_ref ], coors )
                     if ( i , j , 0 ) in self.local_tile_table : pass
 
         # Then we blit the tile modifiers (cracks, glows, etc.)
@@ -275,7 +281,7 @@ class ChunkBuffer:
         self.screen         = _screen
         self.noise_gen      = _noise_gen
 
-        self.positions[1]   = math.floor( self.player.pos[0] / CHUNK_WIDTH_P )
+        self.positions[1]   = math.floor( self.player.pos[0] / consts.CHUNK_WIDTH_P )
 
         self.positions[0]   = self.positions[1] - ( self.len // 2)
         self.positions[2]   = self.positions[1] + ( self.len // 2)

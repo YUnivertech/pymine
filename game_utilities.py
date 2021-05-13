@@ -1,20 +1,25 @@
-import sqlite3, bz2, os, math
-from functools import lru_cache
+import bz2
+import math
+import os
+import pygame
+import pygame.freetype
+import sqlite3
 
-from constants import *
+import constants as consts
+
 
 def populate_key_states( _key_states , _button_states ):
-    for i in range( pygame.K_a , pygame.K_z + 1 ):
+    for i in range( consts.pygame.K_a , consts.pygame.K_z + 1 ):
         _key_states[i] = 0
-    for i in range( pygame.K_0 , pygame.K_9 + 1 ):
+    for i in range( consts.pygame.K_0 , consts.pygame.K_9 + 1 ):
         _key_states[i] = 0
 
-    _key_states[pygame.K_UP]    = 0
-    _key_states[pygame.K_DOWN]  = 0
-    _key_states[pygame.K_LEFT]  = 0
-    _key_states[pygame.K_RIGHT] = 0
+    _key_states[consts.pygame.K_UP ]    = 0
+    _key_states[consts.pygame.K_DOWN ]  = 0
+    _key_states[consts.pygame.K_LEFT ]  = 0
+    _key_states[consts.pygame.K_RIGHT ] = 0
 
-    _key_states[pygame.K_SPACE] = 0
+    _key_states[consts.pygame.K_SPACE ] = 0
 
     # 0 is for left, 1 is for middle and 2 is for right
     _button_states[0] = 0
@@ -92,14 +97,14 @@ class Renderer:
 
         for right_walker in range( self.middle , self.chunk_buffer.len ):
 
-            slice_ind       = self.chunk_buffer[right_walker].index * CHUNK_WIDTH       # Absolute index of current vertical slice
+            slice_ind       = self.chunk_buffer[right_walker].index * consts.CHUNK_WIDTH       # Absolute index of current vertical slice
             slice_pos       = [ 0 , 0 ]                                                 # List containing coordinates of the location where the slice must be blit
-            slice_rect      = [ 0 , self.up_index , TILE_WIDTH , self.down_index ]      # Rectangular region containing the "visible" area of the chunk's surface
+            slice_rect      = [ 0 , self.up_index , consts.TILE_WIDTH , self.down_index ]      # Rectangular region containing the "visible" area of the chunk's surface
 
-            for tile_walker in range( 0 , CHUNK_WIDTH ):
+            for tile_walker in range( 0 , consts.CHUNK_WIDTH ):
 
-                slice_pos[0]    = ( slice_ind + tile_walker ) * TILE_WIDTH - self.camera[0] + self.num_hor
-                slice_rect[0]   = tile_walker * TILE_WIDTH
+                slice_pos[0]    = ( slice_ind + tile_walker ) * consts.TILE_WIDTH - self.camera[0 ] + self.num_hor
+                slice_rect[0]   = tile_walker * consts.TILE_WIDTH
 
                 slice_surf      = self.chunk_buffer[ right_walker ].surf.subsurface( slice_rect )            # Mini-surface containing the visible region of the chunk's surface
 
@@ -119,18 +124,18 @@ class Renderer:
 
         for left_walker in range( self.middle - 1, -1 , -1 ):
 
-            slice_ind       = self.chunk_buffer[left_walker].index * CHUNK_WIDTH        # Absolute index of current vertical slice
+            slice_ind       = self.chunk_buffer[left_walker].index * consts.CHUNK_WIDTH        # Absolute index of current vertical slice
             slice_pos       = [ 0 , 0 ]                                                 # List containing coordinates of the location where the slice must be blit
-            slice_rect      = [ 0 , self.up_index , TILE_WIDTH , self.down_index ]      # Rectangular region containing the "visible" area of the chunk's surface
+            slice_rect      = [ 0 , self.up_index , consts.TILE_WIDTH , self.down_index ]      # Rectangular region containing the "visible" area of the chunk's surface
 
-            for tile_walker in range( CHUNK_WIDTH - 1 , -1 , -1 ):
+            for tile_walker in range( consts.CHUNK_WIDTH - 1 , -1 , -1 ):
 
-                slice_pos[0]    = ( slice_ind + tile_walker ) * TILE_WIDTH - self.camera[0] + self.num_hor
-                slice_rect[0]   = tile_walker * TILE_WIDTH
+                slice_pos[0]    = ( slice_ind + tile_walker ) * consts.TILE_WIDTH - self.camera[0 ] + self.num_hor
+                slice_rect[0]   = tile_walker * consts.TILE_WIDTH
 
                 slice_surf      = self.chunk_buffer[ left_walker ].surf.subsurface( slice_rect )            # Mini-surface containing the visible region of the chunk's surface
 
-                if slice_pos[0] < -TILE_WIDTH :
+                if slice_pos[0] < -consts.TILE_WIDTH :
                     flag = True
                     break
 
@@ -162,8 +167,8 @@ class Renderer:
         plyr_coors[1] = self.num_ver - plyr_coors[1]
 
         # Blit a small rectangle
-        pygame.draw.rect( self.screen, (50, 50, 255), pygame.Rect(plyr_coors[0]-8, plyr_coors[1]-8, 17, 17))
-        pygame.draw.rect( self.screen, (255, 50, 50), pygame.Rect(camera_coors[0]-2, camera_coors[1]-2, 5, 5))
+        pygame.draw.rect( self.screen, (50, 50, 255), pygame.Rect( plyr_coors[0 ] - 8, plyr_coors[1 ] - 8, 17, 17 ) )
+        pygame.draw.rect( self.screen, (255, 50, 50), pygame.Rect( camera_coors[0 ] - 2, camera_coors[1 ] - 2, 5, 5 ) )
 
         # item = cls.player.inventory.getSelectedItem()
         # name, quantity = 'Nothing', cls.player.inventory.getSelectedQuantity()
@@ -197,15 +202,15 @@ class Renderer:
         self.num_ver        = self.window_size[1] // 2
 
 
-        self.camera_upper   = CHUNK_HEIGHT_P - self.num_ver
+        self.camera_upper   = consts.CHUNK_HEIGHT_P - self.num_ver
 
     def update_camera( self ):
 
         # Index of the highest point to be rendered
-        self.up_index       = max( CHUNK_HEIGHT_P - ( self.camera[1] + self.num_ver ) , 0 )
+        self.up_index       = max( consts.CHUNK_HEIGHT_P - (self.camera[1 ] + self.num_ver), 0 )
 
         # Index of the lowest point to be rendered
-        self.down_index     = min( CHUNK_HEIGHT_P - self.up_index , self.window_size[1] )
+        self.down_index     = min( consts.CHUNK_HEIGHT_P - self.up_index, self.window_size[1 ] )
 
 class Serializer:
     def __init__( self, target ):

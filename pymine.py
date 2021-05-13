@@ -1,6 +1,18 @@
-from chunk import *
-from entity import *
 import time
+
+import math
+import opensimplex
+import os
+import pygame
+import pygame.freetype
+import pygame_gui
+from pygame_gui.elements import UIButton, UIPanel, UITextEntryLine
+from pygame_gui.elements.ui_selection_list import UISelectionList
+
+import chunk
+import constants as consts
+import entity
+import game_utilities as utils
 
 key_states              = {}
 button_states           = {}
@@ -16,8 +28,8 @@ screen                  = pygame.display.set_mode( display_sz , pygame.RESIZABLE
 pygame.display.set_caption( "Pymine" )
 pygame.display.set_icon( pygame.image.load( "Resources/Default/gameIcon.png" ) )
 
-populate_key_states( key_states , button_states )
-loadImageTable()
+utils.populate_key_states( key_states, button_states )
+consts.loadImageTable( )
 
 # Create GUI based menus
 if not os.path.isdir("Worlds"): os.mkdir("Worlds") # Create worlds folder if it does not exist
@@ -35,21 +47,21 @@ def main_game_start( _world = 'World1' ):
     # ---------- CREATION OF ALL MANAGERS ---------- #
 
     # Chunk Buffer
-    buffer_width            = ( pygame.display.Info().current_w // CHUNK_WIDTH_P ) + 6
+    buffer_width            = (pygame.display.Info().current_w // consts.CHUNK_WIDTH_P) + 6
     buffer_width            = buffer_width if buffer_width % 2 else buffer_width + 1
-    chunk_buffer            = ChunkBuffer( buffer_width )
+    chunk_buffer            = chunk.ChunkBuffer( buffer_width )
 
     # Entity Buffer
-    entity_buffer           = EntityBuffer()
+    entity_buffer           = entity.EntityBuffer( )
 
     # Player
-    player                  = Player([0, 600])
+    player                  = entity.Player( [ 0, 600 ] )
 
     # Renderer
-    renderer                = Renderer()
+    renderer                = utils.Renderer( )
 
     # Serializer
-    serializer              = Serializer( _world )
+    serializer              = utils.Serializer( _world )
 
     # Noise generator
     noise_gen               = opensimplex.OpenSimplex( seed = 0 )
@@ -87,7 +99,7 @@ def main_game_start( _world = 'World1' ):
     running = True
 
     while running:
-        dbg(0, "")
+        consts.dbg( 0, "" )
         clock = pygame.time.Clock()
         clock.tick(60)
 
@@ -101,7 +113,7 @@ def main_game_start( _world = 'World1' ):
                 if event.key == pygame.K_e: player.inventory.enabled = not player.inventory.enabled
                 if event.key == pygame.K_t:
                     player.tangibility = not player.tangibility
-                    dbg(0, "PLAYER TANGIBILITY:", player.tangibility)
+                    consts.dbg( 0, "PLAYER TANGIBILITY:", player.tangibility )
                 key_states[event.key] = True
 
             elif    event.type == pygame.KEYUP:     key_states[event.key] = False
@@ -128,46 +140,46 @@ def main_game_start( _world = 'World1' ):
 
         try:
             if key_states[pygame.K_b]:
-                prev_debug = DBG[0]
-                DBG[0] = 0 if key_states[pygame.K_0] else 1 if key_states[pygame.K_1] else 2 if key_states[pygame.K_2] else DBG[0]
-                if DBG[0] != prev_debug: dbg(0, "--------------- DEBUG :", DBG[0], "---------------")
-            if      key_states[pygame.K_c] :              Renderer.setShaders()
+                prev_debug = consts.DBG[0 ]
+                consts.DBG[0 ] = 0 if key_states[pygame.K_0 ] else 1 if key_states[pygame.K_1 ] else 2 if key_states[pygame.K_2 ] else consts.DBG[0 ]
+                if consts.DBG[0 ] != prev_debug: consts.dbg( 0, "--------------- DEBUG :", consts.DBG[0 ], "---------------" )
+            if      key_states[pygame.K_c] :              utils.Renderer.setShaders( )
             elif    key_states[pygame.K_n] :              cam_bound = not cam_bound
-            elif    key_states[pygame.K_DOWN]:            player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] + 1) % INV_ROWS
-            elif    key_states[pygame.K_UP]:              player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] - 1 + INV_ROWS) % INV_ROWS
-            elif    key_states[pygame.K_RIGHT]:           player.inventory.itemHeld[0] = (player.inventory.itemHeld[0] + 1) % INV_COLS
-            elif    key_states[pygame.K_LEFT]:            player.inventory.itemHeld[0] = (player.inventory.itemHeld[0] - 1 + INV_COLS) % INV_COLS
+            elif    key_states[pygame.K_DOWN]:            player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] + 1) % consts.INV_ROWS
+            elif    key_states[pygame.K_UP]:              player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] - 1 + consts.INV_ROWS) % consts.INV_ROWS
+            elif    key_states[pygame.K_RIGHT]:           player.inventory.itemHeld[0] = (player.inventory.itemHeld[0] + 1) % consts.INV_COLS
+            elif    key_states[pygame.K_LEFT]:            player.inventory.itemHeld[0] = (player.inventory.itemHeld[0] - 1 + consts.INV_COLS) % consts.INV_COLS
         except Exception as e:
-            dbg(0, "IN MAIN LOOP - EXCEPTION:", e)
+            consts.dbg( 0, "IN MAIN LOOP - EXCEPTION:", e )
 
         now = time.time()
         dt = now - prev
         prev = now
 
         player.run()
-        if player.pos != [0,0]: dbg(0, "IN MAIN LOOP - AFTER PLAYER RUN - PLAYER POS:", player.pos)
-        if player.vel != [0,0]: dbg(0, "IN MAIN LOOP - AFTER PLAYER RUN - PLAYER VEL:", player.vel)
-        if player.acc != [0,0]: dbg(0, "IN MAIN LOOP - AFTER PLAYER RUN - PLAYER ACC:", player.acc)
+        if player.pos != [0,0]: consts.dbg( 0, "IN MAIN LOOP - AFTER PLAYER RUN - PLAYER POS:", player.pos )
+        if player.vel != [0,0]: consts.dbg( 0, "IN MAIN LOOP - AFTER PLAYER RUN - PLAYER VEL:", player.vel )
+        if player.acc != [0,0]: consts.dbg( 0, "IN MAIN LOOP - AFTER PLAYER RUN - PLAYER ACC:", player.acc )
         player.update( dt )
-        if player.pos != [0,0]: dbg(0, "IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER POS:", player.pos)
-        if player.vel != [0,0]: dbg(0, "IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER VEL:", player.vel)
-        if player.acc != [0,0]: dbg(0, "IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER ACC:", player.acc)
+        if player.pos != [0,0]: consts.dbg( 0, "IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER POS:", player.pos )
+        if player.vel != [0,0]: consts.dbg( 0, "IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER VEL:", player.vel )
+        if player.acc != [0,0]: consts.dbg( 0, "IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER ACC:", player.acc )
 
         if cam_bound:
-            camera[0] += ( player.pos[0] - camera[0] ) * LERP_C # * dt
-            camera[1] += ( player.pos[1] - camera[1] ) * LERP_C # * dt
+            camera[0] += ( player.pos[0] - camera[0] ) * consts.LERP_C # * dt
+            camera[1] += ( player.pos[1] - camera[1] ) * consts.LERP_C # * dt
         else :
-            if key_states[pygame.K_a]:      camera[0] -= ( 96 * TILE_WIDTH * dt )
-            elif key_states[pygame.K_d]:    camera[0] += ( 96 * TILE_WIDTH * dt )
-            if key_states[pygame.K_s]:      camera[1] -= ( 96 * TILE_WIDTH * dt )
-            elif key_states[pygame.K_w]:    camera[1] += ( 96 * TILE_WIDTH * dt )
+            if key_states[pygame.K_a]:      camera[0] -= (96 * consts.TILE_WIDTH * dt)
+            elif key_states[pygame.K_d]:    camera[0] += (96 * consts.TILE_WIDTH * dt)
+            if key_states[pygame.K_s]:      camera[1] -= (96 * consts.TILE_WIDTH * dt)
+            elif key_states[pygame.K_w]:    camera[1] += (96 * consts.TILE_WIDTH * dt)
 
         if      camera[1] >= renderer.camera_upper :    camera[1] = renderer.camera_upper
         elif    camera[1] <= renderer.num_ver :         camera[1] = renderer.num_ver
 
         renderer.update_camera()
 
-        curr_chunk = math.floor( camera[0] / CHUNK_WIDTH_P )
+        curr_chunk = math.floor( camera[0] / consts.CHUNK_WIDTH_P )
         delta_chunk = curr_chunk - prev_chunk
         prev_chunk = curr_chunk
 
@@ -232,7 +244,7 @@ menu_background.fill("#0000FF")
 menu_running = True
 
 while menu_running:
-    dt = clock.tick( 60 ) / 1000.0
+    dt = consts.clock.tick( 60 ) / 1000.0
     for event in pygame.event.get( ):
         if event.type == pygame.QUIT:
             menu_running = False

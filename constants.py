@@ -1,14 +1,7 @@
-import math , pygame , pygame.freetype
+import enum
+import math
 import pygame
 import pygame.freetype
-import enum
-import pickle
-import opensimplex
-import pysnooper
-
-import pygame_gui, os
-from pygame_gui.elements import UIButton, UIPanel, UITextBox, UITextEntryLine
-from pygame_gui.elements.ui_selection_list import UISelectionList
 
 log_file = open('log_file.txt', 'w')
 # The debug verbosity level, can be from 0 to 4 (both inclusive)
@@ -74,7 +67,7 @@ pygame.freetype.init()
 # # entities
 # WEIGHT           = 12
 INV_FONT         = pygame.freetype.SysFont('Consolas', size=16, bold=True)
-INV_COLOR        = ( 0 , 0 , 0 )
+INV_COLOR        = ( 0, 0, 0 )
 # SC_DISPLAY_FONT  = pygame.freetype.SysFont('Consolas', size=20, bold=True)
 
 

@@ -1,5 +1,11 @@
-from shapely.geometry import Polygon
-from game_utilities import *
+import math
+import pickle
+
+import pygame
+import pygame.freetype
+
+import constants as consts
+
 
 # ! def initialize( self , _renderer , _chunk_buffer , _serializer , _player , _camera , _screen ):
 
@@ -27,14 +33,14 @@ class Entity:
         self.pos             = _pos
         self.entity_buffer   = _entity_buffer
         self.health          = _health
-        self.friction        = DEFAULT_FRICTION
+        self.friction        = consts.DEFAULT_FRICTION
         self.vel             = [0.0, 0.0]
         self.acc             = [0.0, 0.0]
         self.width           = _width
         self.height          = _height
         self.rel_hitbox      = _hitbox
-        self.surf            = pygame.Surface((self.width, self.height))
-        self.surf_pos        = lambda: [self.pos[0] - (PLYR_WIDTH * 0.5), self.pos[1] + (PLYR_HEIGHT * 0.5)]
+        self.surf            = pygame.Surface( (self.width, self.height) )
+        self.surf_pos        = lambda: [ self.pos[ 0 ] - (consts.PLYR_WIDTH * 0.5), self.pos[ 1 ] + (consts.PLYR_HEIGHT * 0.5) ]
         self.hitting         = False
         self.placing         = False
         self.grounded        = True
@@ -48,8 +54,8 @@ class Entity:
         self.sel_item        = [ None , 0 ]     # The selected item and its quantity
 
     def calc_friction(self):
-        dbg( 0, "IN CALC FRICTION - TILE:", self.tile( (self.pos[ 0 ], self.pos[ 1 ] - 16) ) )
-        self.friction = TILE_ATTR[ self.tile( (self.pos[ 0 ], self.pos[ 1 ] - 16) ) ][ tile_attr.FRICTION ]
+        consts.dbg( 0, "IN CALC FRICTION - TILE:", self.tile( (self.pos[ 0 ], self.pos[ 1 ] - 16) ) )
+        self.friction = consts.TILE_ATTR[ self.tile( (self.pos[ 0 ], self.pos[ 1 ] - 16) ) ][ consts.tile_attr.FRICTION ]
 
     def move_left(self):
         self.acc[0] = -self.friction * 2
@@ -64,15 +70,15 @@ class Entity:
         self.acc[1] = -self.friction * 2
 
     def jump(self):
-        self.vel[1]   = JUMP_VEL
-        self.acc[1]   = -GRAVITY_ACC
+        self.vel[1]   = consts.JUMP_VEL
+        self.acc[1]   = -consts.GRAVITY_ACC
         self.grounded = False
 
     def check_ground(self, _pos):
         hitbox = self.hitbox(_pos)
         for point in hitbox:
             point2 = (point[0], point[1] - 1)
-            if self.tile(point2) != tiles.air:
+            if self.tile(point2) != consts.tiles.air:
                 self.grounded = True
                 return None
         self.grounded = False
@@ -84,11 +90,11 @@ class Entity:
             return True
         hitbox = self.hitbox( _pos )
         for point in hitbox:
-            dbg(1, "IN CHECK - ENTERED FOR LOOP")
-            if self.tile(point) != tiles.air:
-                dbg(1, "CHECK RETURNED FALSE")
+            consts.dbg( 1, "IN CHECK - ENTERED FOR LOOP" )
+            if self.tile(point) != consts.tiles.air:
+                consts.dbg( 1, "CHECK RETURNED FALSE" )
                 return False
-        dbg(1, "CHECK RETURNED TRUE")
+        consts.dbg( 1, "CHECK RETURNED TRUE" )
         return True
 
     def hit( self ):
@@ -146,10 +152,10 @@ class Player(Entity):
         self.tangibility   = False
         x_off              = 0
         y_off              = 0
-        self.up            = [ (x + x_off, y_off) for x in range( 0, HITBOX_WIDTH - 1, 16 ) ] + [ (HITBOX_WIDTH - 1 + x_off, y_off) ]
-        self.left          = [ (x_off, -y + y_off) for y in range( 0, HITBOX_HEIGHT - 1, 16 ) ] + [ (x_off, -HITBOX_HEIGHT + 1 + y_off) ]
-        self.right         = [ (HITBOX_WIDTH - 1 + x_off, -y + y_off) for y in range( 0, HITBOX_HEIGHT - 1, 16 ) ] + [ (HITBOX_WIDTH - 1 + x_off, -HITBOX_HEIGHT + 1 + y_off) ]
-        self.bottom        = [ (x + x_off, -HITBOX_HEIGHT + 1 + y_off) for x in range( 0, HITBOX_WIDTH - 1, 16 ) ] + [ (HITBOX_WIDTH - 1 + x_off, -HITBOX_HEIGHT + 1 + y_off) ]
+        self.up            = [ (x + x_off, y_off) for x in range( 0, consts.HITBOX_WIDTH - 1, 16 ) ] + [ (consts.HITBOX_WIDTH - 1 + x_off, y_off) ]
+        self.left          = [ (x_off, -y + y_off) for y in range( 0, consts.HITBOX_HEIGHT - 1, 16 ) ] + [ (x_off, -consts.HITBOX_HEIGHT + 1 + y_off) ]
+        self.right         = [ (consts.HITBOX_WIDTH - 1 + x_off, -y + y_off) for y in range( 0, consts.HITBOX_HEIGHT - 1, 16 ) ] + [ (consts.HITBOX_WIDTH - 1 + x_off, -consts.HITBOX_HEIGHT + 1 + y_off) ]
+        self.bottom        = [ (x + x_off, -consts.HITBOX_HEIGHT + 1 + y_off) for x in range( 0, consts.HITBOX_WIDTH - 1, 16 ) ] + [ (consts.HITBOX_WIDTH - 1 + x_off, -consts.HITBOX_HEIGHT + 1 + y_off) ]
         self.hitbox        = self.up + self.right + self.bottom + self.left
         self.pos           = _pos  # World pos of surface in x-y-z coords
         # self.hitbox        = [(0, 0), (HITBOX_WIDTH, 0), (HITBOX_WIDTH, -HITBOX_HEIGHT), (0, -HITBOX_HEIGHT)]
@@ -167,48 +173,48 @@ class Player(Entity):
         self.cursor_pos    = _cursor_pos
 
         self.tangibility   = False
-        self.inventory     = Inventory(  INV_COLS, INV_ROWS )
+        self.inventory     = Inventory( consts.INV_COLS, consts.INV_ROWS )
         self.load()
-        super().__init__( self.pos, self.entity_buffer, PLYR_WIDTH, PLYR_HEIGHT, self.hitbox )
+        super().__init__( self.pos, self.entity_buffer, consts.PLYR_WIDTH, consts.PLYR_HEIGHT, self.hitbox )
 
     def run( self ):
         self.acc[0]  = 0
         self.acc[1]  = 0
         self.hitting = False
         self.placing = False
-        if self.key_state[pygame.K_a] and not self.key_state[pygame.K_d]:
-            dbg(1, "IN RUN - MOVING LEFT")
+        if self.key_state[ pygame.K_a ] and not self.key_state[ pygame.K_d ]:
+            consts.dbg( 1, "IN RUN - MOVING LEFT" )
             self.move_left( )
-        elif self.key_state[pygame.K_d] and not self.key_state[pygame.K_a]:
-            dbg(1, "IN RUN - MOVING RIGHT")
+        elif self.key_state[ pygame.K_d ] and not self.key_state[ pygame.K_a ]:
+            consts.dbg( 1, "IN RUN - MOVING RIGHT" )
             self.move_right( )
 
-        if self.key_state[pygame.K_s] and not self.key_state[pygame.K_w]:
-            dbg(1, "IN RUN - MOVING DOWN")
+        if self.key_state[ pygame.K_s ] and not self.key_state[ pygame.K_w ]:
+            consts.dbg( 1, "IN RUN - MOVING DOWN" )
             self.move_down( )
-        elif (self.tangibility or self.grounded) and self.key_state[pygame.K_w] and not self.key_state[pygame.K_s]:
-            dbg(1, "IN RUN - MOVING UP")
+        elif (self.tangibility or self.grounded) and self.key_state[ pygame.K_w ] and not self.key_state[ pygame.K_s ]:
+            consts.dbg( 1, "IN RUN - MOVING UP" )
             self.jump( )
 
     def update( self, dt ):
-        dbg(1, "ENTERING UPDATE")
+        consts.dbg( 1, "ENTERING UPDATE" )
         dt2 = dt
-        dt  = 16 / (MAX_VEL * SCALE_VEL)
+        dt  = 16 / (consts.MAX_VEL * consts.SCALE_VEL)
         while dt2 > 0:
             if dt2 <= dt:
                 dt  = dt2
                 dt2 = 0
             else:
                 dt2 -= dt
-            dbg(0, "IN UPDATE WHILE LOOP - AFTER CALCULATING - DT:", dt)
-            dbg(0, "IN UPDATE WHILE LOOP - AFTER CALCULATING - DT2:", dt2)
-            dbg(1, "INSIDE UPDATE WHILE LOOP")
+            consts.dbg( 0, "IN UPDATE WHILE LOOP - AFTER CALCULATING - DT:", dt )
+            consts.dbg( 0, "IN UPDATE WHILE LOOP - AFTER CALCULATING - DT2:", dt2 )
+            consts.dbg( 1, "INSIDE UPDATE WHILE LOOP" )
             self.calc_friction( )
-            dbg( 0, "IN UPDATE WHILE LOOP - AFTER CALCULATING - FRICTION:", self.friction )
+            consts.dbg( 0, "IN UPDATE WHILE LOOP - AFTER CALCULATING - FRICTION:", self.friction )
             self.check_ground( self.pos )
-            if not self.grounded: self.acc[1] = -GRAVITY_ACC
-            dbg(0, "IN UPDATE - AT START - PLAYER VEL:", self.vel)
-            dbg(0, "IN UPDATE - AT START - PLAYER ACC:", self.acc)
+            if not self.grounded: self.acc[1] = -consts.GRAVITY_ACC
+            consts.dbg( 0, "IN UPDATE - AT START - PLAYER VEL:", self.vel )
+            consts.dbg( 0, "IN UPDATE - AT START - PLAYER ACC:", self.acc )
             for i in range( 0, 2 ):
                 next_pos = self.pos.copy( )
                 next_vel = self.vel[i] + self.acc[i] * dt
@@ -220,28 +226,28 @@ class Player(Entity):
                     self.vel[i] = 0
                     self.acc[i] = 0
 
-                    if self.acc[ i ] > MAX_ACC * 2:
-                        self.acc[ i ] = MAX_ACC * 2
-                    elif self.acc[ i ] < -MAX_ACC * 2:
-                        self.acc[ i ] = -MAX_ACC * 2
+                    if self.acc[ i ] > consts.MAX_ACC * 2:
+                        self.acc[ i ] = consts.MAX_ACC * 2
+                    elif self.acc[ i ] < -consts.MAX_ACC * 2:
+                        self.acc[ i ] = -consts.MAX_ACC * 2
 
                 self.vel[i] += self.acc[i] * dt
-                if self.vel[i] < -MAX_VEL * (1 - self.friction * 0.2):
-                    self.vel[i] = -MAX_VEL * (1 - self.friction * 0.2)
-                elif self.vel[i] > MAX_VEL * (1 - self.friction * 0.2):
-                    self.vel[i] = MAX_VEL * (1 - self.friction * 0.2)
+                if self.vel[i] < -consts.MAX_VEL * (1 - self.friction * 0.2):
+                    self.vel[i] = -consts.MAX_VEL * (1 - self.friction * 0.2)
+                elif self.vel[i] > consts.MAX_VEL * (1 - self.friction * 0.2):
+                    self.vel[i] = consts.MAX_VEL * (1 - self.friction * 0.2)
 
-                next_pos[i] += self.vel[i] * SCALE_VEL * dt
+                next_pos[i] += self.vel[i] * consts.SCALE_VEL * dt
                 move = self.check( next_pos )
                 if move:
-                    if (i == 0) or (i == 1 and CHUNK_HEIGHT_P >= next_pos[ i ] >= 0):
-                        self.pos[i] += self.vel[i] * SCALE_VEL * dt
-                    if CHUNK_HEIGHT_P < self.pos[1]:
-                        self.pos[1] = CHUNK_HEIGHT_P
-                        dbg(0, "IN UPDATE WHILE LOOP - IN MOVE - POS > MAX HEIGHT")
+                    if (i == 0) or (i == 1 and consts.CHUNK_HEIGHT_P >= next_pos[ i ] >= 0):
+                        self.pos[i] += self.vel[i] * consts.SCALE_VEL * dt
+                    if consts.CHUNK_HEIGHT_P < self.pos[1 ]:
+                        self.pos[1] = consts.CHUNK_HEIGHT_P
+                        consts.dbg( 0, "IN UPDATE WHILE LOOP - IN MOVE - POS > MAX HEIGHT" )
                     elif 0 > self.pos[1]:
                         self.pos[1] = 0
-                        dbg(0, "IN UPDATE WHILE LOOP - IN MOVE - POS < MIN HEIGHT")
+                        consts.dbg( 0, "IN UPDATE WHILE LOOP - IN MOVE - POS < MIN HEIGHT" )
                 else:
                     self.vel[i] = 0
             if self.vel == [0, 0]: break
@@ -252,13 +258,13 @@ class Player(Entity):
 
     def save( self ):
         li = [self.inventory.items, self.inventory.quantities, self.inventory.local_item_table, self.pos]
-        li = pickle.dumps(li)
+        li = pickle.dumps( li )
         self.serializer.savePlayer(1, li)
 
     def load( self ):
         li = self.serializer.loadPlayer(1)
         if li:
-            li                              = pickle.loads(li)
+            li                              = pickle.loads( li )
             self.inventory.items            = li[0]
             self.inventory.quantities       = li[1]
             self.inventory.local_item_table = li[2]
@@ -329,10 +335,10 @@ class EntityBuffer:
         self.other_plyrs        = []
         self.len                = None
 
-        self.get_curr_chunk     = lambda p: int( math.floor( p[0] / CHUNK_WIDTH_P ) )
+        self.get_curr_chunk     = lambda p: int( math.floor( p[0 ] / consts.CHUNK_WIDTH_P ) )
         self.get_curr_chunk_ind = lambda p: int( self.get_curr_chunk( p ) - self.chunk_buffer.positions[0] )
-        self.get_x_pos_chunk    = lambda p: int( p[0] // TILE_WIDTH - self.get_curr_chunk( p ) * CHUNK_WIDTH )
-        self.get_y_pos_chunk    = lambda p: int( p[1] // TILE_WIDTH )
+        self.get_x_pos_chunk    = lambda p: int( p[0] // consts.TILE_WIDTH - self.get_curr_chunk( p ) * consts.CHUNK_WIDTH )
+        self.get_y_pos_chunk    = lambda p: int( p[1] // consts.TILE_WIDTH )
         self.get_tile           = lambda p: self.chunk_buffer[self.get_curr_chunk_ind( p )].blocks[self.get_y_pos_chunk( p )][self.get_x_pos_chunk( p )]
 
     def initialize( self , _chunk_buffer, _player , _renderer , _serializer , _camera , _screen ):
@@ -397,7 +403,7 @@ class Inventory:
 
         # ! Magic numbers are being used here
 
-        self.items              = [ [ items.diamond_pickaxe for j in range( _cols ) ] for i in range( _rows ) ]
+        self.items              = [ [ consts.items.diamond_pickaxe for j in range( _cols ) ] for i in range( _rows ) ]
         self.quantities         = [ [ 128 for j in range( _cols ) ] for i in range( _rows ) ]
 
         self.positions          = {}
@@ -406,7 +412,7 @@ class Inventory:
         self.cols               = _cols
         self.rows               = _rows
 
-        self.surf               = pygame.Surface( ( 800 , 500 ) , flags = pygame.SRCALPHA )
+        self.surf               = pygame.Surface( (800 , 500), flags = pygame.SRCALPHA )
 
         self.enabled            = False
 
@@ -533,10 +539,10 @@ class Inventory:
 
             for y , coors[1] in enumerate( range( 0 , 40 * self.rows , 40 ) ):
 
-                self.surf.blit( inventory_slot , coors )
+                self.surf.blit( consts.inventory_slot, coors )
 
                 if self.quantities[y][x]:
 
-                    quantity_text , quantity_rect = INV_FONT.render( str( self.quantities[y][x] ) , INV_COLOR )
-                    self.surf.blit( ITEM_TABLE[self.items[y][x]] , ( coors[0] + 4 , coors[1] + 4 ) )
+                    quantity_text , quantity_rect = consts.INV_FONT.render( str( self.quantities[y ][x ] ), consts.INV_COLOR )
+                    self.surf.blit( consts.ITEM_TABLE[self.items[y ][x ] ], (coors[0 ] + 4 , coors[1 ] + 4) )
                     self.surf.blit( quantity_text , ( coors[0] - 4 , coors[1] - 4 ) )
