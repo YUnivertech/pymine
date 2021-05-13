@@ -9,17 +9,17 @@ import constants as consts
 
 
 def populate_key_states( _key_states , _button_states ):
-    for i in range( consts.pygame.K_a , consts.pygame.K_z + 1 ):
+    for i in range( pygame.K_a , pygame.K_z + 1 ):
         _key_states[i] = 0
-    for i in range( consts.pygame.K_0 , consts.pygame.K_9 + 1 ):
+    for i in range( pygame.K_0 , pygame.K_9 + 1 ):
         _key_states[i] = 0
 
-    _key_states[consts.pygame.K_UP ]    = 0
-    _key_states[consts.pygame.K_DOWN ]  = 0
-    _key_states[consts.pygame.K_LEFT ]  = 0
-    _key_states[consts.pygame.K_RIGHT ] = 0
+    _key_states[pygame.K_UP ]    = 0
+    _key_states[pygame.K_DOWN ]  = 0
+    _key_states[pygame.K_LEFT ]  = 0
+    _key_states[pygame.K_RIGHT ] = 0
 
-    _key_states[consts.pygame.K_SPACE ] = 0
+    _key_states[pygame.K_SPACE ] = 0
 
     # 0 is for left, 1 is for middle and 2 is for right
     _button_states[0] = 0
