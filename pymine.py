@@ -1,8 +1,8 @@
+import math
+import os
 import time
 
-import math
 import opensimplex
-import os
 import pygame
 import pygame.freetype
 import pygame_gui
@@ -105,6 +105,20 @@ def main_game_start( _world = 'World1' ):
 
         for event in pygame.event.get():
 
+            mods = pygame.key.get_mods( )
+            if mods & pygame.KMOD_SHIFT:
+                key_states[ pygame.KMOD_SHIFT ] = True
+            else:
+                key_states[ pygame.KMOD_SHIFT ] = False
+            if mods & pygame.KMOD_ALT:
+                key_states[ pygame.KMOD_ALT ] = True
+            else:
+                key_states[ pygame.KMOD_ALT ] = False
+            if mods & pygame.KMOD_CTRL:
+                key_states[ pygame.KMOD_CTRL ] = True
+            else:
+                key_states[ pygame.KMOD_CTRL ] = False
+
             if      event.type == pygame.QUIT:      running = False
 
             elif    event.type == pygame.KEYDOWN:
@@ -113,8 +127,20 @@ def main_game_start( _world = 'World1' ):
                 if event.key == pygame.K_e: player.inventory.enabled = not player.inventory.enabled
                 if event.key == pygame.K_t:
                     player.tangibility = not player.tangibility
-                    consts.dbg( 0, "PLAYER TANGIBILITY:", player.tangibility )
-                key_states[event.key] = True
+                    consts.dbg( 0, "PLAYER TANGIBILITY CHANGED:", player.tangibility )
+                if event.key == pygame.K_g:
+                    if key_states.get( pygame.KMOD_SHIFT ):
+                        consts.GRAVITY_ACC = -0.98
+                    else:
+                        consts.GRAVITY_ACC = 0 if consts.GRAVITY_ACC else 0.98
+                    consts.dbg( 0, "GRAVITY ACC CHANGED:", consts.GRAVITY_ACC )
+                if event.key == pygame.K_v:
+                    if key_states.get( pygame.KMOD_SHIFT ):
+                        consts.SCALE_VEL /= 2
+                    else:
+                        consts.SCALE_VEL *= 2
+                    consts.dbg( 0, "SCALE VEL CHANGED:", consts.SCALE_VEL )
+                key_states[ event.key ] = True
 
             elif    event.type == pygame.KEYUP:     key_states[event.key] = False
 
@@ -140,9 +166,9 @@ def main_game_start( _world = 'World1' ):
 
         try:
             if key_states[pygame.K_b]:
-                prev_debug = consts.DBG[0 ]
-                consts.DBG[0 ] = 0 if key_states[pygame.K_0 ] else 1 if key_states[pygame.K_1 ] else 2 if key_states[pygame.K_2 ] else consts.DBG[0 ]
-                if consts.DBG[0 ] != prev_debug: consts.dbg( 0, "--------------- DEBUG :", consts.DBG[0 ], "---------------" )
+                prev_debug = consts.DBG
+                consts.DBG = 0 if key_states[pygame.K_0 ] else 1 if key_states[pygame.K_1 ] else 2 if key_states[pygame.K_2 ] else consts.DBG[0 ]
+                if consts.DBG != prev_debug: consts.dbg( 0, "--------------- DEBUG :", consts.DBG, "---------------" )
             if      key_states[pygame.K_c] :              utils.Renderer.setShaders( )
             elif    key_states[pygame.K_n] :              cam_bound = not cam_bound
             elif    key_states[pygame.K_DOWN]:            player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] + 1) % consts.INV_ROWS

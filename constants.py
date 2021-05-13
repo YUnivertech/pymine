@@ -5,7 +5,7 @@ import pygame.freetype
 
 log_file = open('log_file.txt', 'w')
 # The debug verbosity level, can be from 0 to 4 (both inclusive)
-DBG                 = [0]
+DBG                 = 0
 
 
 def dbg_verbose( *args , **kwargs ):  # Messages which the common users can see (always printed)
@@ -25,7 +25,7 @@ def dbg_warning( *args , **kwargs ):  # Messages which devs can see for critical
 
 
 def dbg( msg_priority , *args , **kwargs ):
-    if msg_priority < DBG[0 ]:
+    if msg_priority < DBG:
         print( *args, **kwargs )
 
 

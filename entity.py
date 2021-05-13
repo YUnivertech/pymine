@@ -29,9 +29,10 @@ class ItemEntity:
 
 
 class Entity:
-    def __init__( self, _pos, _entity_buffer, _width, _height, _hitbox, _health=100 ):
+    def __init__( self, _pos, _entity_buffer, _inventory, _width, _height, _hitbox, _health=100 ):
         self.pos             = _pos
         self.entity_buffer   = _entity_buffer
+        self.inventory       = _inventory
         self.health          = _health
         self.friction        = consts.DEFAULT_FRICTION
         self.vel             = [0.0, 0.0]
@@ -40,7 +41,7 @@ class Entity:
         self.height          = _height
         self.rel_hitbox      = _hitbox
         self.surf            = pygame.Surface( (self.width, self.height) )
-        self.surf_pos        = lambda: [ self.pos[ 0 ] - (consts.PLYR_WIDTH * 0.5), self.pos[ 1 ] + (consts.PLYR_HEIGHT * 0.5) ]
+        self.surf_pos        = None
         self.hitting         = False
         self.placing         = False
         self.grounded        = True
@@ -50,8 +51,15 @@ class Entity:
         self.hitbox          = lambda p: [(p[0]+i[0], p[1]+i[1]) for i in self.rel_hitbox]
         self.tile            = lambda p: self.entity_buffer.get_tile(p)
 
-        self.held_item_index = 0        # The index of the held item in the inventory
+        self.held_item_index = [ 0, 0 ]        # The index of the held item in the inventory
         self.sel_item        = [ None , 0 ]     # The selected item and its quantity
+
+    def get_item_held( self ):
+        return self.inventory.items[self.held_item_index[0]][self.held_item_index[1]]
+
+    def get_sel_item( self ):
+
+        return [consts.ITEM_NAMES[self.sel_item[0]], self.sel_item[1]]
 
     def calc_friction(self):
         consts.dbg( 0, "IN CALC FRICTION - TILE:", self.tile( (self.pos[ 0 ], self.pos[ 1 ] - 16) ) )
@@ -175,13 +183,13 @@ class Player(Entity):
         self.tangibility   = False
         self.inventory     = Inventory( consts.INV_COLS, consts.INV_ROWS )
         self.load()
-        super().__init__( self.pos, self.entity_buffer, consts.PLYR_WIDTH, consts.PLYR_HEIGHT, self.hitbox )
+        super().__init__( self.pos, self.entity_buffer, self.inventory, consts.PLYR_WIDTH, consts.PLYR_HEIGHT, self.hitbox )
 
     def run( self ):
-        self.acc[0]  = 0
-        self.acc[1]  = 0
-        self.hitting = False
-        self.placing = False
+        self.acc[ 0 ] = 0
+        self.acc[ 1 ] = 0
+        self.hitting  = False
+        self.placing  = False
         if self.key_state[ pygame.K_a ] and not self.key_state[ pygame.K_d ]:
             consts.dbg( 1, "IN RUN - MOVING LEFT" )
             self.move_left( )
@@ -212,44 +220,44 @@ class Player(Entity):
             self.calc_friction( )
             consts.dbg( 0, "IN UPDATE WHILE LOOP - AFTER CALCULATING - FRICTION:", self.friction )
             self.check_ground( self.pos )
-            if not self.grounded: self.acc[1] = -consts.GRAVITY_ACC
+            if consts.GRAVITY_ACC and (not self.grounded): self.acc[1] = -consts.GRAVITY_ACC
             consts.dbg( 0, "IN UPDATE - AT START - PLAYER VEL:", self.vel )
             consts.dbg( 0, "IN UPDATE - AT START - PLAYER ACC:", self.acc )
             for i in range( 0, 2 ):
                 next_pos = self.pos.copy( )
-                next_vel = self.vel[i] + self.acc[i] * dt
+                next_vel = self.vel[ i ] + self.acc[ i ] * dt
                 if next_vel >= abs( self.friction * dt ):
-                    self.vel[i] -= self.friction * dt
+                    self.vel[ i ] -= self.friction * dt
                 elif next_vel <= -abs( self.friction * dt ):
-                    self.vel[i] += self.friction * dt
+                    self.vel[ i ] += self.friction * dt
                 else:
-                    self.vel[i] = 0
-                    self.acc[i] = 0
+                    self.vel[ i ] = 0
+                    self.acc[ i ] = 0
 
                     if self.acc[ i ] > consts.MAX_ACC * 2:
                         self.acc[ i ] = consts.MAX_ACC * 2
                     elif self.acc[ i ] < -consts.MAX_ACC * 2:
                         self.acc[ i ] = -consts.MAX_ACC * 2
 
-                self.vel[i] += self.acc[i] * dt
-                if self.vel[i] < -consts.MAX_VEL * (1 - self.friction * 0.2):
-                    self.vel[i] = -consts.MAX_VEL * (1 - self.friction * 0.2)
-                elif self.vel[i] > consts.MAX_VEL * (1 - self.friction * 0.2):
-                    self.vel[i] = consts.MAX_VEL * (1 - self.friction * 0.2)
+                self.vel[ i ] += self.acc[ i ] * dt
+                if self.vel[ i ] < -consts.MAX_VEL * (1 - self.friction * 0.2):
+                    self.vel[ i ] = -consts.MAX_VEL * (1 - self.friction * 0.2)
+                elif self.vel[ i ] > consts.MAX_VEL * (1 - self.friction * 0.2):
+                    self.vel[ i ] = consts.MAX_VEL * (1 - self.friction * 0.2)
 
-                next_pos[i] += self.vel[i] * consts.SCALE_VEL * dt
+                next_pos[ i ] += self.vel[ i ] * consts.SCALE_VEL * dt
                 move = self.check( next_pos )
                 if move:
                     if (i == 0) or (i == 1 and consts.CHUNK_HEIGHT_P >= next_pos[ i ] >= 0):
-                        self.pos[i] += self.vel[i] * consts.SCALE_VEL * dt
-                    if consts.CHUNK_HEIGHT_P < self.pos[1 ]:
-                        self.pos[1] = consts.CHUNK_HEIGHT_P
+                        self.pos[ i ] += self.vel[ i ] * consts.SCALE_VEL * dt
+                    if consts.CHUNK_HEIGHT_P < self.pos[ 1 ]:
+                        self.pos[ 1 ] = consts.CHUNK_HEIGHT_P
                         consts.dbg( 0, "IN UPDATE WHILE LOOP - IN MOVE - POS > MAX HEIGHT" )
-                    elif 0 > self.pos[1]:
-                        self.pos[1] = 0
+                    elif 0 > self.pos[ 1 ]:
+                        self.pos[ 1 ] = 0
                         consts.dbg( 0, "IN UPDATE WHILE LOOP - IN MOVE - POS < MIN HEIGHT" )
                 else:
-                    self.vel[i] = 0
+                    self.vel[ i ] = 0
             if self.vel == [0, 0]: break
 
     def pick( self ):
