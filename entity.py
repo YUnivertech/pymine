@@ -29,7 +29,7 @@ class ItemEntity:
 
 
 class Entity:
-    def __init__( self, _pos, _entity_buffer, _inventory, _width, _height, _hitbox, _health=100 ):
+    def __init__( self, _pos, _entity_buffer, _inventory, _width, _height, _hitbox, _bottom_left, _health=100 ):
         self.pos             = _pos
         self.entity_buffer   = _entity_buffer
         self.inventory       = _inventory
@@ -40,6 +40,7 @@ class Entity:
         self.width           = _width
         self.height          = _height
         self.rel_hitbox      = _hitbox
+        self.bottom_left    = _bottom_left
         self.surf            = pygame.Surface( (self.width, self.height) )
         self.surf_pos        = None
         self.hitting         = False
@@ -49,6 +50,7 @@ class Entity:
 
         # In the following lambda functions, 'p' means position which is a tuple
         self.hitbox          = lambda p: [(p[0]+i[0], p[1]+i[1]) for i in self.rel_hitbox]
+        self.friction_point  = lambda p: [ p[ 0 ] + self.bottom_left[ 0 ], p[ 1 ] + self.bottom_left[ 1 ] ]
         self.tile            = lambda p: self.entity_buffer.get_tile(p)
 
         self.held_item_index = [ 0, 0 ]        # The index of the held item in the inventory
@@ -62,8 +64,13 @@ class Entity:
         return [consts.ITEM_NAMES[self.sel_item[0]], self.sel_item[1]]
 
     def calc_friction(self):
-        consts.dbg( 0, "IN CALC FRICTION - TILE:", self.tile( (self.pos[ 0 ], self.pos[ 1 ] - 16) ) )
-        self.friction = consts.TILE_ATTR[ self.tile( (self.pos[ 0 ], self.pos[ 1 ] - 16) ) ][ consts.tile_attr.FRICTION ]
+        try:
+            tile = self.tile( (self.friction_point(self.pos)[ 0 ], self.friction_point(self.pos)[ 1 ] - 1) )
+            consts.dbg( 0, "IN CALC FRICTION - TILE:", tile )
+            self.friction = consts.TILE_ATTR[ tile ][ consts.tile_attr.FRICTION ]
+        except Exception as e:
+            consts.dbg(0, "IN CALC FRICTION - EXCEPTION", e)
+            self.friction = consts.AIR_FRICTION
 
     def move_left(self):
         self.acc[0] = -self.friction * 2
@@ -174,7 +181,8 @@ class Player(Entity):
         self.left          = [ (x_off, -y + y_off) for y in range( 0, consts.HITBOX_HEIGHT - 1, 16 ) ] + [ (x_off, -consts.HITBOX_HEIGHT + 1 + y_off) ]
         self.right         = [ (consts.HITBOX_WIDTH - 1 + x_off, -y + y_off) for y in range( 0, consts.HITBOX_HEIGHT - 1, 16 ) ] + [ (consts.HITBOX_WIDTH - 1 + x_off, -consts.HITBOX_HEIGHT + 1 + y_off) ]
         self.bottom        = [ (x + x_off, -consts.HITBOX_HEIGHT + 1 + y_off) for x in range( 0, consts.HITBOX_WIDTH - 1, 16 ) ] + [ (consts.HITBOX_WIDTH - 1 + x_off, -consts.HITBOX_HEIGHT + 1 + y_off) ]
-        self.hitbox        = self.up + self.right + self.bottom + self.left
+        self.rel_hitbox    = self.up + self.right + self.bottom + self.left
+        self.bottom_left   = self.bottom[0]
         self.pos           = _pos  # World pos of surface in x-y-z coords
         # self.hitbox        = [(0, 0), (HITBOX_WIDTH, 0), (HITBOX_WIDTH, -HITBOX_HEIGHT), (0, -HITBOX_HEIGHT)]
 
@@ -193,7 +201,7 @@ class Player(Entity):
         self.tangibility   = False
         self.inventory     = Inventory( consts.INV_COLS, consts.INV_ROWS )
         self.load()
-        super().__init__( self.pos, self.entity_buffer, self.inventory, consts.PLYR_WIDTH, consts.PLYR_HEIGHT, self.hitbox )
+        super().__init__( self.pos, self.entity_buffer, self.inventory, consts.PLYR_WIDTH, consts.PLYR_HEIGHT, self.rel_hitbox, self.bottom_left )
 
     def run( self ):
         self.acc[ 0 ] = 0
