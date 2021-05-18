@@ -90,6 +90,7 @@ class tile_attr( enum.Enum ):
     DROPS           = 5
     TYPE            = 6
 
+
 class tile_modifs( enum.Enum ):
 
     # Modifier to indicate tile is cracked
@@ -102,6 +103,7 @@ class tile_modifs( enum.Enum ):
     # Modifier to indicate presence of fluid in tile
     water           = 3
     lava            = 4
+
 
 class tiles( enum.Enum ):
 
@@ -197,6 +199,7 @@ class tiles( enum.Enum ):
     furnace              = 101
     chest                = 102
 
+
 class item_attr( enum.Enum ):
 
     MAX_STACK           = 1
@@ -205,8 +208,10 @@ class item_attr( enum.Enum ):
     R_USE               = 4
     DAMAGE              = 5
 
+
 class item_modifs( enum.Enum ):
     pass
+
 
 class items( enum.Enum ):
 
@@ -372,6 +377,7 @@ class items( enum.Enum ):
     crafting_table       = 149
     furnace              = 150
     chest                = 151
+
 
 inventory_slot = pygame.image.load("Resources/Default/InventorySpace.png")
 # Dictionary consisting of tile as key; name as a string
@@ -1020,6 +1026,7 @@ ITEM_ATTR = {
     items.furnace              : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
     items.chest                : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None}
 }
+
 
 def loadImageTable():
 

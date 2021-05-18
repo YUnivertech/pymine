@@ -105,6 +105,16 @@ class Entity:
         consts.dbg( 1, "CHECK RETURNED TRUE" )
         return True
 
+    def left_click( self ):
+        function = consts.ITEM_ATTR[self.get_item_held()][consts.item_attr.L_USE]
+        if function is not None:
+            function()
+
+    def right_click( self ):
+        function = consts.ITEM_ATTR[self.get_item_held()][consts.item_attr.R_USE]
+        if function is not None:
+            function()
+
     def hit( self ):
         # if self.hitting and not self.placing :
         #     chunk = math.floor(self.cursorPos[0] / CHUNK_WIDTH_P)
@@ -204,6 +214,14 @@ class Player(Entity):
             consts.dbg( 1, "IN RUN - MOVING UP" )
             self.jump( )
 
+        if self.mouse_state[ pygame.BUTTON_LEFT ]:
+            consts.dbg( -1, "IN RUN - LEFT MOUSE BUTTON PRESSED")
+            self.left_click()
+
+        if self.mouse_state[ pygame.BUTTON_RIGHT ]:
+            consts.dbg( -1, "IN RUN - RIGHT MOUSE BUTTON PRESSED")
+            self.right_click()
+
     def update( self, dt ):
         consts.dbg( 1, "ENTERING UPDATE" )
         dt2 = dt
@@ -267,10 +285,10 @@ class Player(Entity):
     def save( self ):
         li = [self.inventory.items, self.inventory.quantities, self.inventory.local_item_table, self.pos]
         li = pickle.dumps( li )
-        self.serializer.savePlayer(1, li)
+        self.serializer.save_player( 1, li )
 
     def load( self ):
-        li = self.serializer.loadPlayer(1)
+        li = self.serializer.load_player( 1 )
         if li:
             li                              = pickle.loads( li )
             self.inventory.items            = li[0]
@@ -388,6 +406,9 @@ class EntityBuffer:
         pass
 
     def pick_item( self ):
+        pass
+
+    def item_in_range( self ):
         pass
 
     def entity_in_range( self ):

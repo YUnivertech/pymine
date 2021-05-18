@@ -22,9 +22,9 @@ def populate_key_states( _key_states , _button_states ):
     _key_states[pygame.K_SPACE ] = 0
 
     # 0 is for left, 1 is for middle and 2 is for right
-    _button_states[0] = 0
-    _button_states[1] = 0
-    _button_states[2] = 0
+    _button_states[ pygame.BUTTON_LEFT ]   = 0
+    _button_states[ pygame.BUTTON_MIDDLE ] = 0
+    _button_states[ pygame.BUTTON_RIGHT ]  = 0
 
 
 # Translations
@@ -212,6 +212,7 @@ class Renderer:
         # Index of the lowest point to be rendered
         self.down_index     = min( consts.CHUNK_HEIGHT_P - self.up_index, self.window_size[1 ] )
 
+
 class Serializer:
     def __init__( self, target ):
         self.name = "Worlds/" + target + '.db'
@@ -225,7 +226,7 @@ class Serializer:
             c.execute( '''CREATE TABLE player(playername TEXT NOT NULL PRIMARY KEY, pickledplayer TEXT)''' )
             self.conn.commit()
         except Exception as e:
-            pass
+            consts.dbg(1, "EXCEPTION IN SERIALIZER INIT:", e)
 
     def __setitem__( self, key, t ):
         c = self.conn.cursor()
@@ -235,6 +236,7 @@ class Serializer:
             self.conn.commit()
         except Exception as e:
             # Update string at existing key
+            consts.dbg( 1, "EXCEPTION IN SERIALIZER SETITEM:", e )
             c.execute( 'UPDATE terrain SET list =?, local =?  WHERE keys=?', ( bz2.compress( t[0] ), bz2.compress( t[1] ), key ) )
             self.conn.commit()
 
@@ -250,15 +252,16 @@ class Serializer:
             lo = bz2.decompress( lo[0] )
             return li, lo
         except Exception as e:
+            consts.dbg( 1, "EXCEPTION IN SERIALIZER GETITEM:", e )
             return None
 
-    def setEntity(self, key, li):
+    def set_entity(self, key, li):
         c = self.conn.cursor()
         # Update string at existing key
         c.execute( '''UPDATE terrain SET entity =?, WHERE keys=?''', ( bz2.compress( li ), key ) )
         self.conn.commit()
 
-    def getEntity(self, key):
+    def get_entity(self, key):
         c = self.conn.cursor()
         c.execute( '''SELECT entity FROM terrain WHERE keys=?''', ( key, ) )
         li = c.fetchone()
@@ -266,9 +269,10 @@ class Serializer:
             li = bz2.decompress( li )
             return li
         except Exception as e:
+            consts.dbg( 1, "EXCEPTION IN SERIALIZER GET_ENTITY:", e )
             return None
 
-    def savePlayer( self, name, pickled ):
+    def save_player( self, name, pickled ):
         c = self.conn.cursor()
         try:
             # Save pickledplayer at new playername
@@ -276,10 +280,11 @@ class Serializer:
             self.conn.commit()
         except Exception as e:
             # Update pickledplayer at existing playername
+            consts.dbg( 1, "EXCEPTION IN SERIALIZER SAVE_PLAYER:", e )
             c.execute( '''UPDATE player SET pickledplayer =?  WHERE playername=?''', ( bz2.compress( pickled ), name ) )
             self.conn.commit()
 
-    def loadPlayer( self, name ):
+    def load_player( self, name ):
         c = self.conn.cursor()
         c.execute( '''SELECT pickledplayer FROM player WHERE playername=?''', ( name, ) )
         res = c.fetchone()
@@ -287,6 +292,7 @@ class Serializer:
         try:
             return bz2.decompress( res[0] )
         except Exception as e:
+            consts.dbg( 1, "EXCEPTION IN SERIALIZER LOAD_PLAYER:", e )
             return res
 
     def stop( self ):
@@ -430,6 +436,7 @@ Z_NOISE_GEN = 6971
 SEED_NOISE_GEN = 1013
 SHIFT_NOISE_GEN = 8
 
+
 def value_noise_3d(x, y, z, seed):
     n = (
                 X_NOISE_GEN * x +
@@ -491,45 +498,45 @@ class Voronoi:
         y *= self.frequency
         z *= self.frequency
 
-        xInt = int(x) if (x > 0) else int(x) -1
-        yInt = int(y) if (y > 0) else int(y) -1
-        zInt = int(z) if (z > 0) else int(z) -1
+        x_int = int( x ) if (x > 0) else int( x ) - 1
+        y_int = int( y ) if (y > 0) else int( y ) - 1
+        z_int = int( z ) if (z > 0) else int( z ) - 1
 
-        minDist = 2147483647.0
-        xCan = 0
-        yCan = 0
-        zCan = 0
+        min_dist = 2147483647.0
+        x_can = 0
+        y_can = 0
+        z_can = 0
 
-        for zCur in range(zInt-2, zInt+2):
-            for yCur in range(yInt-2, yInt+2):
-                for xCur in range(xInt-2, xInt+2):
-                    xPos = xCur + value_noise_3d(xCur, yCur, zCur, self.seed)
-                    yPos = yCur + value_noise_3d(xCur, yCur, zCur, self.seed+1)
-                    zPos = zCur + value_noise_3d(xCur, yCur, zCur, self.seed+2)
+        for z_cur in range( z_int - 2, z_int + 2 ):
+            for y_cur in range( y_int - 2, y_int + 2 ):
+                for x_cur in range( x_int - 2, x_int + 2 ):
+                    x_pos = x_cur + value_noise_3d( x_cur, y_cur, z_cur, self.seed )
+                    y_pos = y_cur + value_noise_3d( x_cur, y_cur, z_cur, self.seed + 1 )
+                    z_pos = z_cur + value_noise_3d( x_cur, y_cur, z_cur, self.seed + 2 )
 
-                    xDist = xPos - x
-                    yDist = yPos - y
-                    zDist = zPos - z
-                    dist = xDist * xDist + yDist * yDist + zDist * zDist
+                    x_dist = x_pos - x
+                    y_dist = y_pos - y
+                    z_dist = z_pos - z
+                    dist = x_dist * x_dist + y_dist * y_dist + z_dist * z_dist
 
-                    if dist < minDist:
-                        minDist = dist
-                        xCan = xPos
-                        yCan = yPos
-                        zCan = zPos
+                    if dist < min_dist:
+                        min_dist = dist
+                        x_can = x_pos
+                        y_can = y_pos
+                        z_can = z_pos
         value = 0
 
         if self.enable_distance:
-            xDist = xCan - x
-            yDist = yCan - y
-            zDist = zCan - z
+            x_dist = x_can - x
+            y_dist = y_can - y
+            z_dist = z_can - z
 
-            value = (math.sqrt(xDist * xDist + yDist * yDist + zDist * zDist)) *\
+            value = (math.sqrt(x_dist * x_dist + y_dist * y_dist + z_dist * z_dist)) *\
                 math.sqrt(3) - 1
 
-        return value + (self.displacement * value_noise_3d(math.floor(xCan),
-                                                math.floor(yCan),
-                                                math.floor(zCan), 0))
+        return value + (self.displacement * value_noise_3d( math.floor( x_can ),
+                                                            math.floor( y_can ),
+                                                            math.floor( z_can ), 0 ))
 
 # v = Voronoi()
 # import time
