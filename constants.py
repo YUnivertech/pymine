@@ -1027,6 +1027,351 @@ ITEM_ATTR = {
     items.chest                : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None}
 }
 
+# l_use and r_use functions for various items
+def l_use_grass( _chunk, _pos, _dt ):
+    pass
+
+def l_use_browndirt( _chunk, _pos, _dt ):
+    pass
+
+def l_use_snowgrass( _chunk, _pos, _dt ):
+    pass
+
+def l_use_stick( _chunk, _pos, _dt ):
+    pass
+
+def l_use_leaves( _chunk, _pos, _dt ):
+    pass
+
+def l_use_junglewood( _chunk, _pos, _dt ):
+    pass
+
+def l_use_junglewood_plank( _chunk, _pos, _dt ):
+    pass
+
+def l_use_oakwood( _chunk, _pos, _dt ):
+    pass
+
+def l_use_oakwood_plank( _chunk, _pos, _dt ):
+    pass
+
+def l_use_borealwood( _chunk, _pos, _dt ):
+    pass
+
+def l_use_borealwood_plank( _chunk, _pos, _dt ):
+    pass
+
+def l_use_pinewood( _chunk, _pos, _dt ):
+    pass
+
+def l_use_pinewood_plank( _chunk, _pos, _dt ):
+    pass
+
+def l_use_palmwood( _chunk, _pos, _dt ):
+    pass
+
+def l_use_palmwood_plank( _chunk, _pos, _dt ):
+    pass
+
+def l_use_cosmonium_ore( _chunk, _pos, _dt ):
+    pass
+
+def l_use_cosmonium_ingot( _chunk, _pos, _dt ):
+    pass
+
+def l_use_cosmonium_block( _chunk, _pos, _dt ):
+    pass
+
+def l_use_unobtanium_ore( _chunk, _pos, _dt ):
+    pass
+
+def l_use_unobtanium_ingot( _chunk, _pos, _dt ):
+    pass
+
+def l_use_cosmonium_block( _chunk, _pos, _dt ):
+    pass
+
+def l_use_platinum_ore( _chunk, _pos, _dt ):
+    pass
+
+def l_use_platinum_ingot( _chunk, _pos, _dt ):
+    pass
+
+def l_use_platinum_block( _chunk, _pos, _dt ):
+    pass
+
+def l_use_gold_ore( _chunk, _pos, _dt ):
+    pass
+
+def l_use_gold_brick( _chunk, _pos, _dt ):
+    pass
+
+def l_use_gold_block( _chunk, _pos, _dt ):
+    pass
+
+def l_use_copper_ore( _chunk, _pos, _dt ):
+    pass
+
+def l_use_copper_ingot( _chunk, _pos, _dt ):
+    pass
+
+def l_use_copper_block( _chunk, _pos, _dt ):
+    pass
+
+def l_use_diamond_ore( _chunk, _pos, _dt ):
+    pass
+
+def l_use_diamond_gem( _chunk, _pos, _dt ):
+    pass
+
+def l_use_diamond_block( _chunk, _pos, _dt ):
+    pass
+
+def l_use_hellstone( _chunk, _pos, _dt ):
+    pass
+
+def l_use_adamantite( _chunk, _pos, _dt ):
+    pass
+
+def l_use_adamantite_block( _chunk, _pos, _dt ):
+    pass
+
+def l_use_obsidian( _chunk, _pos, _dt ):
+    pass
+
+def l_use_bedrock( _chunk, _pos, _dt ):
+    pass
+
+def l_use_granite( _chunk, _pos, _dt ):
+    pass
+
+def l_use_quartz( _chunk, _pos, _dt ):
+    pass
+
+def l_use_limestone( _chunk, _pos, _dt ):
+    pass
+
+def l_use_greystone( _chunk, _pos, _dt ):
+    pass
+
+def l_use_sandstone( _chunk, _pos, _dt ):
+    pass
+
+def l_use_coal_ore( _chunk, _pos, _dt ):
+    pass
+
+def l_use_gravel( _chunk, _pos, _dt ):
+    pass
+
+def l_use_coal( _chunk, _pos, _dt ):
+    pass
+
+def l_use_clay( _chunk, _pos, _dt ):
+    pass
+
+def l_use_red_clay( _chunk, _pos, _dt ):
+    pass
+
+def l_use_sand( _chunk, _pos, _dt ):
+    pass
+
+def l_use_snow( _chunk, _pos, _dt ):
+    pass
+
+def l_use_ice( _chunk, _pos, _dt ):
+    pass
+
+def l_use_glass( _chunk, _pos, _dt ):
+    pass
+
+def l_use_glasspane( _chunk, _pos, _dt ):
+    pass
+
+def l_use_glasswindow( _chunk, _pos, _dt ):
+    pass
+
+def l_use_bow( _chunk, _pos, _dt ):
+    pass
+
+def l_use_arrow( _chunk, _pos, _dt ):
+    pass
+
+def l_use_deerskin( _chunk, _pos, _dt ):
+    pass
+
+def l_use_rottenleather( _chunk, _pos, _dt ):
+    pass
+
+def l_use_wood_pickaxe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_stone_pickaxe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_copper_pickaxe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_iron_pickaxe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_gold_pickaxe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_diamond_pickaxe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_platinum_pickaxe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_unobtanium_pickaxe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_hellstone_pickaxe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_adamantite_pickaxe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_wood_axe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_stone_axe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_copper_axe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_iron_axe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_gold_axe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_diamond_axe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_platinum_axe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_unobtanium_axe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_hellstone_axe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_adamantite_axe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_wood_battleaxe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_stone_battleaxe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_copper_battleaxe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_iron_battleaxe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_gold_battleaxe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_diamond_battleaxe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_platinum_battleaxe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_unobtanium_battleaxe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_hellstone_battleaxe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_adamantite_battleaxe( _chunk, _pos, _dt ):
+    pass
+
+def l_use_wood_sword( _chunk, _pos, _dt ):
+    pass
+
+def l_use_stone_sword( _chunk, _pos, _dt ):
+    pass
+
+def l_use_copper_sword( _chunk, _pos, _dt ):
+    pass
+
+def l_use_iron_sword( _chunk, _pos, _dt ):
+    pass
+
+def l_use_gold_sword( _chunk, _pos, _dt ):
+    pass
+
+def l_use_diamond_sword( _chunk, _pos, _dt ):
+    pass
+
+def l_use_platinum_sword( _chunk, _pos, _dt ):
+    pass
+
+def l_use_unobtanium_sword( _chunk, _pos, _dt ):
+    pass
+
+def l_use_hellstone_sword( _chunk, _pos, _dt ):
+    pass
+
+def l_use_adamantite_sword( _chunk, _pos, _dt ):
+    pass
+
+def l_use_wood_door( _chunk, _pos, _dt ):
+    pass
+
+def l_use_iron_door( _chunk, _pos, _dt ):
+    pass
+
+def l_use_gold_door( _chunk, _pos, _dt ):
+    pass
+
+def l_use_platinum_door( _chunk, _pos, _dt ):
+    pass
+
+def l_use_lighter( _chunk, _pos, _dt ):
+    pass
+
+def l_use_bed( _chunk, _pos, _dt ):
+    pass
+
+def l_use_bed( _chunk, _pos, _dt ):
+    pass
+
+def l_use_iron_bucket( _chunk, _pos, _dt ):
+    pass
+
+def l_use_berry( _chunk, _pos, _dt ):
+    pass
+
+def l_use_apple( _chunk, _pos, _dt ):
+    pass
+
+def l_use_chicken( _chunk, _pos, _dt ):
+    pass
+
+def l_use_deermeat( _chunk, _pos, _dt ):
+    pass
+
+def l_use_rottenmeat( _chunk, _pos, _dt ):
+    pass
+
+def l_use_torch( _chunk, _pos, _dt ):
+    pass
+
+def l_use_crafting_table( _chunk, _pos, _dt ):
+    pass
+
+def l_use_furnace( _chunk, _pos, _dt ):
+    pass
+
+def l_use_chest( _chunk, _pos, _dt ):
+    pass
 
 def loadImageTable():
 

@@ -106,18 +106,9 @@ def main_game_start( _world = 'World1' ):
         for event in pygame.event.get():
 
             mods = pygame.key.get_mods( )
-            if mods & pygame.KMOD_SHIFT:
-                key_states[ pygame.KMOD_SHIFT ] = True
-            else:
-                key_states[ pygame.KMOD_SHIFT ] = False
-            if mods & pygame.KMOD_ALT:
-                key_states[ pygame.KMOD_ALT ] = True
-            else:
-                key_states[ pygame.KMOD_ALT ] = False
-            if mods & pygame.KMOD_CTRL:
-                key_states[ pygame.KMOD_CTRL ] = True
-            else:
-                key_states[ pygame.KMOD_CTRL ] = False
+            key_states[pygame.KMOD_SHIFT]   = (mods & pygame.KMOD_SHIFT) > 0
+            key_states[pygame.KMOD_ALT]     = (mods & pygame.KMOD_ALT) > 0
+            key_states[pygame.KMOD_CTRL]    = (mods & pygame.KMOD_CTRL) > 0
 
             if      event.type == pygame.QUIT:      running = False
 
