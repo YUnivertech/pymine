@@ -1028,349 +1028,354 @@ ITEM_ATTR = {
 }
 
 # l_use and r_use functions for various items
-def l_use_grass( _chunk, _pos, _dt ):
-    pass
+def l_use_grass( _pos, _dt, _chunk = None, _entity = None ):
+    # If an entity was clicked on then perform the action on an entity
+    if _entity is None:
+        pass
+    # Else perform the action on a tile/wall in a chunk
+    else:
+        pass
 
-def l_use_browndirt( _chunk, _pos, _dt ):
+def l_use_browndirt( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_snowgrass( _chunk, _pos, _dt ):
+def l_use_snowygrass( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_stick( _chunk, _pos, _dt ):
+def l_use_stick( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_leaves( _chunk, _pos, _dt ):
+def l_use_leaves( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_junglewood( _chunk, _pos, _dt ):
+def l_use_junglewood( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_junglewood_plank( _chunk, _pos, _dt ):
+def l_use_junglewood_plank( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_oakwood( _chunk, _pos, _dt ):
+def l_use_oakwood( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_oakwood_plank( _chunk, _pos, _dt ):
+def l_use_oakwood_plank( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_borealwood( _chunk, _pos, _dt ):
+def l_use_borealwood( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_borealwood_plank( _chunk, _pos, _dt ):
+def l_use_borealwood_plank( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_pinewood( _chunk, _pos, _dt ):
+def l_use_pinewood( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_pinewood_plank( _chunk, _pos, _dt ):
+def l_use_pinewood_plank( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_palmwood( _chunk, _pos, _dt ):
+def l_use_palmwood( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_palmwood_plank( _chunk, _pos, _dt ):
+def l_use_palmwood_plank( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_cosmonium_ore( _chunk, _pos, _dt ):
+def l_use_cosmonium_ore( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_cosmonium_ingot( _chunk, _pos, _dt ):
+def l_use_cosmonium_ingot( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_cosmonium_block( _chunk, _pos, _dt ):
+def l_use_cosmonium_block( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_unobtanium_ore( _chunk, _pos, _dt ):
+def l_use_unobtanium_ore( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_unobtanium_ingot( _chunk, _pos, _dt ):
+def l_use_unobtanium_ingot( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_cosmonium_block( _chunk, _pos, _dt ):
+def l_use_cosmonium_block( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_platinum_ore( _chunk, _pos, _dt ):
+def l_use_platinum_ore( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_platinum_ingot( _chunk, _pos, _dt ):
+def l_use_platinum_ingot( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_platinum_block( _chunk, _pos, _dt ):
+def l_use_platinum_block( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_gold_ore( _chunk, _pos, _dt ):
+def l_use_gold_ore( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_gold_brick( _chunk, _pos, _dt ):
+def l_use_gold_brick( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_gold_block( _chunk, _pos, _dt ):
+def l_use_gold_block( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_copper_ore( _chunk, _pos, _dt ):
+def l_use_copper_ore( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_copper_ingot( _chunk, _pos, _dt ):
+def l_use_copper_ingot( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_copper_block( _chunk, _pos, _dt ):
+def l_use_copper_block( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_diamond_ore( _chunk, _pos, _dt ):
+def l_use_diamond_ore( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_diamond_gem( _chunk, _pos, _dt ):
+def l_use_diamond_gem( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_diamond_block( _chunk, _pos, _dt ):
+def l_use_diamond_block( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_hellstone( _chunk, _pos, _dt ):
+def l_use_hellstone( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_adamantite( _chunk, _pos, _dt ):
+def l_use_adamantite( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_adamantite_block( _chunk, _pos, _dt ):
+def l_use_adamantite_block( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_obsidian( _chunk, _pos, _dt ):
+def l_use_obsidian( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_bedrock( _chunk, _pos, _dt ):
+def l_use_bedrock( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_granite( _chunk, _pos, _dt ):
+def l_use_granite( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_quartz( _chunk, _pos, _dt ):
+def l_use_quartz( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_limestone( _chunk, _pos, _dt ):
+def l_use_limestone( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_greystone( _chunk, _pos, _dt ):
+def l_use_greystone( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_sandstone( _chunk, _pos, _dt ):
+def l_use_sandstone( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_coal_ore( _chunk, _pos, _dt ):
+def l_use_coal_ore( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_gravel( _chunk, _pos, _dt ):
+def l_use_gravel( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_coal( _chunk, _pos, _dt ):
+def l_use_coal( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_clay( _chunk, _pos, _dt ):
+def l_use_clay( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_red_clay( _chunk, _pos, _dt ):
+def l_use_red_clay( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_sand( _chunk, _pos, _dt ):
+def l_use_sand( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_snow( _chunk, _pos, _dt ):
+def l_use_snow( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_ice( _chunk, _pos, _dt ):
+def l_use_ice( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_glass( _chunk, _pos, _dt ):
+def l_use_glass( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_glasspane( _chunk, _pos, _dt ):
+def l_use_glasspane( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_glasswindow( _chunk, _pos, _dt ):
+def l_use_glasswindow( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_bow( _chunk, _pos, _dt ):
+def l_use_bow( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_arrow( _chunk, _pos, _dt ):
+def l_use_arrow( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_deerskin( _chunk, _pos, _dt ):
+def l_use_deerskin( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_rottenleather( _chunk, _pos, _dt ):
+def l_use_rottenleather( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_wood_pickaxe( _chunk, _pos, _dt ):
+def l_use_wood_pickaxe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_stone_pickaxe( _chunk, _pos, _dt ):
+def l_use_stone_pickaxe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_copper_pickaxe( _chunk, _pos, _dt ):
+def l_use_copper_pickaxe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_iron_pickaxe( _chunk, _pos, _dt ):
+def l_use_iron_pickaxe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_gold_pickaxe( _chunk, _pos, _dt ):
+def l_use_gold_pickaxe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_diamond_pickaxe( _chunk, _pos, _dt ):
+def l_use_diamond_pickaxe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_platinum_pickaxe( _chunk, _pos, _dt ):
+def l_use_platinum_pickaxe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_unobtanium_pickaxe( _chunk, _pos, _dt ):
+def l_use_unobtanium_pickaxe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_hellstone_pickaxe( _chunk, _pos, _dt ):
+def l_use_hellstone_pickaxe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_adamantite_pickaxe( _chunk, _pos, _dt ):
+def l_use_adamantite_pickaxe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_wood_axe( _chunk, _pos, _dt ):
+def l_use_wood_axe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_stone_axe( _chunk, _pos, _dt ):
+def l_use_stone_axe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_copper_axe( _chunk, _pos, _dt ):
+def l_use_copper_axe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_iron_axe( _chunk, _pos, _dt ):
+def l_use_iron_axe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_gold_axe( _chunk, _pos, _dt ):
+def l_use_gold_axe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_diamond_axe( _chunk, _pos, _dt ):
+def l_use_diamond_axe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_platinum_axe( _chunk, _pos, _dt ):
+def l_use_platinum_axe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_unobtanium_axe( _chunk, _pos, _dt ):
+def l_use_unobtanium_axe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_hellstone_axe( _chunk, _pos, _dt ):
+def l_use_hellstone_axe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_adamantite_axe( _chunk, _pos, _dt ):
+def l_use_adamantite_axe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_wood_battleaxe( _chunk, _pos, _dt ):
+def l_use_wood_battleaxe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_stone_battleaxe( _chunk, _pos, _dt ):
+def l_use_stone_battleaxe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_copper_battleaxe( _chunk, _pos, _dt ):
+def l_use_copper_battleaxe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_iron_battleaxe( _chunk, _pos, _dt ):
+def l_use_iron_battleaxe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_gold_battleaxe( _chunk, _pos, _dt ):
+def l_use_gold_battleaxe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_diamond_battleaxe( _chunk, _pos, _dt ):
+def l_use_diamond_battleaxe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_platinum_battleaxe( _chunk, _pos, _dt ):
+def l_use_platinum_battleaxe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_unobtanium_battleaxe( _chunk, _pos, _dt ):
+def l_use_unobtanium_battleaxe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_hellstone_battleaxe( _chunk, _pos, _dt ):
+def l_use_hellstone_battleaxe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_adamantite_battleaxe( _chunk, _pos, _dt ):
+def l_use_adamantite_battleaxe( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_wood_sword( _chunk, _pos, _dt ):
+def l_use_wood_sword( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_stone_sword( _chunk, _pos, _dt ):
+def l_use_stone_sword( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_copper_sword( _chunk, _pos, _dt ):
+def l_use_copper_sword( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_iron_sword( _chunk, _pos, _dt ):
+def l_use_iron_sword( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_gold_sword( _chunk, _pos, _dt ):
+def l_use_gold_sword( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_diamond_sword( _chunk, _pos, _dt ):
+def l_use_diamond_sword( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_platinum_sword( _chunk, _pos, _dt ):
+def l_use_platinum_sword( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_unobtanium_sword( _chunk, _pos, _dt ):
+def l_use_unobtanium_sword( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_hellstone_sword( _chunk, _pos, _dt ):
+def l_use_hellstone_sword( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_adamantite_sword( _chunk, _pos, _dt ):
+def l_use_adamantite_sword( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_wood_door( _chunk, _pos, _dt ):
+def l_use_wood_door( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_iron_door( _chunk, _pos, _dt ):
+def l_use_iron_door( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_gold_door( _chunk, _pos, _dt ):
+def l_use_gold_door( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_platinum_door( _chunk, _pos, _dt ):
+def l_use_platinum_door( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_lighter( _chunk, _pos, _dt ):
+def l_use_lighter( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_bed( _chunk, _pos, _dt ):
+def l_use_bed( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_bed( _chunk, _pos, _dt ):
+def l_use_bed( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_iron_bucket( _chunk, _pos, _dt ):
+def l_use_iron_bucket( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_berry( _chunk, _pos, _dt ):
+def l_use_berry( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_apple( _chunk, _pos, _dt ):
+def l_use_apple( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_chicken( _chunk, _pos, _dt ):
+def l_use_chicken( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_deermeat( _chunk, _pos, _dt ):
+def l_use_deermeat( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_rottenmeat( _chunk, _pos, _dt ):
+def l_use_rottenmeat( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_torch( _chunk, _pos, _dt ):
+def l_use_torch( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_crafting_table( _chunk, _pos, _dt ):
+def l_use_crafting_table( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_furnace( _chunk, _pos, _dt ):
+def l_use_furnace( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
-def l_use_chest( _chunk, _pos, _dt ):
+def l_use_chest( _pos, _dt, _chunk = None, _entity = None ):
     pass
 
 def loadImageTable():
