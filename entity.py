@@ -546,25 +546,6 @@ class Inventory:
 
         return to_remove
 
-    def get_selected_item( self ):
-        """Returns the ID of the item which is currently selected
-
-        Returns:
-            int: The ID of the item which is currently selected
-        """
-
-
-        return self.items[self.itemHeld[1]][self.itemHeld[0]]
-
-    def get_selected_quantity( self ):
-        """Returns the quantity of the item at the position currently being selected (not held)
-
-        Returns:
-            int: The quantity of the items being held
-        """
-
-        return self.quantities[self.itemHeld[1]][self.itemHeld[0]]
-
     def draw( self ):
         """ Draws the Inventory on to its own surface
         """
@@ -582,4 +563,4 @@ class Inventory:
 
                     quantity_text , quantity_rect = consts.INV_FONT.render( str( self.quantities[y ][x ] ), consts.INV_COLOR )
                     self.surf.blit( consts.ITEM_TABLE[self.items[y ][x ] ], (coors[0 ] + 4 , coors[1 ] + 4) )
-                    self.surf.blit( quantity_text , ( coors[0] - 4 , coors[1] - 4 ) )
+                    self.surf.blit( quantity_text , ( coors[0] , coors[1] ) )

@@ -44,7 +44,7 @@ CHUNK_WIDTH_P       = TILE_WIDTH * CHUNK_WIDTH
 CHUNK_HEIGHT_P      = TILE_WIDTH * CHUNK_HEIGHT
 
 # Constant to determine the linear interpolation of the camera
-LERP_C              = 0.02
+LERP_C              = (10 / 3) * 3
 
 # Constants for entity and physics (time_unit = seconds, length_unit = points)
 GRAVITY_ACC         = 0.98

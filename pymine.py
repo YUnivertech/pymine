@@ -1,11 +1,7 @@
-import math
-import os
-import time
+import math ,time ,os
 
 import opensimplex
-import pygame
-import pygame.freetype
-import pygame_gui
+import pygame, pygame.freetype, pygame_gui
 from pygame_gui.elements import UIButton, UIPanel, UITextEntryLine
 from pygame_gui.elements.ui_selection_list import UISelectionList
 
@@ -101,7 +97,7 @@ def main_game_start( _world = 'World1' ):
     while running:
         consts.dbg( 0, "" )
         clock = pygame.time.Clock()
-        clock.tick(60)
+        clock.tick(500)
 
         for event in pygame.event.get():
 
@@ -183,8 +179,8 @@ def main_game_start( _world = 'World1' ):
         if player.acc != [0,0]: consts.dbg( 0, "IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER ACC:", player.acc )
 
         if cam_bound:
-            camera[0] += ( player.pos[0] - camera[0] ) * consts.LERP_C # * dt
-            camera[1] += ( player.pos[1] - camera[1] ) * consts.LERP_C # * dt
+            camera[0] += ( player.pos[0] - camera[0] ) * consts.LERP_C * dt
+            camera[1] += ( player.pos[1] - camera[1] ) * consts.LERP_C * dt
         else :
             if key_states[pygame.K_a]:      camera[0] -= (96 * consts.TILE_WIDTH * dt)
             elif key_states[pygame.K_d]:    camera[0] += (96 * consts.TILE_WIDTH * dt)

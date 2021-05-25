@@ -150,27 +150,27 @@ def generate_chunk_temp( _chunk , noise_gen ):
     # one layer of coal
     # one layer of dirt
     # one layer of grass
-    for i in range( consts.CHUNK_WIDTH ):
-        _chunk.blocks[0][i] = consts.tiles.bedrock
-        _chunk.blocks[1][i] = consts.tiles.obsidian
-        _chunk.blocks[2][i] = consts.tiles.hellstone
-        for j in range(10):
-            _chunk.blocks[j + 3][i] = consts.tiles.greystone
-            _chunk.blocks[j + 13][i] = consts.tiles.limestone
-            _chunk.blocks[j + 23][i] = consts.tiles.sandstone
-        _chunk.blocks[32][i] = consts.tiles.coal
-        _chunk.blocks[33][i] = consts.tiles.browndirt
-        _chunk.blocks[34][i] = consts.tiles.grass
+    # for i in range( consts.CHUNK_WIDTH ):
+    #     _chunk.blocks[0][i] = consts.tiles.bedrock
+    #     _chunk.blocks[1][i] = consts.tiles.obsidian
+    #     _chunk.blocks[2][i] = consts.tiles.hellstone
+    #     for j in range(10):
+    #         _chunk.blocks[j + 3][i] = consts.tiles.greystone
+    #         _chunk.blocks[j + 13][i] = consts.tiles.limestone
+    #         _chunk.blocks[j + 23][i] = consts.tiles.sandstone
+    #     _chunk.blocks[32][i] = consts.tiles.coal
+    #     _chunk.blocks[33][i] = consts.tiles.browndirt
+    #     _chunk.blocks[34][i] = consts.tiles.grass
 
     # for i in range( CHUNK_WIDTH ):
     #     for j in range( CHUNK_HEIGHT ):
     #         _chunk.blocks[j][i] = tiles.bedrock
 
-    # for i in range( CHUNK_WIDTH ):
-    #     x_coor = i + ( CHUNK_WIDTH * _chunk.index )
-    #     my_height = int( ( noise_gen.noise2d( x = 0.0075 * x_coor, y = 0 ) + 1 ) * 32 ) # Value will be from 0 to 64
-    #     for j in range( my_height ):
-    #         _chunk.blocks[j][i] = tiles.browndirt
+    for i in range( consts.CHUNK_WIDTH ):
+        x_coor = i + ( consts.CHUNK_WIDTH * _chunk.index )
+        my_height = int( ( noise_gen.noise2d( x = 0.0075 * x_coor, y = 0 ) + 1 ) * 32 ) # Value will be from 0 to 64
+        for j in range( my_height ):
+            _chunk.blocks[j][i] = consts.tiles.browndirt
 
 
 class Chunk:
@@ -230,17 +230,38 @@ class Chunk:
         # Then we blit the liquids / fire
 
 
-    def break_block_at( self , _x , _y , _item , _dt ): pass
+    def break_block_at( self , _x , _y , _item , _dt ):
         # Left click was done at the coordinates x, y for dt time using item tool at the block level
         # the behaviour of tool is acted using its corresponding function which we can get from a dictionary
+        if( ( _x, _y, True ) not in self.local_tile_table ):
+            self.local_tile_table[ ( _x, _y, True ) ] = { }
+
+        if( consts.tile_attr.HEALTH not in self.local_tile_table[ ( _x, _y, True) ] ):
+            self.local_tile_table[ ( _x, _y, True ) ][ consts.tile_attr.HEALTH ] = 100
+
+        self.local_tile_table[ ( _x, _y, True ) ][ consts.tile_attr.HEALTH ] -= (25 * _dt)
+
+        if(self.local_tile_table[ ( _x, _y, True ) ][ consts.tile_attr.HEALTH ] <= 0):
+            del self.local_tile_table[ ( _x, _y, True ) ]
+            self.blocks[_y][_x] = consts.tiles.air
+            return True
+
+        return False
 
     def break_wall_at( self , _x , _y , _item , _dt ): pass
         # Left click was done at the coordinates x, y for dt time using item tool at the wall level
         # the behaviour of tool is acted using its corresponding function which we can get from a dictionary
 
-    def place_block_at( self , _x , _y , _item , _dt ): pass
+    def place_block_at( self , _x , _y , _tile, _local_entry = None ):
+        # Place _tile at (_x, _y) and put an entry for it in the local tile table if _local_entry is a valid dictionary
         # Right click was done at the coordinates x, y for dt time using item item at the block level
         # the behaviour of item is acted using its corresponding function which we can get from a dictionary
+        if self.blocks[_y][_x] != consts.tiles.air: return False
+        self.blocks[_y][_x] = _tile
+
+        if _local_entry: self.local_tile_table[ ( _x, _y, True) ] = _local_entry.copy()
+
+        return True
 
     def place_wall_at( self , _x , _y , _item , _dt ): pass
         # Right click was done at the coordinates x, y for dt time using item item at the wall level
@@ -283,8 +304,8 @@ class ChunkBuffer:
 
         self.positions[1]   = math.floor( self.player.pos[0] / consts.CHUNK_WIDTH_P )
 
-        self.positions[0]   = self.positions[1] - ( self.len // 2)
-        self.positions[2]   = self.positions[1] + ( self.len // 2)
+        self.positions[0]   = self.positions[1] - ( self.len // 2 )
+        self.positions[2]   = self.positions[1] + ( self.len // 2 )
 
         self.load()
 
@@ -297,16 +318,14 @@ class ChunkBuffer:
         flag ,_delta = (True, _delta) if _delta > 0 else (False, -_delta)
         num_times , extra = _delta // self.len , _delta % self.len
 
-        for i in range( num_times ):
-            if flag: self.shift_left( self.len )
-            else: self.shift_right( self.len )
+        side = self.shift_left if flag else self.shift_right
 
-        if extra:
-            if flag: self.shift_left( extra )
-            else: self.shift_right( extra )
+        for i in range( num_times ): side( self.len )
+        if extra: side( extra )
 
         if num_times: return ( 0 , self.len )
-        else:         return ( self.len - extra if flag else 0 , extra )
+        elif flag:    return ( self.len - extra, extra )
+        else:         return ( 0, extra)
 
     def shift_right( self , _delta ):
 
