@@ -227,10 +227,26 @@ class Chunk:
                     if ( i , j ) in self.local_tile_table[0] : pass
 
         for key in self.local_tile_table[0]:
-            pass
+            x, y        = key
+            wall        = self.walls[y][x]
+            wall_attr   = self.local_tile_table[0][key]
+
+            coors       = [ x * consts.TILE_WIDTH, ( consts.CHUNK_HEIGHT - y - 1) * consts.TILE_WIDTH ]
+
+            if consts.tile_attr.HEALTH in wall_attr:
+                break_state = int( ( wall_attr[consts.tile_attr.HEALTH] * 8 ) / consts.TILE_ATTR[wall][consts.tile_attr.HEALTH] )
+                self.surf.blit( consts.TILE_MODIFIERS[consts.tile_attr.crack][8 - break_state], coors )
 
         for key in self.local_tile_table[1]:
-            pass
+            x, y        = key
+            blck        = self.blocks[y][x]
+            blck_attr   = self.local_tile_table[1][key]
+
+            coors       = [ x * consts.TILE_WIDTH, ( consts.CHUNK_HEIGHT - y - 1) * consts.TILE_WIDTH ]
+
+            if consts.tile_attr.HEALTH in blck_attr:
+                break_state = int( ( blck_attr[consts.tile_attr.HEALTH] * 8 ) / consts.TILE_ATTR[blck][consts.tile_attr.HEALTH] )
+                self.surf.blit( consts.TILE_MODIFIERS[consts.tile_modifs.crack][8 - break_state], coors )
 
         # Then we blit the tile modifiers (cracks, glows, etc.)
         # Then we blit the liquids / fire

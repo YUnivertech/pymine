@@ -1051,6 +1051,8 @@ def l_use_hand( _pos, _dt, _chunk = None, _entity = None ):
 
     table[(x, y)][tile_attr.HEALTH] -= ( HAND_DAMAGE * _dt )
 
+    _chunk.draw()
+
     if table[(x, y)][tile_attr.HEALTH] <= 0:
         layer[y][x] = tiles.air
 
