@@ -169,7 +169,7 @@ def main_game_start( _world = 'World1' ):
         dt = now - prev
         prev = now
 
-        player.run()
+        player.run( dt )
         if player.pos != [0,0]: consts.dbg( 0, "IN MAIN LOOP - AFTER PLAYER RUN - PLAYER POS:", player.pos )
         if player.vel != [0,0]: consts.dbg( 0, "IN MAIN LOOP - AFTER PLAYER RUN - PLAYER VEL:", player.vel )
         if player.acc != [0,0]: consts.dbg( 0, "IN MAIN LOOP - AFTER PLAYER RUN - PLAYER ACC:", player.acc )

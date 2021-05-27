@@ -5,7 +5,7 @@ import pygame.freetype
 
 log_file = open('log_file.txt', 'w')
 # The debug verbosity level, can be from 0 to 4 (both inclusive)
-DBG                 = 0
+DBG                 = -1
 
 
 def dbg_verbose( *args , **kwargs ):  # Messages which the common users can see (always printed)
@@ -1026,6 +1026,43 @@ ITEM_ATTR = {
     items.furnace              : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
     items.chest                : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None}
 }
+
+def l_use_hand( _pos, _dt, _chunk = None, _entity = None ):
+    # Entity hitting behaviour has not been implemented yet
+    # -1 returned indicates there was nothing to break
+    # 0 indicates that nothing has been broken
+    # 1 indicates that something has been broken
+
+    # pos = (_x, _y)
+    x, y = _pos
+    layer = _chunk.blocks
+    table = _chunk.local_tile_table[1]
+
+    if _chunk.blocks[y][x] == tiles.air:
+        if _chunk.walls[y][x] == tiles.air:
+            return -1
+        layer = _chunk.walls
+        table = _chunk.local_tile_table[0]
+
+    if (x, y) not in table:
+        table[(x, y)] = {}
+    if tile_attr.HEALTH not in table[(x, y)]:
+        table[(x, y)][tile_attr.HEALTH] = TILE_ATTR[layer[y][x]][tile_attr.HEALTH]
+
+    table[(x, y)][tile_attr.HEALTH] -= ( HAND_DAMAGE * _dt )
+
+    if table[(x, y)][tile_attr.HEALTH] <= 0:
+        layer[y][x] = tiles.air
+
+        del table[(x, y)][tile_attr.HEALTH]
+        if table[(x, y)]:
+            del table[(x, y)]
+
+        _chunk.draw()
+
+        return 1
+
+    return 0
 
 # l_use and r_use functions for various items
 def l_use_grass( _pos, _dt, _chunk = None, _entity = None ):

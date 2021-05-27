@@ -112,10 +112,14 @@ class Entity:
         consts.dbg( 1, "CHECK RETURNED TRUE" )
         return True
 
-    def left_click( self ):
-        function = consts.ITEM_ATTR[self.get_item_held()][consts.item_attr.L_USE]
-        if function is not None:
-            function()
+    def left_click( self, _dt, _cursor_pos ):
+        function = consts.l_use_hand
+        if self.get_item_held():
+            function = consts.ITEM_ATTR[self.get_item_held()][consts.item_attr.L_USE]
+
+        pos = (self.entity_buffer.get_x_pos_chunk(_cursor_pos), self.entity_buffer.get_y_pos_chunk(_cursor_pos))
+        chunk = self.entity_buffer.chunk_buffer.chunks[self.entity_buffer.get_curr_chunk(_cursor_pos) - self.entity_buffer.chunk_buffer.positions[0]]
+        function( pos, _dt, chunk, None )
 
     def right_click( self ):
         function = consts.ITEM_ATTR[self.get_item_held()][consts.item_attr.R_USE]
@@ -203,7 +207,7 @@ class Player(Entity):
         self.load()
         super().__init__( self.pos, self.entity_buffer, self.inventory, consts.PLYR_WIDTH, consts.PLYR_HEIGHT, self.rel_hitbox, self.bottom_left )
 
-    def run( self ):
+    def run( self, _dt ):
         self.acc[ 0 ] = 0
         self.acc[ 1 ] = 0
         self.hitting  = False
@@ -224,7 +228,7 @@ class Player(Entity):
 
         if self.mouse_state[ pygame.BUTTON_LEFT ]:
             consts.dbg( -1, "IN RUN - LEFT MOUSE BUTTON PRESSED")
-            self.left_click()
+            self.left_click( _dt, self.cursor_pos )
 
         if self.mouse_state[ pygame.BUTTON_RIGHT ]:
             consts.dbg( -1, "IN RUN - RIGHT MOUSE BUTTON PRESSED")
@@ -369,7 +373,7 @@ class EntityBuffer:
         self.other_plyrs        = []
         self.len                = None
 
-        self.get_curr_chunk     = lambda p: int( math.floor( p[0 ] / consts.CHUNK_WIDTH_P ) )
+        self.get_curr_chunk     = lambda p: int( math.floor( p[0] / consts.CHUNK_WIDTH_P ) )
         self.get_curr_chunk_ind = lambda p: int( self.get_curr_chunk( p ) - self.chunk_buffer.positions[0] )
         self.get_x_pos_chunk    = lambda p: int( p[0] // consts.TILE_WIDTH - self.get_curr_chunk( p ) * consts.CHUNK_WIDTH )
         self.get_y_pos_chunk    = lambda p: int( p[1] // consts.TILE_WIDTH )
@@ -440,8 +444,8 @@ class Inventory:
 
         # ! Magic numbers are being used here
 
-        self.items              = [ [ consts.items.diamond_pickaxe for j in range( _cols ) ] for i in range( _rows ) ]
-        self.quantities         = [ [ 128 for j in range( _cols ) ] for i in range( _rows ) ]
+        self.items              = [ [ None for j in range( _cols ) ] for i in range( _rows ) ]
+        self.quantities         = [ [ 0 for j in range( _cols ) ] for i in range( _rows ) ]
 
         self.positions          = {}
         self.local_item_table   = []

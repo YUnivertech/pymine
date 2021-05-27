@@ -150,27 +150,27 @@ def generate_chunk_temp( _chunk , noise_gen ):
     # one layer of coal
     # one layer of dirt
     # one layer of grass
-    # for i in range( consts.CHUNK_WIDTH ):
-    #     _chunk.blocks[0][i] = consts.tiles.bedrock
-    #     _chunk.blocks[1][i] = consts.tiles.obsidian
-    #     _chunk.blocks[2][i] = consts.tiles.hellstone
-    #     for j in range(10):
-    #         _chunk.blocks[j + 3][i] = consts.tiles.greystone
-    #         _chunk.blocks[j + 13][i] = consts.tiles.limestone
-    #         _chunk.blocks[j + 23][i] = consts.tiles.sandstone
-    #     _chunk.blocks[32][i] = consts.tiles.coal
-    #     _chunk.blocks[33][i] = consts.tiles.browndirt
-    #     _chunk.blocks[34][i] = consts.tiles.grass
+    for i in range( consts.CHUNK_WIDTH ):
+        _chunk.blocks[0][i] = consts.tiles.bedrock
+        _chunk.blocks[1][i] = consts.tiles.obsidian
+        _chunk.blocks[2][i] = consts.tiles.hellstone
+        for j in range(10):
+            _chunk.blocks[j + 3][i] = consts.tiles.greystone
+            _chunk.blocks[j + 13][i] = consts.tiles.limestone
+            _chunk.blocks[j + 23][i] = consts.tiles.sandstone
+        _chunk.blocks[32][i] = consts.tiles.coal
+        _chunk.blocks[33][i] = consts.tiles.browndirt
+        _chunk.blocks[34][i] = consts.tiles.grass
 
     # for i in range( CHUNK_WIDTH ):
     #     for j in range( CHUNK_HEIGHT ):
     #         _chunk.blocks[j][i] = tiles.bedrock
 
-    for i in range( consts.CHUNK_WIDTH ):
-        x_coor = i + ( consts.CHUNK_WIDTH * _chunk.index )
-        my_height = int( ( noise_gen.noise2d( x = 0.0075 * x_coor, y = 0 ) + 1 ) * 32 ) # Value will be from 0 to 64
-        for j in range( my_height ):
-            _chunk.blocks[j][i] = consts.tiles.browndirt
+    # for i in range( consts.CHUNK_WIDTH ):
+    #     x_coor = i + ( consts.CHUNK_WIDTH * _chunk.index )
+    #     my_height = int( ( noise_gen.noise2d( x = 0.0075 * x_coor, y = 0 ) + 1 ) * 32 ) # Value will be from 0 to 64
+    #     for j in range( my_height ):
+    #         _chunk.blocks[j][i] = consts.tiles.browndirt
 
 
 class Chunk:
@@ -193,7 +193,7 @@ class Chunk:
         if not self.walls:
             self.walls = [ [ consts.tiles.air for j in range( consts.CHUNK_WIDTH ) ] for i in range( consts.CHUNK_HEIGHT ) ]
         if not self.local_tile_table:
-            self.local_tile_table = {}
+            self.local_tile_table = [ {}, {} ]
 
     def draw( self, _rect = [ 0 , 0 , consts.CHUNK_WIDTH , consts.CHUNK_HEIGHT ] ):
 
@@ -219,12 +219,18 @@ class Chunk:
                 if tile_ref != consts.tiles.air :
 
                     self.surf.blit( consts.TILE_TABLE[tile_ref ], coors )
-                    if ( i , j , 1 ) in self.local_tile_table : pass
+                    if ( i , j ) in self.local_tile_table[1] : pass
 
                 elif wall_ref != consts.tiles.air :
 
                     self.surf.blit( consts.TILE_TABLE[wall_ref ], coors )
-                    if ( i , j , 0 ) in self.local_tile_table : pass
+                    if ( i , j ) in self.local_tile_table[0] : pass
+
+        for key in self.local_tile_table[0]:
+            pass
+
+        for key in self.local_tile_table[1]:
+            pass
 
         # Then we blit the tile modifiers (cracks, glows, etc.)
         # Then we blit the liquids / fire
@@ -233,16 +239,16 @@ class Chunk:
     def break_block_at( self , _x , _y , _item , _dt ):
         # Left click was done at the coordinates x, y for dt time using item tool at the block level
         # the behaviour of tool is acted using its corresponding function which we can get from a dictionary
-        if( ( _x, _y, True ) not in self.local_tile_table ):
-            self.local_tile_table[ ( _x, _y, True ) ] = { }
+        if( ( _x, _y ) not in self.local_tile_table[1] ):
+            self.local_tile_table[ ( _x, _y ) ] = {}
 
-        if( consts.tile_attr.HEALTH not in self.local_tile_table[ ( _x, _y, True) ] ):
-            self.local_tile_table[ ( _x, _y, True ) ][ consts.tile_attr.HEALTH ] = 100
+        if( consts.tile_attr.HEALTH not in self.local_tile_table[1][ ( _x, _y ) ] ):
+            self.local_tile_table[1][ ( _x, _y ) ][ consts.tile_attr.HEALTH ] = 100
 
-        self.local_tile_table[ ( _x, _y, True ) ][ consts.tile_attr.HEALTH ] -= (25 * _dt)
+        self.local_tile_table[1][ ( _x, _y ) ][ consts.tile_attr.HEALTH ] -= (25 * _dt)
 
-        if(self.local_tile_table[ ( _x, _y, True ) ][ consts.tile_attr.HEALTH ] <= 0):
-            del self.local_tile_table[ ( _x, _y, True ) ]
+        if(self.local_tile_table[1][ ( _x, _y ) ][ consts.tile_attr.HEALTH ] <= 0):
+            del self.local_tile_table[1][ ( _x, _y ) ]
             self.blocks[_y][_x] = consts.tiles.air
             return True
 
@@ -394,6 +400,9 @@ class ChunkBuffer:
         self.positions[2] += _delta
 
         return self.positions[2]
+
+    def calc_light( self ):
+        pass
 
     def save( self ):
 
