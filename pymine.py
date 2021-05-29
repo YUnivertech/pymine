@@ -48,7 +48,6 @@ def main_game_start( _world = 'World1' ):
     buffer_width            = (monitor_sz[0] // consts.CHUNK_WIDTH_P) + 4
     buffer_width            = buffer_width if buffer_width % 2 else buffer_width + 1
     chunk_buffer            = chunk.ChunkBuffer( buffer_width )
-    print('    ', monitor_sz)
 
     # Entity Buffer
     entity_buffer           = entity.EntityBuffer( )

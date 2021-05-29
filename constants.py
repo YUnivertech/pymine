@@ -203,13 +203,13 @@ class tiles( enum.Enum ):
     furnace              = 101
     chest                = 102
 
-    wood_list = { junglewood, junglewood_plank, oakwood, oakwood_plank, borealwood, borealwood_plank, pinewood, pinewood_plank, cactuswood, cactuswood_plank, palmwood, palmwood_plank }
-    metal_list = { cosmonium_ore, cosmonium, unobtanium_ore, unobtanium, platinum_ore, platinum, gold_ore, gold, iron_ore, iron, copper_ore, copper }
-    non_metal_list = { diamond_ore, diamond_block, hellstone, adamantite, obsidian, bedrock }
-    stone_list = { granite, quartz, limestone, greystone, sandstone }
-    broken_by_pickaxe = stone_list.union( non_metal_list )
-    broken_by_axe = wood_list
 
+wood_list = { junglewood, junglewood_plank, oakwood, oakwood_plank, borealwood, borealwood_plank, pinewood, pinewood_plank, cactuswood, cactuswood_plank, palmwood, palmwood_plank }
+metal_list = { cosmonium_ore, cosmonium, unobtanium_ore, unobtanium, platinum_ore, platinum, gold_ore, gold, iron_ore, iron, copper_ore, copper }
+non_metal_list = { diamond_ore, diamond_block, hellstone, adamantite, obsidian, bedrock }
+stone_list = { granite, quartz, limestone, greystone, sandstone }
+broken_by_pickaxe = stone_list.union( non_metal_list )
+broken_by_axe = wood_list
 
 class item_attr( enum.Enum ):
 
@@ -389,10 +389,10 @@ class items( enum.Enum ):
     furnace              = 150
     chest                = 151
 
-    pickaxe_list = { wood_pickaxe, stone_pickaxe, copper_pickaxe, iron_pickaxe, gold_pickaxe, diamond_pickaxe, platinum_pickaxe, unobtanium_pickaxe, hellstone_pickaxe, adamantite_pickaxe }
-    axe_list = { wood_axe, stone_axe, copper_axe, iron_axe, gold_axe, diamond_axe, platinum_axe, unobtanium_axe, hellstone_axe, adamantite_axe }
-    battle_axe_list = { wood_battleaxe, stone_battleaxe, copper_battleaxe, iron_battleaxe, gold_battleaxe, diamond_battleaxe, platinum_battleaxe, unobtanium_battleaxe, hellstone_battleaxe, adamantite_battleaxe }
-    sword_list = { wood_sword, stone_sword, copper_sword, iron_sword, gold_sword, diamond_sword, platinum_sword, unobtanium_sword, hellstone_sword, adamantite_sword }
+pickaxe_list = { wood_pickaxe, stone_pickaxe, copper_pickaxe, iron_pickaxe, gold_pickaxe, diamond_pickaxe, platinum_pickaxe, unobtanium_pickaxe, hellstone_pickaxe, adamantite_pickaxe }
+axe_list = { wood_axe, stone_axe, copper_axe, iron_axe, gold_axe, diamond_axe, platinum_axe, unobtanium_axe, hellstone_axe, adamantite_axe }
+battle_axe_list = { wood_battleaxe, stone_battleaxe, copper_battleaxe, iron_battleaxe, gold_battleaxe, diamond_battleaxe, platinum_battleaxe, unobtanium_battleaxe, hellstone_battleaxe, adamantite_battleaxe }
+sword_list = { wood_sword, stone_sword, copper_sword, iron_sword, gold_sword, diamond_sword, platinum_sword, unobtanium_sword, hellstone_sword, adamantite_sword }
 
 # Dictionary consisting of tile as key; name as a string
 TILE_NAMES = {
