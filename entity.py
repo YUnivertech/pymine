@@ -125,9 +125,16 @@ class Entity:
         function( pos_x, pos_y, which_chunk, self.entity_buffer.chunk_buffer, self.entity_buffer, _dt )
 
     def right_click( self, _dt, _cursor_pos ):
-        function = consts.l_use_hand
+        function = consts.r_use_hand
         if self.get_item_held():
-            function = consts.ITEM_ATTR[self.get_item_held()][consts.item_attr.L_USE]
+            function = consts.ITEM_ATTR[self.get_item_held()][consts.item_attr.R_USE]
+
+        pos_x           = consts.get_x_pos_chunk(_cursor_pos)
+        pos_y           = consts.get_y_pos_chunk(_cursor_pos)
+
+        which_chunk     = consts.get_curr_chunk(_cursor_pos) - self.entity_buffer.chunk_buffer.positions[0]
+
+        function( pos_x, pos_y, which_chunk, self.entity_buffer.chunk_buffer, self.entity_buffer, _dt )
 
         pos_x           = consts.get_x_pos_chunk(_cursor_pos)
         pos_y           = consts.get_y_pos_chunk(_cursor_pos)

@@ -204,12 +204,12 @@ class tiles( enum.Enum ):
     chest                = 102
 
 
-wood_list = { junglewood, junglewood_plank, oakwood, oakwood_plank, borealwood, borealwood_plank, pinewood, pinewood_plank, cactuswood, cactuswood_plank, palmwood, palmwood_plank }
-metal_list = { cosmonium_ore, cosmonium, unobtanium_ore, unobtanium, platinum_ore, platinum, gold_ore, gold, iron_ore, iron, copper_ore, copper }
-non_metal_list = { diamond_ore, diamond_block, hellstone, adamantite, obsidian, bedrock }
-stone_list = { granite, quartz, limestone, greystone, sandstone }
-broken_by_pickaxe = stone_list.union( non_metal_list )
-broken_by_axe = wood_list
+wood_list           = { tiles.junglewood, tiles.junglewood_plank, tiles.oakwood, tiles.oakwood_plank, tiles.borealwood, tiles.borealwood_plank, tiles.pinewood, tiles.pinewood_plank, tiles.cactuswood, tiles.cactuswood_plank, tiles.palmwood, tiles.palmwood_plank }
+metal_list          = { tiles.cosmonium_ore, tiles.cosmonium, tiles.unobtanium_ore, tiles.unobtanium, tiles.platinum_ore, tiles.platinum, tiles.gold_ore, tiles.gold, tiles.iron_ore, tiles.iron, tiles.copper_ore, tiles.copper }
+non_metal_list      = { tiles.diamond_ore, tiles.diamond_block, tiles.hellstone, tiles.adamantite, tiles.obsidian, tiles.bedrock }
+stone_list          = { tiles.granite, tiles.quartz, tiles.limestone, tiles.greystone, tiles.sandstone }
+broken_by_pickaxe   = stone_list.union( non_metal_list )
+broken_by_axe       = wood_list.copy()
 
 class item_attr( enum.Enum ):
 
@@ -389,10 +389,10 @@ class items( enum.Enum ):
     furnace              = 150
     chest                = 151
 
-pickaxe_list = { wood_pickaxe, stone_pickaxe, copper_pickaxe, iron_pickaxe, gold_pickaxe, diamond_pickaxe, platinum_pickaxe, unobtanium_pickaxe, hellstone_pickaxe, adamantite_pickaxe }
-axe_list = { wood_axe, stone_axe, copper_axe, iron_axe, gold_axe, diamond_axe, platinum_axe, unobtanium_axe, hellstone_axe, adamantite_axe }
-battle_axe_list = { wood_battleaxe, stone_battleaxe, copper_battleaxe, iron_battleaxe, gold_battleaxe, diamond_battleaxe, platinum_battleaxe, unobtanium_battleaxe, hellstone_battleaxe, adamantite_battleaxe }
-sword_list = { wood_sword, stone_sword, copper_sword, iron_sword, gold_sword, diamond_sword, platinum_sword, unobtanium_sword, hellstone_sword, adamantite_sword }
+pickaxe_list    = { items.wood_pickaxe, items.stone_pickaxe, items.copper_pickaxe, items.iron_pickaxe, items.gold_pickaxe, items.diamond_pickaxe, items.platinum_pickaxe, items.unobtanium_pickaxe, items.hellstone_pickaxe, items.adamantite_pickaxe }
+axe_list        = { items.wood_axe, items.stone_axe, items.copper_axe, items.iron_axe, items.gold_axe, items.diamond_axe, items.platinum_axe, items.unobtanium_axe, items.hellstone_axe, items.adamantite_axe }
+battle_axe_list = { items.wood_battleaxe, items.stone_battleaxe, items.copper_battleaxe, items.iron_battleaxe, items.gold_battleaxe, items.diamond_battleaxe, items.platinum_battleaxe, items.unobtanium_battleaxe, items.hellstone_battleaxe, items.adamantite_battleaxe }
+sword_list      = { items.wood_sword, items.stone_sword, items.copper_sword, items.iron_sword, items.gold_sword, items.diamond_sword, items.platinum_sword, items.unobtanium_sword, items.hellstone_sword, items.adamantite_sword }
 
 # Dictionary consisting of tile as key; name as a string
 TILE_NAMES = {
@@ -1091,9 +1091,8 @@ def r_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     blocks= chunk.blocks
     walls = chunk.walls
 
-    # if()
-    # if self.blocks[_y][_x] != consts.tiles.air: return False
-    # self.blocks[_y][_x] = _tile
+    if blocks[_y][_x] != tiles.air: return 0
+    blocks[_y][_x] = tiles.grass
 
     # if _local_entry: self.local_tile_table[ ( _x, _y, True) ] = _local_entry.copy()
 
