@@ -10,7 +10,7 @@
         "font": {
             "name": "game_font",
             "size": "18",
-            "regular_path": "C:\\Users\\vikas\\AppData\\Local\\Microsoft\\Windows\\Fonts\\pointfree.ttf"
+            "regular_path": "Resources\\Fonts\\pointfree.ttf"
         },
         "misc": {
             "shape": "rounded_rectangle",
