@@ -226,6 +226,8 @@ class Serializer:
             self.conn.commit()
             c.execute( '''CREATE TABLE player(playername TEXT NOT NULL PRIMARY KEY, pickledplayer TEXT)''' )
             self.conn.commit()
+            c.execute( '''CREATE TABLE info(world_time TEXT)''' )
+            self.conn.commit()
         except Exception as e:
             consts.dbg(1, "EXCEPTION IN SERIALIZER INIT:", e)
 
@@ -294,6 +296,29 @@ class Serializer:
             return bz2.decompress( res[0] )
         except Exception as e:
             consts.dbg( 1, "EXCEPTION IN SERIALIZER LOAD_PLAYER:", e )
+            return res
+
+    def set_world_time( self, _time ):
+        c = self.conn.cursor()
+        try:
+            # Set world time for the first time
+            c.execute( '''INSERT INTO info (world_time) VALUES (?)''', ( bz2.compress( _time ), ) )
+            self.conn.commit()
+        except Exception as e:
+            # Update world time
+            consts.dbg( 1, "EXCEPTION IN SERIALIZER SET_WORLD_TIME:", e )
+            c.execute( '''UPDATE info SET world_time=?''', ( bz2.compress( _time ), ) )
+            self.conn.commit()
+
+    def get_world_time( self ):
+        c = self.conn.cursor()
+        c.execute( '''SELECT world_time FROM info''' )
+        res = c.fetchone()
+        self.conn.commit()
+        try:
+            return bz2.decompress( res[0] )
+        except Exception as e:
+            consts.dbg( 1, "EXCEPTION IN SERIALIZER GET_WORLD_TIME:", e )
             return res
 
     def stop( self ):
