@@ -79,7 +79,7 @@ class Renderer:
         self.camera         = _camera
         self.screen         = _screen
 
-        self.window_size = _window_size
+        self.window_size    = _window_size
 
         self.update_size()
         self.update_camera()
@@ -167,8 +167,9 @@ class Renderer:
         plyr_coors[1] = self.num_ver - plyr_coors[1]
 
         # Blit a small rectangle
-        pygame.draw.rect( self.screen, (50, 50, 255), pygame.Rect( plyr_coors[0 ] - 8, plyr_coors[1 ] - 8, 17, 17 ) )
-        pygame.draw.rect( self.screen, (255, 50, 50), pygame.Rect( camera_coors[0 ] - 2, camera_coors[1 ] - 2, 5, 5 ) )
+        self.screen.blit( self.player.texture_strct.texture, ( plyr_coors[0] - 8, plyr_coors[1] - 8))
+        # pygame.draw.rect( self.screen, (50, 50, 255), pygame.Rect( plyr_coors[0] - 8, plyr_coors[1] - 8, 17, 17 ) )
+        # pygame.draw.rect( self.screen, (255, 50, 50), pygame.Rect( camera_coors[0] - 2, camera_coors[1] - 2, 5, 5 ) )
 
         # item = cls.player.inventory.getSelectedItem()
         # name, quantity = 'Nothing', cls.player.inventory.getSelectedQuantity()

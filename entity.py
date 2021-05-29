@@ -117,14 +117,24 @@ class Entity:
         if self.get_item_held():
             function = consts.ITEM_ATTR[self.get_item_held()][consts.item_attr.L_USE]
 
-        pos = (self.entity_buffer.get_x_pos_chunk(_cursor_pos), self.entity_buffer.get_y_pos_chunk(_cursor_pos))
-        chunk = self.entity_buffer.chunk_buffer.chunks[self.entity_buffer.get_curr_chunk(_cursor_pos) - self.entity_buffer.chunk_buffer.positions[0]]
-        function( pos, _dt, chunk, None )
+        pos_x           = consts.get_x_pos_chunk(_cursor_pos)
+        pos_y           = consts.get_y_pos_chunk(_cursor_pos)
 
-    def right_click( self ):
-        function = consts.ITEM_ATTR[self.get_item_held()][consts.item_attr.R_USE]
-        if function is not None:
-            function()
+        which_chunk     = consts.get_curr_chunk(_cursor_pos) - self.entity_buffer.chunk_buffer.positions[0]
+
+        function( pos_x, pos_y, which_chunk, self.entity_buffer.chunk_buffer, self.entity_buffer, _dt )
+
+    def right_click( self, _dt, _cursor_pos ):
+        function = consts.l_use_hand
+        if self.get_item_held():
+            function = consts.ITEM_ATTR[self.get_item_held()][consts.item_attr.L_USE]
+
+        pos_x           = consts.get_x_pos_chunk(_cursor_pos)
+        pos_y           = consts.get_y_pos_chunk(_cursor_pos)
+
+        which_chunk     = consts.get_curr_chunk(_cursor_pos) - self.entity_buffer.chunk_buffer.positions[0]
+
+        function( pos_x, pos_y, which_chunk, self.entity_buffer.chunk_buffer, self.entity_buffer, _dt )
 
     def hit( self ):
         # if self.hitting and not self.placing :
@@ -190,6 +200,8 @@ class Player(Entity):
         self.pos           = _pos  # World pos of surface in x-y-z coords
         # self.hitbox        = [(0, 0), (HITBOX_WIDTH, 0), (HITBOX_WIDTH, -HITBOX_HEIGHT), (0, -HITBOX_HEIGHT)]
 
+        self.texture_strct = TextureStructPlayer()
+
     def initialize( self, _chunk_buffer, _entity_buffer, _renderer, _serializer, _key_state, _mouse_state, _cursor_pos ):
 
         # Set all references to main managers
@@ -215,9 +227,13 @@ class Player(Entity):
         if self.key_state[ pygame.K_a ] and not self.key_state[ pygame.K_d ]:
             consts.dbg( 1, "IN RUN - MOVING LEFT" )
             self.move_left( )
+            self.texture_strct.run_left( _dt )
         elif self.key_state[ pygame.K_d ] and not self.key_state[ pygame.K_a ]:
             consts.dbg( 1, "IN RUN - MOVING RIGHT" )
             self.move_right( )
+            self.texture_strct.run_right( _dt )
+        else:
+            self.texture_strct.run_static()
 
         if self.key_state[ pygame.K_s ] and not self.key_state[ pygame.K_w ]:
             consts.dbg( 1, "IN RUN - MOVING DOWN" )
@@ -568,3 +584,31 @@ class Inventory:
                     quantity_text , quantity_rect = consts.INV_FONT.render( str( self.quantities[y ][x ] ), consts.INV_COLOR )
                     self.surf.blit( consts.ITEM_TABLE[self.items[y ][x ] ], (coors[0 ] + 4 , coors[1 ] + 4) )
                     self.surf.blit( quantity_text , ( coors[0] , coors[1] ) )
+
+
+class TextureStructPlayer:
+
+    def __init__( self, ):
+        # 0 is during static
+        # every third of a second we need to move onto the next texture
+
+        self.running_index = 0
+        self.frames = len( consts.player_running ) >> 1
+        self.center_index = self.frames
+
+        self.texture = consts.player_running[self.center_index]
+
+    def run_right( self, _dt ):
+        self.running_index += _dt * 3
+        if self.running_index > self.frames: self.running_index = 0
+        self.texture = consts.player_running[self.center_index + int( self.running_index ) + 1]
+
+    def run_left( self, _dt ):
+        self.running_index += _dt * 3
+        if self.running_index > self.frames: self.running_index = 0
+        self.texture = consts.player_running[self.center_index - int( self.running_index ) - 1]
+
+    def run_static( self ):
+        self.texture = consts.player_running[self.center_index]
+        self.running_index = 0
+
