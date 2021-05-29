@@ -16,10 +16,12 @@ mouse_pos               = [ 0 , 0 ]
 cursor_pos              = [ 0 , 0 ]
 
 # Screen variables
+monitor_sz              = []
 display_sz              = [ 800 , 600 ]
 framerate               = 0
 
 # Create the main window
+monitor_sz              = (pygame.display.Info().current_w, pygame.display.Info().current_h)
 screen                  = pygame.display.set_mode( display_sz , pygame.RESIZABLE )
 pygame.display.set_caption( "Pymine" )
 pygame.display.set_icon( pygame.image.load( "Resources/Default/gameIcon.png" ) )
@@ -43,9 +45,10 @@ def main_game_start( _world = 'World1' ):
     # ---------- CREATION OF ALL MANAGERS ---------- #
 
     # Chunk Buffer
-    buffer_width            = (pygame.display.Info().current_w // consts.CHUNK_WIDTH_P) + 6
+    buffer_width            = (monitor_sz[0] // consts.CHUNK_WIDTH_P) + 4
     buffer_width            = buffer_width if buffer_width % 2 else buffer_width + 1
     chunk_buffer            = chunk.ChunkBuffer( buffer_width )
+    print('    ', monitor_sz)
 
     # Entity Buffer
     entity_buffer           = entity.EntityBuffer( )

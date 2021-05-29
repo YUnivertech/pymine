@@ -1030,7 +1030,7 @@ ITEM_ATTR = {
     items.chest                : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None}
 }
 
-player_running = [pygame.image.load("Resources/Default/running{}.png".format(i)) for i in range(2)] + [pygame.image.load("Resources/Default/static.png")] + [pygame.image.load("Resources/Default/running{}.png".format(i)) for i in range(2)]
+player_running = [pygame.image.load("Resources/Default/running{}.png".format(1-i)) for i in range(2)] + [pygame.image.load("Resources/Default/static.png")] + [pygame.image.load("Resources/Default/running{}.png".format(i)) for i in range(2)]
 player_running[0] = pygame.transform.flip(player_running[0], True, False)
 player_running[1] = pygame.transform.flip(player_running[1], True, False)
 
@@ -1072,6 +1072,19 @@ def l_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
         return 1
 
     return 0
+
+def r_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+
+    chunk = _chunk_buffer[_chunk]
+    blocks= chunk.blocks
+    walls = chunk.walls
+
+    # if()
+    # if self.blocks[_y][_x] != consts.tiles.air: return False
+    # self.blocks[_y][_x] = _tile
+
+    # if _local_entry: self.local_tile_table[ ( _x, _y, True) ] = _local_entry.copy()
+
 
 # l_use and r_use functions for various items
 def l_use_grass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
