@@ -1,16 +1,21 @@
 {
     "button": {
         "colours": {
-            "normal_bg": "#00000045",
-            "hovered_text": "#FFE900",
-            "normal_border": "#00000050",
-            "hovered_border": "#DDDDDD99",
-            "hovered_bg": "#35393E50"
+            "normal_bg": "#363636",
+            "hovered_text": "#FFFFFF",
+            "normal_border": "#242424",
+            "hovered_border": "#333333",
+            "hovered_bg": "#424242"
+        },
+        "font": {
+            "name": "game_font",
+            "size": "18",
+            "regular_path": "C:\\Users\\vikas\\AppData\\Local\\Microsoft\\Windows\\Fonts\\pointfree.ttf"
         },
         "misc": {
             "shape": "rounded_rectangle",
-            "shape_corner_radius": "6",
-            "border_width": "1",
+            "shape_corner_radius": "9",
+            "border_width": "3",
             "shadow_width": "1",
             "tool_tip_delay": "0.5",
             "state_transitions": {
@@ -34,16 +39,16 @@
      {
          "colours":
          {
-             "dark_bg":"#21282D",
-             "normal_border": "#999999"
+             "dark_bg":"#3F3F3F",
+             "normal_border": "#6F6F6F"
          },
 
          "misc":
          {
              "shape": "rounded_rectangle",
-             "shape_corner_radius": "9",
-             "border_width": "1",
-             "shadow_width": "15"
+             "shape_corner_radius": "15",
+             "border_width": "3",
+             "shadow_width": "1"
          }
      }
 }
