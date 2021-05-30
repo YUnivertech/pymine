@@ -919,10 +919,42 @@ ITEM_TABLE = {
     items.chest                : pygame.image.load("Resources/Default/item_chest.png")
 }
 
+def r_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+# l_use and r_use functions for various items
+def l_use_grass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_grass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+
+    chunk = _chunk_buffer[_chunk]
+    blocks= chunk.blocks
+    walls = chunk.walls
+
+    if blocks[_y][_x] != tiles.air: return 0
+    blocks[_y][_x] = tiles.grass
+    chunk.draw()
+
+    # if _local_entry: self.local_tile_table[ ( _x, _y, True) ] = _local_entry.copy()
+
+def l_use_browndirt(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_browndirt(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+
+    chunk = _chunk_buffer[_chunk]
+    blocks= chunk.blocks
+    walls = chunk.walls
+
+    if blocks[_y][_x] != tiles.air: return 0
+    blocks[_y][_x] = tiles.browndirt
+    chunk.draw()
+
 # Dictionary consisting of item as key; dictionary consisting of item attribute as key and attribute as value as value
 ITEM_ATTR = {
-    items.grass                : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
-    items.browndirt            : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
+    items.grass                : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:l_use_grass, item_attr.R_USE:r_use_grass},
+    items.browndirt            : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:l_use_browndirt, item_attr.R_USE:r_use_browndirt},
     items.snowygrass           : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
     items.stick                : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
     items.leaves               : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None},
@@ -1042,6 +1074,8 @@ ITEM_ATTR = {
     items.chest                : {item_attr.WEIGHT:100, item_attr.DAMAGE:HAND_DAMAGE, item_attr.L_USE:None, item_attr.R_USE:None}
 }
 
+# Textures for entities
+
 player_running = [pygame.image.load("Resources/Default/running{}.png".format(1-i)) for i in range(2)] + [pygame.image.load("Resources/Default/static.png")] + [pygame.image.load("Resources/Default/running{}.png".format(i)) for i in range(2)]
 player_running[0] = pygame.transform.flip(player_running[0], True, False)
 player_running[1] = pygame.transform.flip(player_running[1], True, False)
@@ -1088,37 +1122,37 @@ def l_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
 
     return 0
 
-def r_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+# def r_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+#     pass
 
-# l_use and r_use functions for various items
-def l_use_grass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+# # l_use and r_use functions for various items
+# def l_use_grass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+#     pass
 
-def r_use_grass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+# def r_use_grass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
 
-    chunk = _chunk_buffer[_chunk]
-    blocks= chunk.blocks
-    walls = chunk.walls
+#     chunk = _chunk_buffer[_chunk]
+#     blocks= chunk.blocks
+#     walls = chunk.walls
 
-    if blocks[_y][_x] != tiles.air: return 0
-    blocks[_y][_x] = tiles.grass
-    chunk.draw()
+#     if blocks[_y][_x] != tiles.air: return 0
+#     blocks[_y][_x] = tiles.grass
+#     chunk.draw()
 
-    # if _local_entry: self.local_tile_table[ ( _x, _y, True) ] = _local_entry.copy()
+#     # if _local_entry: self.local_tile_table[ ( _x, _y, True) ] = _local_entry.copy()
 
-def l_use_browndirt(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+# def l_use_browndirt(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+#     pass
 
-def r_use_browndirt(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+# def r_use_browndirt(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
 
-    chunk = _chunk_buffer[_chunk]
-    blocks= chunk.blocks
-    walls = chunk.walls
+#     chunk = _chunk_buffer[_chunk]
+#     blocks= chunk.blocks
+#     walls = chunk.walls
 
-    if blocks[_y][_x] != tiles.air: return 0
-    blocks[_y][_x] = tiles.browndirt
-    chunk.draw()
+#     if blocks[_y][_x] != tiles.air: return 0
+#     blocks[_y][_x] = tiles.browndirt
+#     chunk.draw()
 
 def l_use_snowygrass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass

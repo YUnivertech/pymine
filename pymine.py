@@ -118,21 +118,31 @@ def main_game_start( _world = 'World1' ):
 
                 # The inventory state must only be toggled when the key is pressed (not while it is being held down)
                 if event.key == pygame.K_e: player.inventory.enabled = not player.inventory.enabled
-                if event.key == pygame.K_t:
+                elif event.key == pygame.K_t:
                     player.tangibility = not player.tangibility
                     consts.dbg( 0, "PLAYER TANGIBILITY CHANGED:", player.tangibility )
-                if event.key == pygame.K_g:
+                elif event.key == pygame.K_g:
                     if key_states.get( pygame.KMOD_SHIFT ):
                         consts.GRAVITY_ACC = -0.98
                     else:
                         consts.GRAVITY_ACC = 0 if consts.GRAVITY_ACC else 0.98
                     consts.dbg( 0, "GRAVITY ACC CHANGED:", consts.GRAVITY_ACC )
-                if event.key == pygame.K_v:
+                elif event.key == pygame.K_v:
                     if key_states.get( pygame.KMOD_SHIFT ):
                         consts.SCALE_VEL /= 2
                     else:
                         consts.SCALE_VEL *= 2
                     consts.dbg( 0, "SCALE VEL CHANGED:", consts.SCALE_VEL )
+                elif event.key == pygame.K_c:
+                    command = input(">> ")
+                    if command[0] == '.':
+                        command = command.split(' ')
+                        if command[0] == '.give': # Add requested item to inventory
+                            which_item = eval( 'consts.' + command[1], globals(), locals() )
+                            quantity = eval( command[2] )
+                            remainder = player.inventory.add_item( which_item, quantity )
+                            print('Added {} items succesfully'.format(quantity - remainder))
+
                 key_states[ event.key ] = True
 
             elif    event.type == pygame.KEYUP:     key_states[event.key] = False
