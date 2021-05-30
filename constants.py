@@ -1047,7 +1047,10 @@ player_running[0] = pygame.transform.flip(player_running[0], True, False)
 player_running[1] = pygame.transform.flip(player_running[1], True, False)
 
 # _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt
+# player = _entity_buffer.player
+# inventory = player.inventory
 
+# !Only redraw a portion of the chunk
 def l_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     # Entity hitting behaviour has not been implemented yet
     # -1 returned indicates there was nothing to break
@@ -1086,6 +1089,13 @@ def l_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     return 0
 
 def r_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+# l_use and r_use functions for various items
+def l_use_grass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_grass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
 
     chunk = _chunk_buffer[_chunk]
     blocks= chunk.blocks
@@ -1093,359 +1103,706 @@ def r_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
 
     if blocks[_y][_x] != tiles.air: return 0
     blocks[_y][_x] = tiles.grass
+    chunk.draw()
 
     # if _local_entry: self.local_tile_table[ ( _x, _y, True) ] = _local_entry.copy()
-
-
-# l_use and r_use functions for various items
-def l_use_grass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    # If an entity was clicked on then perform the action on an entity
-    if _entity is None:
-        pass
-    # Else perform the action on a tile/wall in a chunk
-    else:
-        pass
 
 def l_use_browndirt(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_browndirt(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+
+    chunk = _chunk_buffer[_chunk]
+    blocks= chunk.blocks
+    walls = chunk.walls
+
+    if blocks[_y][_x] != tiles.air: return 0
+    blocks[_y][_x] = tiles.browndirt
+    chunk.draw()
+
 def l_use_snowygrass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_snowygrass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+
+    chunk = _chunk_buffer[_chunk]
+    blocks= chunk.blocks
+    walls = chunk.walls
+
+    if blocks[_y][_x] != tiles.air: return 0
+    blocks[_y][_x] = tiles.snowygrass
+    chunk.draw()
+
 def l_use_stick(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_stick(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_leaves(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_leaves(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_junglewood(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_junglewood(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_junglewood_plank(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_junglewood_plank(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_oakwood(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_oakwood(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_oakwood_plank(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_oakwood_plank(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_borealwood(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_borealwood(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_borealwood_plank(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_borealwood_plank(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_pinewood(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_pinewood(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_pinewood_plank(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_pinewood_plank(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_palmwood(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_palmwood(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_palmwood_plank(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_palmwood_plank(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_cosmonium_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_cosmonium_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_cosmonium_ingot(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_cosmonium_ingot(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_cosmonium_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_cosmonium_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_unobtanium_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_unobtanium_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_unobtanium_ingot(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_unobtanium_ingot(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_cosmonium_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_cosmonium_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_platinum_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_platinum_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_platinum_ingot(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_platinum_ingot(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_platinum_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_platinum_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_gold_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_gold_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_gold_brick(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_gold_brick(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_gold_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_gold_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_copper_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_copper_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_copper_ingot(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_copper_ingot(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_copper_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_copper_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_diamond_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
-def l_use_diamond_gem(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+def r_use_diamond_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def l_use_diamond_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_diamond_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_diamond_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_diamond_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_hellstone(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_hellstone(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_adamantite(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_adamantite(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_adamantite_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_adamantite_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_obsidian(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_obsidian(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_bedrock(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_bedrock(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_granite(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_granite(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_quartz(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_quartz(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_limestone(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_limestone(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_greystone(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_greystone(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_sandstone(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_sandstone(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_coal_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_coal_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_gravel(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_gravel(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_coal(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_coal(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_clay(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_clay(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_red_clay(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_red_clay(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_sand(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_sand(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_snow(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_snow(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_ice(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_ice(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_glass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_glass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_glasspane(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_glasspane(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_glasswindow(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_glasswindow(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_bow(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_bow(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_arrow(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_arrow(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_deerskin(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_deerskin(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_rottenleather(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_rottenleather(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_wood_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_wood_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_stone_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_stone_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_copper_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_copper_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_iron_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_iron_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_gold_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_gold_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_diamond_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_diamond_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_platinum_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_platinum_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_unobtanium_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_unobtanium_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_hellstone_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_hellstone_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_adamantite_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_adamantite_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_wood_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_wood_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_stone_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_stone_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_copper_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_copper_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_iron_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_iron_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_gold_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_gold_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_diamond_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_diamond_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_platinum_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_platinum_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_unobtanium_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_unobtanium_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_hellstone_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_hellstone_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_adamantite_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_adamantite_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_wood_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_wood_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_stone_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_stone_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_copper_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_copper_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_iron_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_iron_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_gold_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_gold_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_diamond_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_diamond_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_platinum_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_platinum_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_unobtanium_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_unobtanium_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_hellstone_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_hellstone_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_adamantite_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_adamantite_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_wood_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_wood_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_stone_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_stone_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_copper_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_copper_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_iron_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_iron_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_gold_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_gold_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_diamond_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_diamond_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_platinum_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_platinum_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_unobtanium_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_unobtanium_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_hellstone_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_hellstone_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_adamantite_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_adamantite_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_wood_door(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_wood_door(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_iron_door(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_iron_door(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_gold_door(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_gold_door(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_platinum_door(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_platinum_door(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_lighter(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
-def l_use_bed(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+def r_use_lighter(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_bed(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_bed(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def l_use_bed(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_bed(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_iron_bucket(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_iron_bucket(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_berry(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_berry(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_apple(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_apple(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_chicken(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_chicken(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_deermeat(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_deermeat(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_rottenmeat(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_rottenmeat(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_torch(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_torch(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_crafting_table(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_crafting_table(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_furnace(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
+def r_use_furnace(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
 def l_use_chest(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
+
+def r_use_chest(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def loadImageTable():

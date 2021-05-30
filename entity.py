@@ -255,7 +255,7 @@ class Player(Entity):
 
         if self.mouse_state[ pygame.BUTTON_RIGHT ]:
             consts.dbg( -1, "IN RUN - RIGHT MOUSE BUTTON PRESSED")
-            self.right_click()
+            self.right_click( _dt, self.cursor_pos )
 
     def update( self, dt ):
         consts.dbg( 1, "ENTERING UPDATE" )
