@@ -919,37 +919,75 @@ ITEM_TABLE = {
     items.chest                : pygame.image.load("Resources/Default/item_chest.png")
 }
 
-def r_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+# # l_use and r_use functions for various items
+# _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt
+# player = _entity_buffer.player
+# inventory = player.inventory
+
+#! Only redraw a portion of the chunk
+
+# Function only to be called if not colliding with the player or any other entity
+def place_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, _block ):
+    chunk = _chunk_buffer[_chunk]
+    blocks= chunk.blocks
+    walls = chunk.walls
+
+    if blocks[_y][_x] != tiles.air: return 0
+    blocks[_y][_x] = _block
+    chunk.draw()
+
+    # if _local_entry: self.local_tile_table[ ( _x, _y, True) ] = _local_entry.copy()
+    # Lightmaps
+
+# Function only to be called if no entity is being attacked
+def break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, _damage ):
+    # -1 returned indicates there was nothing to break
+    # 0 indicates that nothing has been broken
+    # 1 indicates that something has been broken
+
+    chunk = _chunk_buffer.chunks[_chunk]
+    layer = chunk.blocks
+    table = chunk.local_tile_table[1]
+
+    if chunk.blocks[_y][_x] == tiles.air:
+        if chunk.walls[_y][_x] == tiles.air:
+            return -1
+        layer = chunk.walls
+        table = chunk.local_tile_table[0]
+
+    if (_x, _y) not in table:
+        table[(_x, _y)] = {}
+    if tile_attr.HEALTH not in table[(_x, _y)]:
+        table[(_x, _y)][tile_attr.HEALTH] = TILE_ATTR[layer[_y][_x]][tile_attr.HEALTH]
+
+    table[(_x, _y)][tile_attr.HEALTH] -= ( _damage * _dt )
+
+    chunk.draw()
+
+    if table[(_x, _y)][tile_attr.HEALTH] <= 0:
+        layer[_y][_x] = tiles.air
+
+        del table[(_x, _y)][tile_attr.HEALTH]
+        if table[(_x, _y)]:
+            del table[(_x, _y)]
+        chunk.draw()
+
+        return 1
+
+    return 0
 
 # l_use and r_use functions for various items
 def l_use_grass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def r_use_grass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-
-    chunk = _chunk_buffer[_chunk]
-    blocks= chunk.blocks
-    walls = chunk.walls
-
-    if blocks[_y][_x] != tiles.air: return 0
-    blocks[_y][_x] = tiles.grass
-    chunk.draw()
-
-    # if _local_entry: self.local_tile_table[ ( _x, _y, True) ] = _local_entry.copy()
+    place_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, tiles.grass )
 
 def l_use_browndirt(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def r_use_browndirt(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-
-    chunk = _chunk_buffer[_chunk]
-    blocks= chunk.blocks
-    walls = chunk.walls
-
-    if blocks[_y][_x] != tiles.air: return 0
-    blocks[_y][_x] = tiles.browndirt
-    chunk.draw()
+    place_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, tiles.browndirt )
 
 # Dictionary consisting of item as key; dictionary consisting of item attribute as key and attribute as value as value
 ITEM_ATTR = {
@@ -1080,82 +1118,18 @@ player_running = [pygame.image.load("Resources/Default/running{}.png".format(1-i
 player_running[0] = pygame.transform.flip(player_running[0], True, False)
 player_running[1] = pygame.transform.flip(player_running[1], True, False)
 
-# _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt
-# player = _entity_buffer.player
-# inventory = player.inventory
-
-# !Only redraw a portion of the chunk
 def l_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     # Entity hitting behaviour has not been implemented yet
     # -1 returned indicates there was nothing to break
     # 0 indicates that nothing has been broken
     # 1 indicates that something has been broken
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
-    chunk = _chunk_buffer.chunks[_chunk]
-    layer = chunk.blocks
-    table = chunk.local_tile_table[1]
-
-    if chunk.blocks[_y][_x] == tiles.air:
-        if chunk.walls[_y][_x] == tiles.air:
-            return -1
-        layer = chunk.walls
-        table = chunk.local_tile_table[0]
-
-    if (_x, _y) not in table:
-        table[(_x, _y)] = {}
-    if tile_attr.HEALTH not in table[(_x, _y)]:
-        table[(_x, _y)][tile_attr.HEALTH] = TILE_ATTR[layer[_y][_x]][tile_attr.HEALTH]
-
-    table[(_x, _y)][tile_attr.HEALTH] -= ( HAND_DAMAGE * _dt )
-
-    chunk.draw()
-
-    if table[(_x, _y)][tile_attr.HEALTH] <= 0:
-        layer[_y][_x] = tiles.air
-
-        del table[(_x, _y)][tile_attr.HEALTH]
-        if table[(_x, _y)]:
-            del table[(_x, _y)]
-        chunk.draw()
-
-        return 1
-
-    return 0
-
-# def r_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-#     pass
-
-# # l_use and r_use functions for various items
-# def l_use_grass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-#     pass
-
-# def r_use_grass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-
-#     chunk = _chunk_buffer[_chunk]
-#     blocks= chunk.blocks
-#     walls = chunk.walls
-
-#     if blocks[_y][_x] != tiles.air: return 0
-#     blocks[_y][_x] = tiles.grass
-#     chunk.draw()
-
-#     # if _local_entry: self.local_tile_table[ ( _x, _y, True) ] = _local_entry.copy()
-
-# def l_use_browndirt(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-#     pass
-
-# def r_use_browndirt(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-
-#     chunk = _chunk_buffer[_chunk]
-#     blocks= chunk.blocks
-#     walls = chunk.walls
-
-#     if blocks[_y][_x] != tiles.air: return 0
-#     blocks[_y][_x] = tiles.browndirt
-#     chunk.draw()
+def r_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    pass
 
 def l_use_snowygrass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_snowygrass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
 
@@ -1168,7 +1142,7 @@ def r_use_snowygrass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     chunk.draw()
 
 def l_use_stick(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_stick(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
@@ -1180,661 +1154,661 @@ def r_use_leaves(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_junglewood(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_junglewood(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_junglewood_plank(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_junglewood_plank(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_oakwood(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_oakwood(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_oakwood_plank(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_oakwood_plank(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_borealwood(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_borealwood(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_borealwood_plank(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_borealwood_plank(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_pinewood(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_pinewood(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_pinewood_plank(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_pinewood_plank(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_palmwood(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_palmwood(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_palmwood_plank(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_palmwood_plank(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_cosmonium_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_cosmonium_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_cosmonium_ingot(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_cosmonium_ingot(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_cosmonium_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_cosmonium_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_unobtanium_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_unobtanium_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_unobtanium_ingot(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_unobtanium_ingot(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_cosmonium_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_cosmonium_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_platinum_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_platinum_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_platinum_ingot(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_platinum_ingot(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_platinum_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_platinum_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_gold_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_gold_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_gold_brick(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_gold_brick(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_gold_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_gold_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_copper_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_copper_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_copper_ingot(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_copper_ingot(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_copper_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_copper_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_diamond_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_diamond_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_diamond_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_diamond_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_diamond_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_diamond_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_hellstone(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_hellstone(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_adamantite(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_adamantite(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_adamantite_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_adamantite_block(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_obsidian(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_obsidian(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_bedrock(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_bedrock(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_granite(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_granite(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_quartz(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_quartz(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_limestone(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_limestone(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_greystone(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_greystone(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_sandstone(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_sandstone(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_coal_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_coal_ore(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_gravel(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_gravel(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_coal(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_coal(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_clay(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_clay(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_red_clay(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_red_clay(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_sand(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_sand(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_snow(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_snow(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_ice(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_ice(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_glass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_glass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_glasspane(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_glasspane(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_glasswindow(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_glasswindow(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_bow(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_bow(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_arrow(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_arrow(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_deerskin(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_deerskin(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_rottenleather(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_rottenleather(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_wood_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_wood_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_stone_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_stone_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_copper_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_copper_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_iron_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_iron_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_gold_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_gold_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_diamond_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_diamond_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_platinum_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_platinum_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_unobtanium_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_unobtanium_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_hellstone_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_hellstone_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_adamantite_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_adamantite_pickaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_wood_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_wood_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_stone_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_stone_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_copper_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_copper_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_iron_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_iron_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_gold_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_gold_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_diamond_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_diamond_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_platinum_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_platinum_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_unobtanium_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_unobtanium_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_hellstone_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_hellstone_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_adamantite_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_adamantite_axe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_wood_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_wood_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_stone_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_stone_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_copper_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_copper_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_iron_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_iron_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_gold_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_gold_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_diamond_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_diamond_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_platinum_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_platinum_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_unobtanium_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_unobtanium_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_hellstone_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_hellstone_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_adamantite_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_adamantite_battleaxe(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_wood_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_wood_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_stone_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_stone_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_copper_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_copper_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_iron_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_iron_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_gold_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_gold_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_diamond_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_diamond_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_platinum_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_platinum_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_unobtanium_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_unobtanium_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_hellstone_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_hellstone_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_adamantite_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_adamantite_sword(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_wood_door(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_wood_door(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_iron_door(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_iron_door(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_gold_door(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_gold_door(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_platinum_door(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_platinum_door(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_lighter(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_lighter(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_bed(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_bed(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_bed(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_bed(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_iron_bucket(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_iron_bucket(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_berry(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_berry(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_apple(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_apple(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_chicken(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_chicken(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_deermeat(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_deermeat(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_rottenmeat(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_rottenmeat(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_torch(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_torch(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_crafting_table(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_crafting_table(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_furnace(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_furnace(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def l_use_chest(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_chest(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
