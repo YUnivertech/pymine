@@ -231,7 +231,7 @@ def main_game_start( _world = 'World1' ):
 
 menu_1, singleplayer_btn, multiplayer_btn, settings_btn, credits_btn = None, None, None, None, None
 menu_2, world_list, create_world_btn, delete_world_btn, menu_2_back_btn = None, None, None, None, None
-menu_3, create_world_text_entry, menu_3_back_btn = None, None, None
+menu_3, create_world_text_entry, menu_3_back_btn, create_world_confirm_btn = None, None, None, None
 
 # Start-up menu
 def init_menu_1( display_size, _manager ):
@@ -283,7 +283,7 @@ def init_menu_2( display_size, _manager ):
 
 # Create world menu
 def init_menu_3( display_size, _manager ):
-    global menu_3, create_world_text_entry, menu_3_back_btn
+    global menu_3, create_world_text_entry, create_world_confirm_btn, menu_3_back_btn
     menu_3_dim = (400, 420)
     menu_3_pos = ((display_size[ 0 ] - menu_3_dim[ 0 ]) / 2, (display_size[ 1 ] - menu_3_dim[ 1 ]) / 2)
 
@@ -293,8 +293,12 @@ def init_menu_3( display_size, _manager ):
     menu_3_back_btn_pos = (60, create_world_text_entry_pos[ 1 ] + create_world_text_entry_dim[ 1 ] + 10)
     menu_3_back_btn_dim = (menu_3_dim[ 0 ] - 2 * menu_3_back_btn_pos[ 0 ], 50)
 
+    create_world_confirm_btn_pos = (60, 60)
+    create_world_confirm_btn_dim = (menu_3_dim[ 0 ] - 2 * menu_3_back_btn_pos[ 0 ], 50)
+
     menu_3 = UIPanel( pygame.Rect( menu_3_pos, menu_3_dim ), 1, _manager )
     create_world_text_entry = UITextEntryLine( pygame.Rect( create_world_text_entry_pos, create_world_text_entry_dim ), _manager, menu_3 )
+    create_world_confirm_btn = UIButton( pygame.Rect( create_world_confirm_btn_pos, create_world_confirm_btn_dim ), "Confirm", _manager, menu_3 )
     menu_3_back_btn = UIButton( pygame.Rect( menu_3_back_btn_pos, menu_3_back_btn_dim ), "Back", _manager, menu_3 )
 
 # Delete world menu
@@ -348,6 +352,10 @@ while menu_running:
                     menu_2.kill()
                     menu_2 = None
                     init_menu_1( display_sz, gui_manager )
+                elif event.ui_element == create_world_confirm_btn: # Confirm creating the world
+                    print('Created New world')
+                    t_serializer = utils.Serializer('Worldx')
+                    t_serializer.stop()
                 elif event.ui_element == menu_3_back_btn: # Back button
                     menu_3.kill()
                     menu_2 = None
