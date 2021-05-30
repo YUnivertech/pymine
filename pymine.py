@@ -6,8 +6,9 @@ import opensimplex
 import pygame
 import pygame.freetype
 import pygame_gui
-from pygame_gui.elements import UIButton, UIPanel, UITextEntryLine
+from pygame_gui.elements import UIButton, UILabel, UIPanel, UITextEntryLine
 from pygame_gui.elements.ui_selection_list import UISelectionList
+import send2trash
 
 import chunk
 import constants as consts
@@ -230,8 +231,10 @@ def main_game_start( _world = 'World1' ):
 
 
 menu_1, singleplayer_btn, multiplayer_btn, settings_btn, credits_btn = None, None, None, None, None
-menu_2, world_list, create_world_btn, delete_world_btn, menu_2_back_btn = None, None, None, None, None
-menu_3, create_world_text_entry, menu_3_back_btn, create_world_confirm_btn = None, None, None, None
+menu_2, world_list, new_world_btn, remove_world_btn, menu_2_back_btn = None, None, None, None, None
+menu_3, create_world_text_entry, char_error_label_1, char_error_label_2, world_exists_label, create_world_btn, menu_3_back_btn = None, None, None, None, None, None, None
+menu_4, info_label, delete_world_list, delete_world_btn, menu_4_back_btn = None, None, None, None, None
+world_to_delete = None
 
 # Start-up menu
 def init_menu_1( display_size, _manager ):
@@ -259,57 +262,95 @@ def init_menu_1( display_size, _manager ):
 
 # Singleplayer menu
 def init_menu_2( display_size, _manager ):
-    global menu_2, world_list, create_world_btn, delete_world_btn, menu_2_back_btn
+    global menu_2, world_list, new_world_btn, remove_world_btn, menu_2_back_btn
     menu_2_dim = (400, 420)
     menu_2_pos = ((display_size[ 0 ] - menu_2_dim[ 0 ]) / 2, (display_size[ 1 ] - menu_2_dim[ 1 ]) / 2)
 
-    world_list_pos = (45, 30)
-    world_list_dim = (menu_2_dim[ 0 ] - 2 * world_list_pos[ 0 ], 160)
+    world_list_pos = (50, 25)
+    world_list_dim = (menu_2_dim[ 0 ] - 2 * world_list_pos[ 0 ], 180)
 
-    create_world_btn_pos = (60, world_list_pos[1] + world_list_dim[1] + 10)
-    create_world_btn_dim = (menu_2_dim[ 0 ] - 2 * create_world_btn_pos[ 0 ], 50)
+    new_world_btn_pos = (60, world_list_pos[ 1 ] + world_list_dim[ 1 ] + 10)
+    new_world_btn_dim = (menu_2_dim[ 0 ] - 2 * new_world_btn_pos[ 0 ], 50)
 
-    delete_world_btn_pos = (60, create_world_btn_pos[1] + create_world_btn_dim[1] + 10)
-    delete_world_btn_dim = (menu_2_dim[ 0 ] - 2 * delete_world_btn_pos[ 0 ], 50)
+    remove_world_btn_pos = (60, new_world_btn_pos[ 1 ] + new_world_btn_dim[ 1 ] + 10)
+    remove_world_btn_dim = (menu_2_dim[ 0 ] - 2 * remove_world_btn_pos[ 0 ], 50)
 
-    menu_2_back_btn_pos = (60, delete_world_btn_pos[1] + delete_world_btn_dim[1] + 10)
+    menu_2_back_btn_pos = (60, remove_world_btn_pos[ 1 ] + remove_world_btn_dim[ 1 ] + 10)
     menu_2_back_btn_dim = (menu_2_dim[ 0 ] - 2 * menu_2_back_btn_pos[ 0 ], 50)
 
     menu_2 = UIPanel( pygame.Rect( menu_2_pos, menu_2_dim ), 1, _manager )
     world_list = UISelectionList( pygame.Rect( world_list_pos, world_list_dim ), worlds, _manager, container=menu_2 )
-    create_world_btn = UIButton( pygame.Rect( create_world_btn_pos, create_world_btn_dim ), "Create", _manager, menu_2 )
-    delete_world_btn = UIButton( pygame.Rect( delete_world_btn_pos, delete_world_btn_dim ), "Delete", _manager, menu_2 )
+    new_world_btn = UIButton( pygame.Rect( new_world_btn_pos, new_world_btn_dim ), "New World", _manager, menu_2 )
+    remove_world_btn = UIButton( pygame.Rect( remove_world_btn_pos, remove_world_btn_dim ), "Remove World", _manager, menu_2 )
     menu_2_back_btn = UIButton( pygame.Rect( menu_2_back_btn_pos, menu_2_back_btn_dim ), "Back", _manager, menu_2 )
 
 # Create world menu
 def init_menu_3( display_size, _manager ):
-    global menu_3, create_world_text_entry, create_world_confirm_btn, menu_3_back_btn
+    global menu_3, create_world_text_entry, char_error_label_1, char_error_label_2, world_exists_label, create_world_btn, menu_3_back_btn
     menu_3_dim = (400, 420)
     menu_3_pos = ((display_size[ 0 ] - menu_3_dim[ 0 ]) / 2, (display_size[ 1 ] - menu_3_dim[ 1 ]) / 2)
 
-    create_world_text_entry_pos = (60, 30)
-    create_world_text_entry_dim = (menu_3_dim[0] - 2*create_world_text_entry_pos[0], 100)
+    create_world_text_entry_pos = (60, 50)
+    create_world_text_entry_dim = (menu_3_dim[ 0 ] - 2 * create_world_text_entry_pos[ 0 ], 60)
 
-    menu_3_back_btn_pos = (60, create_world_text_entry_pos[ 1 ] + create_world_text_entry_dim[ 1 ] + 10)
+    char_error_label_1_pos = (60, create_world_text_entry_pos[ 1 ] + create_world_text_entry_dim[ 1 ])
+    char_error_label_1_dim = (menu_3_dim[ 0 ] - 2 * char_error_label_1_pos[ 0 ], 30)
+    char_error_label_2_pos = (60, char_error_label_1_pos[ 1 ] + char_error_label_1_dim[ 1 ])
+    char_error_label_2_dim = (menu_3_dim[ 0 ] - 2 * char_error_label_2_pos[ 0 ], 30)
+
+    world_exists_label_pos = (60, char_error_label_2_pos[ 1 ] + char_error_label_2_dim[ 1 ] + 10)
+    world_exists_label_dim = (menu_3_dim[ 0 ] - 2 * world_exists_label_pos[ 0 ], 30)
+
+    create_world_btn_pos = (60, create_world_text_entry_pos[ 1 ] + create_world_text_entry_dim[ 1 ] + 150)
+    create_world_btn_dim = (menu_3_dim[ 0 ] - 2 * create_world_text_entry_pos[ 0 ], 50)
+
+    menu_3_back_btn_pos = (60, create_world_btn_pos[ 1 ] + create_world_btn_dim[ 1 ] + 10)
     menu_3_back_btn_dim = (menu_3_dim[ 0 ] - 2 * menu_3_back_btn_pos[ 0 ], 50)
-
-    create_world_confirm_btn_pos = (60, 60)
-    create_world_confirm_btn_dim = (menu_3_dim[ 0 ] - 2 * menu_3_back_btn_pos[ 0 ], 50)
 
     menu_3 = UIPanel( pygame.Rect( menu_3_pos, menu_3_dim ), 1, _manager )
     create_world_text_entry = UITextEntryLine( pygame.Rect( create_world_text_entry_pos, create_world_text_entry_dim ), _manager, menu_3 )
-    create_world_confirm_btn = UIButton( pygame.Rect( create_world_confirm_btn_pos, create_world_confirm_btn_dim ), "Confirm", _manager, menu_3 )
+    create_world_text_entry.allowed_characters = consts.ALLOWED_CHARACTERS
+    char_error_label_1 = UILabel( pygame.Rect( char_error_label_1_pos, char_error_label_1_dim ), "Enter the world name. Only", _manager, menu_3 )
+    char_error_label_2 = UILabel( pygame.Rect( char_error_label_2_pos, char_error_label_2_dim ), "alphabets and numbers allowed", _manager, menu_3 )
+    world_exists_label = UILabel( pygame.Rect( world_exists_label_pos, world_exists_label_dim ), "World already exists", _manager, menu_3)
+    world_exists_label.hide()
+    create_world_btn = UIButton( pygame.Rect( create_world_btn_pos, create_world_btn_dim ), "Create World", _manager, menu_3 )
     menu_3_back_btn = UIButton( pygame.Rect( menu_3_back_btn_pos, menu_3_back_btn_dim ), "Back", _manager, menu_3 )
 
 # Delete world menu
-def init_menu_4( display_size ):
-    pass
+def init_menu_4( display_size, _manager ):
+    global menu_4, info_label, delete_world_list, delete_world_btn, menu_4_back_btn
+    menu_4_dim = (400, 420)
+    menu_4_pos = ((display_size[ 0 ] - menu_4_dim[ 0 ]) / 2, (display_size[ 1 ] - menu_4_dim[ 1 ]) / 2)
+
+    info_label_pos = (50, 25)
+    info_label_dim = (menu_4_dim[ 0 ] - 2 * info_label_pos[ 0 ], 30)
+
+    delete_world_list_pos = (50, info_label_pos[1] + info_label_dim[1] + 20)
+    delete_world_list_dim = (menu_4_dim[ 0 ] - 2 * delete_world_list_pos[ 0 ], 180)
+
+    delete_world_btn_pos = (60, delete_world_list_pos[ 1 ] + delete_world_list_dim[ 1 ] + 30)
+    delete_world_btn_dim = (menu_4_dim[ 0 ] - 2 * delete_world_btn_pos[ 0 ], 50)
+
+    menu_4_back_btn_pos = (60, delete_world_btn_pos[ 1 ] + delete_world_btn_dim[ 1 ] + 10)
+    menu_4_back_btn_dim = (menu_4_dim[ 0 ] - 2 * menu_4_back_btn_pos[ 0 ], 50)
+
+    menu_4 = UIPanel( pygame.Rect( menu_4_pos, menu_4_dim ), 1, _manager )
+    info_label = UILabel( pygame.Rect( info_label_pos, info_label_dim ), "Double-Click World to Choose", _manager, menu_4)
+    delete_world_list = UISelectionList( pygame.Rect( delete_world_list_pos, delete_world_list_dim ), worlds, _manager, container=menu_4 )
+    delete_world_btn = UIButton( pygame.Rect( delete_world_btn_pos, delete_world_btn_dim ), "Delete World", _manager, menu_4 )
+    menu_4_back_btn = UIButton( pygame.Rect( menu_4_back_btn_pos, menu_4_back_btn_dim ), "Back", _manager, menu_4 )
 
 
-init_menu_1(display_sz, gui_manager)
-
+init_menu_1( display_sz, gui_manager )
+init_menu_2( display_sz, gui_manager )
+init_menu_3( display_sz, gui_manager )
+init_menu_4( display_sz, gui_manager )
+menu_2.hide( )
+menu_3.hide( )
+menu_4.hide( )
 menu_background = pygame.Surface( display_sz )
-menu_background.fill("#0000FF")
+menu_background.fill( "#0000FF" )
 
 menu_running = True
 
@@ -319,47 +360,94 @@ while menu_running:
         if event.type == pygame.QUIT:
             menu_running = False
         elif event.type == pygame.VIDEORESIZE:
-            display_sz[0] = screen.get_width()
-            display_sz[1] = screen.get_height()
+            display_sz[ 0 ] = screen.get_width( )
+            display_sz[ 1 ] = screen.get_height( )
 
             menu_background = pygame.Surface( display_sz )
-            menu_background.fill("#0000FF")
+            menu_background.fill( "#0000FF" )
 
-            # gui_manager = pygame_gui.UIManager(display_sz, "temptheme.json")
-            gui_manager.clear_and_reset()
+            gui_manager.clear_and_reset( )
             gui_manager.set_window_resolution( display_sz )
 
-            if menu_1:
-                menu_1.kill()
-                init_menu_1( display_sz, gui_manager )
-            if menu_2:
-                menu_2.kill()
-                init_menu_2( display_sz, gui_manager )
+            prev_menu_1_visible = menu_1.visible
+            prev_menu_2_visible = menu_2.visible
+            prev_menu_3_visible = menu_3.visible
+            prev_menu_4_visible = menu_4.visible
+
+            menu_1.kill( )
+            menu_2.kill( )
+            menu_3.kill( )
+            menu_4.kill( )
+
+            init_menu_1( display_sz, gui_manager )
+            init_menu_2( display_sz, gui_manager )
+            init_menu_3( display_sz, gui_manager )
+            init_menu_4( display_sz, gui_manager )
+
+            if not prev_menu_1_visible:
+                menu_1.hide( )
+            if not prev_menu_2_visible:
+                menu_2.hide( )
+            if not prev_menu_3_visible:
+                menu_3.hide( )
+            if not prev_menu_4_visible:
+                menu_4.hide( )
 
         elif event.type == pygame.USEREVENT:
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                 if event.ui_element == singleplayer_btn:
-                    menu_1.kill()
-                    menu_1 = None
-                    init_menu_2( display_sz, gui_manager )
-                elif event.ui_element == create_world_btn: # Create World button
-                    menu_2.kill( )
-                    menu_2 = None
-                    init_menu_3(display_sz, gui_manager)
-                elif event.ui_element == delete_world_btn: # Delete World button
-                    pass
-                elif event.ui_element == menu_2_back_btn: # Back button
-                    menu_2.kill()
-                    menu_2 = None
-                    init_menu_1( display_sz, gui_manager )
-                elif event.ui_element == create_world_confirm_btn: # Confirm creating the world
-                    print('Created New world')
-                    t_serializer = utils.Serializer('Worldx')
-                    t_serializer.stop()
-                elif event.ui_element == menu_3_back_btn: # Back button
-                    menu_3.kill()
-                    menu_2 = None
-                    init_menu_2(display_sz, gui_manager)
+                    menu_1.hide( )
+                    menu_2.show( )
+                elif event.ui_element == new_world_btn:  # Create World button
+                    menu_2.hide( )
+                    menu_3.show( )
+                    world_exists_label.hide( )
+                elif event.ui_element == create_world_btn:
+                    world_name = create_world_text_entry.get_text( )
+                    world_name = world_name.strip()
+                    lower_case_worlds = [i.lower() for i in worlds]
+                    if world_name.lower( ) not in lower_case_worlds:
+                        world_exists_label.hide( )
+                        if world_name:
+                            create_world_text_entry.set_text("")
+                            temp_serial = utils.Serializer(world_name)
+                            temp_serial.stop()
+                            worlds = os.listdir( "Worlds" )
+                            for i in range( len( worlds ) ): worlds[ i ] = worlds[ i ][ :-3 ]  # remove .db extension
+                            menu_3.hide( )
+                            menu_2.kill( )
+                            menu_4.kill( )
+                            init_menu_2( display_sz, gui_manager )
+                            init_menu_4( display_sz, gui_manager )
+                            menu_4.hide( )
+                    else:
+                        world_exists_label.show( )
+                elif event.ui_element == remove_world_btn:  # Delete World button
+                    menu_2.hide( )
+                    menu_4.show( )
+                elif event.ui_element == delete_world_btn:
+                    if world_to_delete:
+                        world_path = "Worlds/" + world_to_delete + ".db"
+                        if os.path.exists(world_path):
+                            send2trash.send2trash(world_path)
+                        worlds = os.listdir( "Worlds" )
+                        for i in range( len( worlds ) ): worlds[ i ] = worlds[ i ][ :-3 ]
+                        menu_2.kill( )
+                        menu_4.kill( )
+                        init_menu_2( display_sz, gui_manager )
+                        menu_2.hide( )
+                        init_menu_4( display_sz, gui_manager )
+                    worlds = os.listdir( "Worlds" )
+                    for i in range( len( worlds ) ): worlds[ i ] = worlds[ i ][ :-3 ]
+                elif event.ui_element == menu_2_back_btn:   # Back button
+                    menu_2.hide( )
+                    menu_1.show( )
+                elif event.ui_element == menu_3_back_btn:   # Back button
+                    menu_3.hide( )
+                    menu_2.show( )
+                elif event.ui_element == menu_4_back_btn:   # Back button
+                    menu_4.hide( )
+                    menu_2.show( )
 
             elif event.user_type == pygame_gui.UI_SELECTION_LIST_DOUBLE_CLICKED_SELECTION:
                 if event.ui_element == world_list:
@@ -373,14 +461,33 @@ while menu_running:
 
                     gui_manager.clear_and_reset( )
                     gui_manager.set_window_resolution( display_sz )
+
+                    prev_menu_1_visible = menu_1.visible
+                    prev_menu_2_visible = menu_2.visible
+                    prev_menu_3_visible = menu_3.visible
+                    prev_menu_4_visible = menu_4.visible
+
+                    menu_1.kill( )
                     menu_2.kill( )
-                    menu_2 = None
+                    menu_3.kill( )
+                    menu_4.kill( )
+
                     init_menu_1( display_sz, gui_manager )
+                    init_menu_2( display_sz, gui_manager )
+                    init_menu_3( display_sz, gui_manager )
+                    init_menu_4( display_sz, gui_manager )
+                    menu_2.hide( )
+                    menu_3.hide( )
+                    menu_4.hide( )
+                elif event.ui_element == delete_world_list:
+                    print("World to be deleted:", event.text)
+                    world_to_delete = event.text
+
 
         gui_manager.process_events( event )
-    gui_manager.update(dt)
-    screen.blit( menu_background , (0,0))
-    gui_manager.draw_ui(screen)
-    pygame.display.update()
+    gui_manager.update( dt )
+    screen.blit( menu_background, (0, 0) )
+    gui_manager.draw_ui( screen )
+    pygame.display.update( )
 
-pygame.display.quit()
+pygame.display.quit( )

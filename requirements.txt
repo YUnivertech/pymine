@@ -3,3 +3,4 @@ pygame>=2.0.1
 numpy>=1.18.5
 shapely>=1.7.1
 pygame-gui>=0.5.7
+Send2Trash>=1.5.0
