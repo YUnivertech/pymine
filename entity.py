@@ -57,11 +57,10 @@ class Entity:
         self.sel_item        = [ None , 0 ]     # The selected item and its quantity
 
     def get_item_held( self ):
-        return self.inventory.items[self.held_item_index[0]][self.held_item_index[1]]
+        return self.inventory.items[self.held_item_index[1]][self.held_item_index[0]]
 
     def get_sel_item( self ):
-
-        return [consts.ITEM_NAMES[self.sel_item[0]], self.sel_item[1]]
+        return consts.ITEM_NAMES[self.sel_item[1]], self.sel_item[0]
 
     def calc_friction(self):
         try:
@@ -128,13 +127,6 @@ class Entity:
         function = consts.r_use_hand
         if self.get_item_held():
             function = consts.ITEM_ATTR[self.get_item_held()][consts.item_attr.R_USE]
-
-        pos_x           = consts.get_x_pos_chunk(_cursor_pos)
-        pos_y           = consts.get_y_pos_chunk(_cursor_pos)
-
-        which_chunk     = consts.get_curr_chunk(_cursor_pos) - self.entity_buffer.chunk_buffer.positions[0]
-
-        function( pos_x, pos_y, which_chunk, self.entity_buffer.chunk_buffer, self.entity_buffer, _dt )
 
         pos_x           = consts.get_x_pos_chunk(_cursor_pos)
         pos_y           = consts.get_y_pos_chunk(_cursor_pos)
@@ -402,7 +394,7 @@ class EntityBuffer:
         self.get_y_pos_chunk    = lambda p: int( p[1] // consts.TILE_WIDTH )
         self.get_tile           = lambda p: self.chunk_buffer[self.get_curr_chunk_ind( p )].blocks[self.get_y_pos_chunk( p )][self.get_x_pos_chunk( p )]
 
-    def initialize( self , _chunk_buffer, _player , _renderer , _serializer , _camera , _screen ):
+    def initialize( self , _chunk_buffer, _renderer, _serializer, _player, _camera, _screen ):
 
         # Set all references to main managers
         self.chunk_buffer = _chunk_buffer
@@ -539,17 +531,16 @@ class Inventory:
         """
 
         for x in range( self.cols ):
-
             for y in range( self.rows ):
 
-                if self.items[y][x] == _item:
+                if self.items[y][x] != _item: continue
 
-                    to_remove = min( self.quantities[y][x] , _quantity )
-                    print(to_remove)
-                    self.quantities[y][x] -= to_remove
-                    _quantity -= to_remove
-                    if self.quantities[y][x] <= 0: self.items[y][x] = None
-                    if _quantity <= 0: return True
+                to_remove               = min( self.quantities[y][x] , _quantity )
+                self.quantities[y][x]   -= to_remove
+                _quantity               -= to_remove
+
+                if self.quantities[y][x] <= 0: self.items[y][x] = None
+                if _quantity <= 0: return True
 
         return _quantity
 
@@ -592,6 +583,20 @@ class Inventory:
                     self.surf.blit( consts.ITEM_TABLE[self.items[y ][x ] ], (coors[0 ] + 4 , coors[1 ] + 4) )
                     self.surf.blit( quantity_text , ( coors[0] , coors[1] ) )
 
+    def draw_top( self ):
+
+        self.surf.fill( ( 0 , 0 , 0 , 0 ), [ 0 , 0 , 800 , 500 ])
+        coors   = [ 0 , 0 ]
+        y = 0
+
+        for x , coors[0] in enumerate( range( 0 , 40 * self.cols , 40 ) ):
+            self.surf.blit( consts.inventory_slot, coors )
+
+            if self.quantities[y][x]:
+
+                quantity_text , quantity_rect = consts.INV_FONT.render( str( self.quantities[y ][x ] ), consts.INV_COLOR )
+                self.surf.blit( consts.ITEM_TABLE[self.items[y ][x ] ], (coors[0 ] + 4 , coors[1 ] + 4) )
+                self.surf.blit( quantity_text , ( coors[0] , coors[1] ) )
 
 class TextureStructPlayer:
 

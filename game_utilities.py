@@ -194,7 +194,11 @@ class Renderer:
 
     def paint_inventory( self ):
         self.player.inventory.draw()
-        self.screen.blit( self.player.inventory.surf , [ 20 , 20 ] )
+        self.screen.blit( self.player.inventory.surf , (20 , 20) )
+
+    def paint_inventory_top( self ):
+        self.player.inventory.draw_top()
+        self.screen.blit( self.player.inventory.surf, (20, 20) )
 
     def update_size( self ):
 
