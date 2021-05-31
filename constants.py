@@ -928,6 +928,11 @@ ITEM_TABLE = {
 # player = _entity_buffer.player
 # inventory = player.inventory
 
+# Entity hitting behaviour has not been implemented yet
+    # -1 returned indicates there was nothing to break
+    # 0 indicates that nothing has been broken
+    # 1 indicates that something has been broken
+
 #! Only redraw a portion of the chunk
 
 # Function only to be called if not colliding with the player or any other entity
@@ -939,6 +944,8 @@ def place_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, _bl
     if blocks[_y][_x] != tiles.air: return 0
     blocks[_y][_x] = _block
     chunk.draw()
+
+    return 1
 
     # if _local_entry: self.local_tile_table[ ( _x, _y, True) ] = _local_entry.copy()
     # Lightmaps
@@ -982,16 +989,28 @@ def break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, _da
 
 # l_use and r_use functions for various items
 def l_use_grass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_grass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    place_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, tiles.grass )
+    player = _entity_buffer.player
+    state = place_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, tiles.grass )
+    if state != 0:
+        player.inventory.rem_item_stack( items.grass, 1 )
 
 def l_use_browndirt(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_browndirt(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    place_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, tiles.browndirt )
+    player = _entity_buffer.player
+    state = place_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, tiles.browndirt )
+    if state != 0:
+        player.inventory.rem_item_stack( items.browndirt, 1 )
+
+def l_use_snowygrass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
+
+def r_use_snowygrass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    return place_block_generic( _x, _y, _chunk_buffer, _entity_buffer, _dt, tiles.snowygrass )
 
 # Dictionary consisting of item as key; dictionary consisting of item attribute as key and attribute as value as value
 ITEM_ATTR = {
@@ -1123,33 +1142,16 @@ player_running[0] = pygame.transform.flip(player_running[0], True, False)
 player_running[1] = pygame.transform.flip(player_running[1], True, False)
 
 def l_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    # Entity hitting behaviour has not been implemented yet
-    # -1 returned indicates there was nothing to break
-    # 0 indicates that nothing has been broken
-    # 1 indicates that something has been broken
     return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
-
-def l_use_snowygrass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
-
-def r_use_snowygrass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-
-    chunk = _chunk_buffer[_chunk]
-    blocks= chunk.blocks
-    walls = chunk.walls
-
-    if blocks[_y][_x] != tiles.air: return 0
-    blocks[_y][_x] = tiles.snowygrass
-    chunk.draw()
+    return 0
 
 def l_use_stick(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_stick(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return 0
 
 def l_use_leaves(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass

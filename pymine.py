@@ -134,12 +134,18 @@ def main_game_start( _world = 'World1' ):
                     else:
                         consts.SCALE_VEL *= 2
                     consts.dbg( 0, "SCALE VEL CHANGED:", consts.SCALE_VEL )
+
+                elif event.key == pygame.K_DOWN:            player.held_item_index[0] = (player.held_item_index[0] + 1) % consts.INV_ROWS
+                elif event.key == pygame.K_UP:              player.held_item_index[0] = (player.held_item_index[0] - 1 + consts.INV_ROWS) % consts.INV_ROWS
+                elif event.key == pygame.K_RIGHT:           player.held_item_index[1] = (player.held_item_index[1] + 1) % consts.INV_COLS
+                elif event.key == pygame.K_LEFT:            player.held_item_index[1] = (player.held_item_index[1] - 1 + consts.INV_COLS) % consts.INV_COLS
+
                 elif event.key == pygame.K_c:
                     command = input(">> ")
                     if command[0] == '.':
                         command = command.split(' ')
                         if command[0] == '.give': # Add requested item to inventory
-                            which_item = eval( 'consts.' + command[1], globals(), locals() )
+                            which_item = eval( 'consts.items.' + command[1], globals(), locals() )
                             quantity = eval( command[2] )
                             remainder = player.inventory.add_item( which_item, quantity )
                             print('Added {} items succesfully'.format(quantity - remainder))
@@ -159,7 +165,12 @@ def main_game_start( _world = 'World1' ):
 
             elif    event.type == pygame.MOUSEBUTTONDOWN:   button_states[event.button] = True
             elif    event.type == pygame.MOUSEBUTTONUP:     button_states[event.button] = False
-            elif    event.type == pygame.MOUSEWHEEL:        pass
+            elif    event.type == pygame.MOUSEWHEEL:
+                # event.y is 1 for upward motion and -1 for downward motion
+                if event.y == 1:
+                    print('upward motion')
+                else:
+                    print('downward motion')
 
             elif    event.type == pygame.VIDEORESIZE:
 
@@ -175,10 +186,6 @@ def main_game_start( _world = 'World1' ):
                 if consts.DBG != prev_debug: consts.dbg( 0, "--------------- DEBUG :", consts.DBG, "---------------" )
             if      key_states[pygame.K_c] :              utils.Renderer.setShaders( )
             elif    key_states[pygame.K_n] :              cam_bound = not cam_bound
-            elif    key_states[pygame.K_DOWN]:            player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] + 1) % consts.INV_ROWS
-            elif    key_states[pygame.K_UP]:              player.inventory.itemHeld[1] = (player.inventory.itemHeld[1] - 1 + consts.INV_ROWS) % consts.INV_ROWS
-            elif    key_states[pygame.K_RIGHT]:           player.inventory.itemHeld[0] = (player.inventory.itemHeld[0] + 1) % consts.INV_COLS
-            elif    key_states[pygame.K_LEFT]:            player.inventory.itemHeld[0] = (player.inventory.itemHeld[0] - 1 + consts.INV_COLS) % consts.INV_COLS
         except Exception as e:
             consts.dbg( 0, "IN MAIN LOOP - EXCEPTION:", e )
 
@@ -222,7 +229,8 @@ def main_game_start( _world = 'World1' ):
                 chunk_buffer[new_side + i].draw()
 
         renderer.paint_screen()
-        if( player.inventory.enabled ): renderer.paint_inventory()
+        if player.inventory.enabled : renderer.paint_inventory()
+        else: renderer.paint_inventory_top()
         pygame.display.update()
 
     chunk_buffer.save()
