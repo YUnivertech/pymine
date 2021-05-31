@@ -448,6 +448,7 @@ while menu_running:
                 elif event.ui_element == menu_4_back_btn:   # Back button
                     menu_4.hide( )
                     menu_2.show( )
+                    world_to_delete = None
 
             elif event.user_type == pygame_gui.UI_SELECTION_LIST_DOUBLE_CLICKED_SELECTION:
                 if event.ui_element == world_list:
