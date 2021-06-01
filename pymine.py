@@ -167,10 +167,7 @@ def main_game_start( _world = 'World1' ):
             elif    event.type == pygame.MOUSEBUTTONUP:     button_states[event.button] = False
             elif    event.type == pygame.MOUSEWHEEL:
                 # event.y is 1 for upward motion and -1 for downward motion
-                if event.y == 1:
-                    print('upward motion')
-                else:
-                    print('downward motion')
+                player.held_item_index[0] = (player.held_item_index + consts.INV_ROWs + event.y) % consts.INV_ROWS
 
             elif    event.type == pygame.VIDEORESIZE:
 
