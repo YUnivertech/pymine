@@ -27,6 +27,9 @@ class ItemEntity:
     def draw( self ):
         pass
 
+    def save( self ):
+        pass
+
 
 class Entity:
     def __init__( self, _pos, _entity_buffer, _inventory, _width, _height, _hitbox, _bottom_left, _health=100 ):
@@ -414,20 +417,27 @@ class EntityBuffer:
     def add_entity( self, _ind, _entity):
         self.entities[_ind].append(_entity)
 
-    def load_entity( self ):
-        pass
-
-    def save_entity( self ):
-        li = [[] for _i in range(self.len)]
-        for _i in range(len(self.entities)):
-            for entity in self.entities[_i]:
-                li[_i].append(entity.save())
-
     def load_player( self ):
         pass
 
     def save_player( self ):
         pass
+
+    def save( self, _entities, _index ):
+        raw_entities = [ ]
+        for entity in _entities:
+            raw_entities.append( entity.save( ) )
+        pickled_raw_entities = pickle.dumps( raw_entities )
+        self.serializer.set_entity( _index, pickled_raw_entities )
+
+    def load( self, _index ):
+        entities = [ ]
+        pickled_raw_entities = self.serializer.get_entity( _index )
+        if pickled_raw_entities:
+            raw_entities = pickle.loads( pickled_raw_entities )
+            for entity in raw_entities:
+                entities.append( entity.load( ) )
+        return entities
 
     def hit( self ):
         pass
@@ -449,8 +459,17 @@ class EntityBuffer:
     def draw( self ):
         pass
 
-    def shift( self, _dt):
-        pass
+    def shift( self, _delta_chunk):
+        if _delta_chunk > 0:
+            for i in range( _delta_chunk ):
+                self.entities.append(self.load(self.chunk_buffer[-1].index + i + 1))
+                self.save(self.entities[i], self.chunk_buffer[0].index + i)
+                self.entities.pop(0)
+        else:
+            for i in range( abs( _delta_chunk ) ):
+                self.entities.insert(i, self.load(self.chunk_buffer[0].index - i - 1))
+                self.save(self.entities[-i-1], self.chunk_buffer[-1].index - i)
+                self.entities.pop(-1)
 
 
 class Inventory:

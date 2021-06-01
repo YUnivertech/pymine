@@ -218,9 +218,8 @@ def main_game_start( _world = 'World1' ):
         prev_chunk = curr_chunk
 
         if delta_chunk:
-
-            new_side , num_chunks = chunk_buffer.shift(delta_chunk)
-            entity_buffer.shift(delta_chunk)
+            entity_buffer.shift( delta_chunk )
+            new_side, num_chunks = chunk_buffer.shift( delta_chunk )
 
             for i in range( num_chunks ):
                 chunk_buffer[new_side + i].draw()
@@ -453,6 +452,7 @@ while menu_running:
                 elif event.ui_element == menu_4_back_btn:   # Back button
                     menu_4.hide( )
                     menu_2.show( )
+                    world_to_delete = None
 
             elif event.user_type == pygame_gui.UI_SELECTION_LIST_DOUBLE_CLICKED_SELECTION:
                 if event.ui_element == world_list:

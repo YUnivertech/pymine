@@ -263,10 +263,16 @@ class Serializer:
             return None
 
     def set_entity(self, key, li):
-        c = self.conn.cursor()
-        # Update string at existing key
-        c.execute( '''UPDATE terrain SET entity =?, WHERE keys=?''', ( bz2.compress( li ), key ) )
-        self.conn.commit()
+        c = self.conn.cursor( )
+        try:
+            # Save string at new key location
+            c.execute( '''INSERT INTO terrain (entity, keys) VALUES (?,?)''', (bz2.compress( li ), key) )
+            self.conn.commit( )
+        except Exception as e:
+            consts.dbg(1, "EXCEPTION IN SERIALIZER SET_ENTITY:", e )
+            # Update string at existing key
+            c.execute( '''UPDATE terrain SET entity =? WHERE keys=?''', (bz2.compress( li ), key) )
+            self.conn.commit( )
 
     def get_entity(self, key):
         c = self.conn.cursor()
