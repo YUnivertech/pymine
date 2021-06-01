@@ -221,9 +221,8 @@ def main_game_start( _world = 'World1' ):
         prev_chunk = curr_chunk
 
         if delta_chunk:
-
-            new_side , num_chunks = chunk_buffer.shift(delta_chunk)
-            entity_buffer.shift(delta_chunk)
+            entity_buffer.shift( delta_chunk )
+            new_side, num_chunks = chunk_buffer.shift( delta_chunk )
 
             for i in range( num_chunks ):
                 chunk_buffer[new_side + i].draw()
