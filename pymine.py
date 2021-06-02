@@ -226,6 +226,7 @@ def main_game_start( _world = 'World1' ):
         else: renderer.paint_inventory_top()
         pygame.display.update()
 
+    entity_buffer.save_complete()
     chunk_buffer.save()
     player.save()
     serializer.stop()

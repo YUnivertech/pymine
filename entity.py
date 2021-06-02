@@ -408,7 +408,7 @@ class EntityBuffer:
         self.screen       = _screen
 
         self.len          = self.chunk_buffer.len
-        self.entities     = [[] for _i in range(self.len)]
+        self.entities     = [self.load(self.chunk_buffer[0].index + i) for i in range(self.len)]
 
     def add_player( self ):
         # To be implemented in multiplayer
@@ -438,6 +438,10 @@ class EntityBuffer:
             for entity in raw_entities:
                 entities.append( entity.load( ) )
         return entities
+
+    def save_complete( self ):
+        for i in range(self.len):
+            self.save(self.entities[i], self.chunk_buffer[0].index + i)
 
     def hit( self ):
         pass
