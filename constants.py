@@ -97,6 +97,7 @@ class tile_attr( enum.Enum ):
     # Gameplay related attributes
     DROPS           = 5
     TYPE            = 6
+    DROP_ITEM       = 7
 
 
 class tile_modifs( enum.Enum ):
@@ -567,68 +568,68 @@ TILE_ATTR = {
     # tiles.browndirt     : {tile_attr.FRICTION:0.8,  tile_attr.LUMINOSITY:0,   tile_attr.HEALTH:30,  tile_attr.INFLAMMABLE:None}
 
     tiles.air                 : {tile_attr.FRICTION:AIR_FRICTION, tile_attr.LUMINOSITY:255},
-    tiles.grass               : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.browndirt           : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.snowygrass          : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.leaves              : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.junglewood          : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.junglewood_plank    : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.oakwood             : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.oakwood_plank       : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.borealwood          : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.borealwood_plank    : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.pinewood            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.pinewood_plank      : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.cactuswood          : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.cactuswood_plank    : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.palmwood            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.palmwood_plank      : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.cosmonium_ore       : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.cosmonium           : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.unobtanium_ore      : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.unobtanium          : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.platinum_ore        : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.platinum            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.gold_ore            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.gold                : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.iron_ore            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.iron                : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.copper_ore          : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.copper              : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.diamond_ore         : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.diamond_block       : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.hellstone           : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.adamantite          : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.obsidian            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.bedrock             : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.granite             : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.quartz              : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.limestone           : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.greystone           : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.sandstone           : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.gravel              : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.coal                : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.clay                : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.red_clay            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.sand                : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.snow                : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.ice                 : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.glasspane           : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.glasswindow         : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.wood_door_upper     : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.wood_door_lower     : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.iron_door_upper     : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.iron_door_lower     : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.gold_door_upper     : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.gold_door_lower     : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.platinum_door_upper : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.platinum_door_lower : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.bed_head            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.bed_tail            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.torch               : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.crafting_table      : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.furnace             : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None},
-    tiles.chest               : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None}
+    tiles.grass               : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.browndirt           : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.snowygrass          : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.leaves              : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.junglewood          : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.junglewood_plank    : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.oakwood             : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.oakwood_plank       : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.borealwood          : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.borealwood_plank    : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.pinewood            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.pinewood_plank      : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.cactuswood          : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.cactuswood_plank    : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.palmwood            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.palmwood_plank      : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.cosmonium_ore       : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.cosmonium           : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.unobtanium_ore      : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.unobtanium          : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.platinum_ore        : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.platinum            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.gold_ore            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.gold                : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.iron_ore            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.iron                : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.copper_ore          : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.copper              : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.diamond_ore         : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.diamond_block       : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.hellstone           : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.adamantite          : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.obsidian            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.bedrock             : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.granite             : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.quartz              : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.limestone           : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.greystone           : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.sandstone           : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.gravel              : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.coal                : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.clay                : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.red_clay            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.sand                : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.snow                : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.ice                 : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.glasspane           : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.glasswindow         : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.wood_door_upper     : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.wood_door_lower     : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.iron_door_upper     : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.iron_door_lower     : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.gold_door_upper     : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.gold_door_lower     : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.platinum_door_upper : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.platinum_door_lower : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.bed_head            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.bed_tail            : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.torch               : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.crafting_table      : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.furnace             : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt},
+    tiles.chest               : {tile_attr.FRICTION:0.8, tile_attr.LUMINOSITY:255, tile_attr.HEALTH:100, tile_attr.INFLAMMABLE:None, tile_attr.DROP_ITEM:items.browndirt}
 }
 
 # Dictionary consisting of item as key; name as a string
@@ -937,6 +938,7 @@ ITEM_TABLE = {
 
 # Function only to be called if not colliding with the player or any other entity
 def place_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, _block ):
+
     chunk = _chunk_buffer[_chunk]
     blocks= chunk.blocks
     walls = chunk.walls
@@ -952,6 +954,7 @@ def place_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, _bl
 
 # Function only to be called if no entity is being attacked
 def break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, _damage ):
+
     # -1 returned indicates there was nothing to break
     # 0 indicates that nothing has been broken
     # 1 indicates that something has been broken
@@ -976,12 +979,16 @@ def break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, _da
     chunk.draw()
 
     if table[(_x, _y)][tile_attr.HEALTH] <= 0:
+        which_block   = layer[_y][_x]
         layer[_y][_x] = tiles.air
 
         del table[(_x, _y)][tile_attr.HEALTH]
         if table[(_x, _y)]:
             del table[(_x, _y)]
         chunk.draw()
+
+        pos = [_x, _y, _chunk.index]
+        _entity_buffer.add_item_entity( TILE_ATTR[which_block][tile_attr.DROP_ITEM], pos )
 
         return 1
 

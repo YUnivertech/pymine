@@ -18,18 +18,20 @@ import constants as consts
 
 
 class ItemEntity:
-    def __init__( self ):
-        pass
+
+    def __init__( self, _pos, _id, _entity_buffer ):
+
+        self.pos            = _pos
+        self.id             = _id
+        self.entity_buffer  = _entity_buffer
+        self.get_texture    = lambda : consts.ITEM_TABLE[self.id]
+        self.draw           = lambda : None
 
     def update( self ):
         pass
 
-    def draw( self ):
-        pass
-
     def save( self ):
         pass
-
 
 class Entity:
     def __init__( self, _pos, _entity_buffer, _inventory, _width, _height, _hitbox, _bottom_left, _health=100 ):
@@ -414,8 +416,22 @@ class EntityBuffer:
         # To be implemented in multiplayer
         pass
 
-    def add_entity( self, _ind, _entity):
+    def add_entity( self, _entity, _ind ):
         self.entities[_ind].append(_entity)
+
+    def add_item_entity( self, _id, _pos ):
+
+        x, y, ind = _pos
+        ind -= self.chunk_buffer.positions[0]
+        y *= consts.TILE_WIDTH
+
+        x += _pos * consts.CHUNK_WIDTH
+        x *= consts.TILE_WIDTH
+
+        pos = [x, y]
+
+        item_entity = ItemEntity( pos, _id, self )
+        self.add_entity( item_entity, ind )
 
     def load_player( self ):
         pass
