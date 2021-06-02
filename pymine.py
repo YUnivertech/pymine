@@ -1,6 +1,4 @@
-import math
-import os
-import time
+import math, os, time
 
 import opensimplex
 import pygame
@@ -10,9 +8,8 @@ from pygame_gui.elements import UIButton, UILabel, UIPanel, UITextEntryLine
 from pygame_gui.elements.ui_selection_list import UISelectionList
 import send2trash
 
-import chunk
+import chunk, entity
 import constants as consts
-import entity
 import game_utilities as utils
 
 key_states              = {}
