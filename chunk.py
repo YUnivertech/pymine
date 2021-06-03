@@ -140,315 +140,315 @@ import constants as consts
 #                 propagateRadial(y, x-1, left=True)
 
 def generate_chunk_temp( _chunk , noise_gen ):
-    # one layer of bedrock
-    # one layer of obsidian
-    # one layer of hellstone
-    # 10 layers of stone
-    # 10 layers of limestone
-    # 10 layers of sandstone
-    # one layer of coal
-    # one layer of dirt
-    # one layer of grass
-    for i in range( consts.CHUNK_WIDTH ):
-        _chunk.blocks[0][i] = consts.tiles.bedrock
-        _chunk.blocks[1][i] = consts.tiles.obsidian
-        _chunk.blocks[2][i] = consts.tiles.hellstone
-        for j in range(10):
-            _chunk.blocks[j + 3][i] = consts.tiles.greystone
-            _chunk.blocks[j + 13][i] = consts.tiles.limestone
-            _chunk.blocks[j + 23][i] = consts.tiles.sandstone
-        _chunk.blocks[32][i] = consts.tiles.coal
-        _chunk.blocks[33][i] = consts.tiles.browndirt
-        _chunk.blocks[34][i] = consts.tiles.grass
+	# one layer of bedrock
+	# one layer of obsidian
+	# one layer of hellstone
+	# 10 layers of stone
+	# 10 layers of limestone
+	# 10 layers of sandstone
+	# one layer of coal
+	# one layer of dirt
+	# one layer of grass
+	for i in range( consts.CHUNK_WIDTH ):
+		_chunk.blocks[0][i] = consts.tiles.bedrock
+		_chunk.blocks[1][i] = consts.tiles.obsidian
+		_chunk.blocks[2][i] = consts.tiles.hellstone
+		for j in range(10):
+			_chunk.blocks[j + 3][i] = consts.tiles.greystone
+			_chunk.blocks[j + 13][i] = consts.tiles.limestone
+			_chunk.blocks[j + 23][i] = consts.tiles.sandstone
+		_chunk.blocks[32][i] = consts.tiles.coal
+		_chunk.blocks[33][i] = consts.tiles.browndirt
+		_chunk.blocks[34][i] = consts.tiles.grass
 
-    # for i in range( CHUNK_WIDTH ):
-    #     for j in range( CHUNK_HEIGHT ):
-    #         _chunk.blocks[j][i] = tiles.bedrock
+	# for i in range( CHUNK_WIDTH ):
+	#     for j in range( CHUNK_HEIGHT ):
+	#         _chunk.blocks[j][i] = tiles.bedrock
 
-    # for i in range( consts.CHUNK_WIDTH ):
-    #     x_coor = i + ( consts.CHUNK_WIDTH * _chunk.index )
-    #     my_height = int( ( noise_gen.noise2d( x = 0.0075 * x_coor, y = 0 ) + 1 ) * 32 ) # Value will be from 0 to 64
-    #     for j in range( my_height ):
-    #         _chunk.blocks[j][i] = consts.tiles.browndirt
+	# for i in range( consts.CHUNK_WIDTH ):
+	#     x_coor = i + ( consts.CHUNK_WIDTH * _chunk.index )
+	#     my_height = int( ( noise_gen.noise2d( x = 0.0075 * x_coor, y = 0 ) + 1 ) * 32 ) # Value will be from 0 to 64
+	#     for j in range( my_height ):
+	#         _chunk.blocks[j][i] = consts.tiles.browndirt
 
 
 class Chunk:
 
-    def __init__( self , _blocks = None , _walls = None , _local_tile_table = None , _index = None , _active_time = None ):
+	def __init__( self , _blocks = None , _walls = None , _local_tile_table = None , _index = None , _active_time = None ):
 
-        self.blocks             = _blocks
-        self.walls              = _walls
-        self.local_tile_table   = _local_tile_table
-        self.index              = _index
+		self.blocks             = _blocks
+		self.walls              = _walls
+		self.local_tile_table   = _local_tile_table
+		self.index              = _index
 
-        # self.created            = _time
-        self.active_time        = _active_time
+		# self.created            = _time
+		self.active_time        = _active_time
 
-        # self.surf               = pygame.Surface( ( CHUNK_WIDTH_P , CHUNK_HEIGHT_P ) , flags = pygame.SRCALPHA )
-        self.surf               = pygame.Surface( (consts.CHUNK_WIDTH_P , consts.CHUNK_HEIGHT_P) )
+		# self.surf               = pygame.Surface( ( CHUNK_WIDTH_P , CHUNK_HEIGHT_P ) , flags = pygame.SRCALPHA )
+		self.surf               = pygame.Surface( (consts.CHUNK_WIDTH_P , consts.CHUNK_HEIGHT_P) )
 
-        if not self.blocks:
-            self.blocks = [ [ consts.tiles.air for j in range( consts.CHUNK_WIDTH ) ] for i in range( consts.CHUNK_HEIGHT ) ]
-        if not self.walls:
-            self.walls = [ [ consts.tiles.air for j in range( consts.CHUNK_WIDTH ) ] for i in range( consts.CHUNK_HEIGHT ) ]
-        if not self.local_tile_table:
-            self.local_tile_table = [ {}, {} ]
+		if not self.blocks:
+			self.blocks = [ [ consts.tiles.air for j in range( consts.CHUNK_WIDTH ) ] for i in range( consts.CHUNK_HEIGHT ) ]
+		if not self.walls:
+			self.walls = [ [ consts.tiles.air for j in range( consts.CHUNK_WIDTH ) ] for i in range( consts.CHUNK_HEIGHT ) ]
+		if not self.local_tile_table:
+			self.local_tile_table = [ {}, {} ]
 
-    def draw( self, _rect = [ 0 , 0 , consts.CHUNK_WIDTH , consts.CHUNK_HEIGHT ] ):
+	def draw( self, _rect = [ 0 , 0 , consts.CHUNK_WIDTH , consts.CHUNK_HEIGHT ] ):
 
-        x_start = consts.TILE_WIDTH * ( _rect[0 ])
-        y_start = consts.TILE_WIDTH * (consts.CHUNK_HEIGHT - _rect[3 ])
+		x_start = consts.TILE_WIDTH * ( _rect[0 ])
+		y_start = consts.TILE_WIDTH * (consts.CHUNK_HEIGHT - _rect[3 ])
 
-        x_span  = consts.TILE_WIDTH * (_rect[2 ] - _rect[0 ])
-        y_span  = consts.TILE_WIDTH * (_rect[3 ] - _rect[1 ])
+		x_span  = consts.TILE_WIDTH * (_rect[2 ] - _rect[0 ])
+		y_span  = consts.TILE_WIDTH * (_rect[3 ] - _rect[1 ])
 
-        # make the region transparent
-        self.surf.fill( ( 0 , 0 , 0 , 0 ), [ x_start , y_start , x_span, y_span])
+		# make the region transparent
+		self.surf.fill( ( 0 , 0 , 0 , 0 ), [ x_start , y_start , x_span, y_span])
 
-        # loop for blitting the tiles and walls
-        for i in range( _rect[1] , _rect[3] ):
+		# loop for blitting the tiles and walls
+		for i in range( _rect[1] , _rect[3] ):
 
-            coors = [ 0 , consts.TILE_WIDTH * (consts.CHUNK_HEIGHT - i - 1) ]
+			coors = [ 0 , consts.TILE_WIDTH * (consts.CHUNK_HEIGHT - i - 1) ]
 
-            for j in range( _rect[0] , _rect[2] ):
+			for j in range( _rect[0] , _rect[2] ):
 
-                coors[0]            = consts.TILE_WIDTH * j
-                tile_ref , wall_ref = self.blocks[i][j] , self.walls[i][j]
+				coors[0]            = consts.TILE_WIDTH * j
+				tile_ref , wall_ref = self.blocks[i][j] , self.walls[i][j]
 
-                if tile_ref != consts.tiles.air :
+				if tile_ref != consts.tiles.air :
 
-                    self.surf.blit( consts.TILE_TABLE[tile_ref ], coors )
-                    if ( i , j ) in self.local_tile_table[1] : pass
+					self.surf.blit( consts.TILE_TABLE[tile_ref ], coors )
+					if ( i , j ) in self.local_tile_table[1] : pass
 
-                elif wall_ref != consts.tiles.air :
+				elif wall_ref != consts.tiles.air :
 
-                    self.surf.blit( consts.TILE_TABLE[wall_ref ], coors )
-                    if ( i , j ) in self.local_tile_table[0] : pass
+					self.surf.blit( consts.TILE_TABLE[wall_ref ], coors )
+					if ( i , j ) in self.local_tile_table[0] : pass
 
-        for key in self.local_tile_table[0]:
-            x, y        = key
-            wall        = self.walls[y][x]
-            wall_attr   = self.local_tile_table[0][key]
+		for key in self.local_tile_table[0]:
+			x, y        = key
+			wall        = self.walls[y][x]
+			wall_attr   = self.local_tile_table[0][key]
 
-            coors       = [ x * consts.TILE_WIDTH, ( consts.CHUNK_HEIGHT - y - 1) * consts.TILE_WIDTH ]
+			coors       = [ x * consts.TILE_WIDTH, ( consts.CHUNK_HEIGHT - y - 1) * consts.TILE_WIDTH ]
 
-            if consts.tile_attr.HEALTH in wall_attr:
-                break_state = int( ( wall_attr[consts.tile_attr.HEALTH] * 8 ) / consts.TILE_ATTR[wall][consts.tile_attr.HEALTH] )
-                self.surf.blit( consts.TILE_MODIFIERS[consts.tile_attr.crack][8 - break_state], coors )
+			if consts.tile_attr.HEALTH in wall_attr:
+				break_state = int( ( wall_attr[consts.tile_attr.HEALTH] * 8 ) / consts.TILE_ATTR[wall][consts.tile_attr.HEALTH] )
+				self.surf.blit( consts.TILE_MODIFIERS[consts.tile_attr.crack][8 - break_state], coors )
 
-        for key in self.local_tile_table[1]:
-            x, y        = key
-            blck        = self.blocks[y][x]
-            blck_attr   = self.local_tile_table[1][key]
+		for key in self.local_tile_table[1]:
+			x, y        = key
+			blck        = self.blocks[y][x]
+			blck_attr   = self.local_tile_table[1][key]
 
-            coors       = [ x * consts.TILE_WIDTH, ( consts.CHUNK_HEIGHT - y - 1) * consts.TILE_WIDTH ]
+			coors       = [ x * consts.TILE_WIDTH, ( consts.CHUNK_HEIGHT - y - 1) * consts.TILE_WIDTH ]
 
-            if consts.tile_attr.HEALTH in blck_attr:
-                break_state = int( ( blck_attr[consts.tile_attr.HEALTH] * 8 ) / consts.TILE_ATTR[blck][consts.tile_attr.HEALTH] )
-                self.surf.blit( consts.TILE_MODIFIERS[consts.tile_modifs.crack][8 - break_state], coors )
+			if consts.tile_attr.HEALTH in blck_attr:
+				break_state = int( ( blck_attr[consts.tile_attr.HEALTH] * 8 ) / consts.TILE_ATTR[blck][consts.tile_attr.HEALTH] )
+				self.surf.blit( consts.TILE_MODIFIERS[consts.tile_modifs.crack][8 - break_state], coors )
 
-        # Then we blit the tile modifiers (cracks, glows, etc.)
-        # Then we blit the liquids / fire
+		# Then we blit the tile modifiers (cracks, glows, etc.)
+		# Then we blit the liquids / fire
 
 
-    def break_block_at( self , _x , _y , _item , _dt ):
-        # Left click was done at the coordinates x, y for dt time using item tool at the block level
-        # the behaviour of tool is acted using its corresponding function which we can get from a dictionary
-        if( ( _x, _y ) not in self.local_tile_table[1] ):
-            self.local_tile_table[ ( _x, _y ) ] = {}
+	def break_block_at( self , _x , _y , _item , _dt ):
+		# Left click was done at the coordinates x, y for dt time using item tool at the block level
+		# the behaviour of tool is acted using its corresponding function which we can get from a dictionary
+		if( ( _x, _y ) not in self.local_tile_table[1] ):
+			self.local_tile_table[ ( _x, _y ) ] = {}
 
-        if( consts.tile_attr.HEALTH not in self.local_tile_table[1][ ( _x, _y ) ] ):
-            self.local_tile_table[1][ ( _x, _y ) ][ consts.tile_attr.HEALTH ] = 100
+		if( consts.tile_attr.HEALTH not in self.local_tile_table[1][ ( _x, _y ) ] ):
+			self.local_tile_table[1][ ( _x, _y ) ][ consts.tile_attr.HEALTH ] = 100
 
-        self.local_tile_table[1][ ( _x, _y ) ][ consts.tile_attr.HEALTH ] -= (25 * _dt)
+		self.local_tile_table[1][ ( _x, _y ) ][ consts.tile_attr.HEALTH ] -= (25 * _dt)
 
-        if(self.local_tile_table[1][ ( _x, _y ) ][ consts.tile_attr.HEALTH ] <= 0):
-            del self.local_tile_table[1][ ( _x, _y ) ]
-            self.blocks[_y][_x] = consts.tiles.air
-            return True
+		if(self.local_tile_table[1][ ( _x, _y ) ][ consts.tile_attr.HEALTH ] <= 0):
+			del self.local_tile_table[1][ ( _x, _y ) ]
+			self.blocks[_y][_x] = consts.tiles.air
+			return True
 
-        return False
+		return False
 
-    def break_wall_at( self , _x , _y , _item , _dt ): pass
-        # Left click was done at the coordinates x, y for dt time using item tool at the wall level
-        # the behaviour of tool is acted using its corresponding function which we can get from a dictionary
+	def break_wall_at( self , _x , _y , _item , _dt ): pass
+		# Left click was done at the coordinates x, y for dt time using item tool at the wall level
+		# the behaviour of tool is acted using its corresponding function which we can get from a dictionary
 
-    def place_block_at( self , _x , _y , _tile, _local_entry = None ):
-        # Place _tile at (_x, _y) and put an entry for it in the local tile table if _local_entry is a valid dictionary
-        # Right click was done at the coordinates x, y for dt time using item item at the block level
-        # the behaviour of item is acted using its corresponding function which we can get from a dictionary
-        if self.blocks[_y][_x] != consts.tiles.air: return False
-        self.blocks[_y][_x] = _tile
+	def place_block_at( self , _x , _y , _tile, _local_entry = None ):
+		# Place _tile at (_x, _y) and put an entry for it in the local tile table if _local_entry is a valid dictionary
+		# Right click was done at the coordinates x, y for dt time using item item at the block level
+		# the behaviour of item is acted using its corresponding function which we can get from a dictionary
+		if self.blocks[_y][_x] != consts.tiles.air: return False
+		self.blocks[_y][_x] = _tile
 
-        if _local_entry: self.local_tile_table[ ( _x, _y, True) ] = _local_entry.copy()
+		if _local_entry: self.local_tile_table[ ( _x, _y, True) ] = _local_entry.copy()
 
-        return True
+		return True
 
-    def place_wall_at( self , _x , _y , _item , _dt ): pass
-        # Right click was done at the coordinates x, y for dt time using item item at the wall level
-        # the behaviour of item is acted using its corresponding function which we can get from a dictionary
+	def place_wall_at( self , _x , _y , _item , _dt ): pass
+		# Right click was done at the coordinates x, y for dt time using item item at the wall level
+		# the behaviour of item is acted using its corresponding function which we can get from a dictionary
 
-    def update( self , _dt ): pass
-        # First we update the state of all the blocks using their respective function calls (growing trees, flowers, decaying blocks etc)
-        # Fire spread
-        # Liquid movement
+	def update( self , _dt ): pass
+		# First we update the state of all the blocks using their respective function calls (growing trees, flowers, decaying blocks etc)
+		# Fire spread
+		# Liquid movement
 
 class ChunkBuffer:
 
-    def __init__( self , _len ):
+	def __init__( self , _len ):
 
-        # size and positions of chunks in the world
-        self.len            = _len
-        # self.positions      = [None] * 3
-        self.positions      = [ 0, 0, 0 ]
+		# size and positions of chunks in the world
+		self.len            = _len
+		# self.positions      = [None] * 3
+		self.positions      = [ 0, 0, 0 ]
 
-        # chunk and light surface data
-        self.chunks         = [None] * _len
-        self.light_surfs    = [None] * _len
+		# chunk and light surface data
+		self.chunks         = [None] * _len
+		self.light_surfs    = [None] * _len
 
-        # References to the other managers (These must be provided in the main)
-        self.entity_buffer  = None
-        self.renderer       = None
-        self.serializer     = None
-        self.player         = None
+		# References to the other managers (These must be provided in the main)
+		self.entity_buffer  = None
+		self.renderer       = None
+		self.serializer     = None
+		self.player         = None
 
-    def initialize( self , _entity_buffer , _renderer , _serializer , _player , _camera , _screen , _noise_gen ):
+	def initialize( self , _entity_buffer , _renderer , _serializer , _player , _camera , _screen , _noise_gen ):
 
-        # Set all references to main managers
-        self.entity_buffer  = _entity_buffer
-        self.renderer       = _renderer
-        self.serializer     = _serializer
-        self.player         = _player
-        self.camera         = _camera
-        self.screen         = _screen
-        self.noise_gen      = _noise_gen
+		# Set all references to main managers
+		self.entity_buffer  = _entity_buffer
+		self.renderer       = _renderer
+		self.serializer     = _serializer
+		self.player         = _player
+		self.camera         = _camera
+		self.screen         = _screen
+		self.noise_gen      = _noise_gen
 
-        self.positions[1]   = math.floor( self.player.pos[0] / consts.CHUNK_WIDTH_P )
+		self.positions[1]   = math.floor( self.player.pos[0] / consts.CHUNK_WIDTH_P )
 
-        self.positions[0]   = self.positions[1] - ( self.len // 2 )
-        self.positions[2]   = self.positions[1] + ( self.len // 2 )
+		self.positions[0]   = self.positions[1] - ( self.len // 2 )
+		self.positions[2]   = self.positions[1] + ( self.len // 2 )
 
-        self.load()
+		self.load()
 
-    def draw( self ):
+	def draw( self ):
 
-        for chunk in self.chunks: chunk.draw()
+		for chunk in self.chunks: chunk.draw()
 
-    def shift( self , _delta ):
+	def shift( self , _delta ):
 
-        flag ,_delta = (True, _delta) if _delta > 0 else (False, -_delta)
-        num_times , extra = _delta // self.len , _delta % self.len
+		flag ,_delta = (True, _delta) if _delta > 0 else (False, -_delta)
+		num_times , extra = _delta // self.len , _delta % self.len
 
-        side = self.shift_left if flag else self.shift_right
+		side = self.shift_left if flag else self.shift_right
 
-        for i in range( num_times ): side( self.len )
-        if extra: side( extra )
+		for i in range( num_times ): side( self.len )
+		if extra: side( extra )
 
-        if num_times: return ( 0 , self.len )
-        elif flag:    return ( self.len - extra, extra )
-        else:         return ( 0, extra)
+		if num_times: return ( 0 , self.len )
+		elif flag:    return ( self.len - extra, extra )
+		else:         return ( 0, extra)
 
-    def shift_right( self , _delta ):
+	def shift_right( self , _delta ):
 
-        for i , pos in enumerate( range( self.positions[2] , self.positions[2] - _delta , -1 ) ):
+		for i , pos in enumerate( range( self.positions[2] , self.positions[2] - _delta , -1 ) ):
 
-            li                      = [ self.chunks[self.len-1-i].blocks, self.chunks[self.len-1-i].walls ]
-            lo                      = self.chunks[self.len-1-i].local_tile_table
+			li                      = [ self.chunks[self.len-1-i].blocks, self.chunks[self.len-1-i].walls ]
+			lo                      = self.chunks[self.len-1-i].local_tile_table
 
-            self.serializer.set_chunk( pos, pickle.dumps( li ), pickle.dumps( lo ) )
+			self.serializer.set_chunk( pos, pickle.dumps( li ), pickle.dumps( lo ) )
 
-        for i in range( self.len - 1, _delta - 1, -1 ):
+		for i in range( self.len - 1, _delta - 1, -1 ):
 
-            self.chunks[i]          = self.chunks[i - _delta]
+			self.chunks[i]          = self.chunks[i - _delta]
 
-        loaded_chunks =  [None] * _delta
-        for i , pos in enumerate( range( self.positions[0] - _delta , self.positions[0] ) ):
+		loaded_chunks =  [None] * _delta
+		for i , pos in enumerate( range( self.positions[0] - _delta , self.positions[0] ) ):
 
-            loaded_chunks[i]         = self.serializer.get_chunk( pos )
+			loaded_chunks[i]         = self.serializer.get_chunk( pos )
 
-            if loaded_chunks[i] is None:
-                loaded_chunks[i] = Chunk( _index = pos )
-                generate_chunk_temp( loaded_chunks[i] , self.noise_gen )
-            else:
-                li = pickle.loads( loaded_chunks[i][0] )
-                lo = pickle.loads( loaded_chunks[i][1] )
-                loaded_chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = pos )
+			if loaded_chunks[i] is None:
+				loaded_chunks[i] = Chunk( _index = pos )
+				generate_chunk_temp( loaded_chunks[i] , self.noise_gen )
+			else:
+				li = pickle.loads( loaded_chunks[i][0] )
+				lo = pickle.loads( loaded_chunks[i][1] )
+				loaded_chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = pos )
 
-            self.chunks[i]          = loaded_chunks[i]
+			self.chunks[i]          = loaded_chunks[i]
 
-        self.positions[0] -= _delta
-        self.positions[1] -= _delta
-        self.positions[2] -= _delta
+		self.positions[0] -= _delta
+		self.positions[1] -= _delta
+		self.positions[2] -= _delta
 
-        return self.positions[0]
+		return self.positions[0]
 
-    def shift_left( self , _delta ):
+	def shift_left( self , _delta ):
 
-        for i , pos in enumerate( range( self.positions[0] , self.positions[0] + _delta ) ):
+		for i , pos in enumerate( range( self.positions[0] , self.positions[0] + _delta ) ):
 
-            li                      = [ self.chunks[i].blocks , self.chunks[i].walls ]
-            lo                      = self.chunks[i].local_tile_table
+			li                      = [ self.chunks[i].blocks , self.chunks[i].walls ]
+			lo                      = self.chunks[i].local_tile_table
 
-            self.serializer.set_chunk( pos, pickle.dumps( li ), pickle.dumps( lo ) )
+			self.serializer.set_chunk( pos, pickle.dumps( li ), pickle.dumps( lo ) )
 
-        for i in range( self.len - _delta ):
+		for i in range( self.len - _delta ):
 
-            self.chunks[i]          = self.chunks[i + _delta]
+			self.chunks[i]          = self.chunks[i + _delta]
 
-        loaded_chunks =  [None] * _delta
-        for i , pos in enumerate( range( self.len - _delta , self.len ) ):
+		loaded_chunks =  [None] * _delta
+		for i , pos in enumerate( range( self.len - _delta , self.len ) ):
 
-            loaded_chunks[i]        = self.serializer.get_chunk( self.positions[2] + i + 1 )
+			loaded_chunks[i]        = self.serializer.get_chunk( self.positions[2] + i + 1 )
 
-            if loaded_chunks[i] is None:
-                loaded_chunks[i] = Chunk( _index = self.positions[2] + i + 1 )
-                generate_chunk_temp( loaded_chunks[i] , self.noise_gen )
-            else:
-                li = pickle.loads( loaded_chunks[i][0] )
-                lo = pickle.loads( loaded_chunks[i][1] )
-                loaded_chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = self.positions[2] + i + 1 )
+			if loaded_chunks[i] is None:
+				loaded_chunks[i] = Chunk( _index = self.positions[2] + i + 1 )
+				generate_chunk_temp( loaded_chunks[i] , self.noise_gen )
+			else:
+				li = pickle.loads( loaded_chunks[i][0] )
+				lo = pickle.loads( loaded_chunks[i][1] )
+				loaded_chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = self.positions[2] + i + 1 )
 
-            self.chunks[pos]        = loaded_chunks[i]
+			self.chunks[pos]        = loaded_chunks[i]
 
-        self.positions[0] += _delta
-        self.positions[1] += _delta
-        self.positions[2] += _delta
+		self.positions[0] += _delta
+		self.positions[1] += _delta
+		self.positions[2] += _delta
 
-        return self.positions[2]
+		return self.positions[2]
 
-    def calc_light( self ):
-        pass
+	def calc_light( self ):
+		pass
 
-    def save( self ):
+	def save( self ):
 
-        for chunk in self.chunks:
-            self.serializer.set_chunk( chunk.index, pickle.dumps( [ chunk.blocks , chunk.walls ] ) , pickle.dumps( chunk.local_tile_table ) )
+		for chunk in self.chunks:
+			self.serializer.set_chunk( chunk.index, pickle.dumps( [ chunk.blocks , chunk.walls ] ) , pickle.dumps( chunk.local_tile_table ) )
 
-    def load( self ):
+	def load( self ):
 
-        for i in range( self.len ):
-            self.chunks[i] = self.serializer.get_chunk( self.positions[0] + i )
+		for i in range( self.len ):
+			self.chunks[i] = self.serializer.get_chunk( self.positions[0] + i )
 
-        for i in range( self.len ):
+		for i in range( self.len ):
 
-            if( self.chunks[i] is None ):
+			if( self.chunks[i] is None ):
 
-                self.chunks[i] = Chunk( _index = self.positions[0] + i )
-                generate_chunk_temp( self.chunks[i] , self.noise_gen )
+				self.chunks[i] = Chunk( _index = self.positions[0] + i )
+				generate_chunk_temp( self.chunks[i] , self.noise_gen )
 
-            else:
+			else:
 
-                li = pickle.loads( self.chunks[i][0] )
-                lo = pickle.loads( self.chunks[i][1] )
+				li = pickle.loads( self.chunks[i][0] )
+				lo = pickle.loads( self.chunks[i][1] )
 
-                self.chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = self.positions[0] + i )
+				self.chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = self.positions[0] + i )
 
-            self.chunks[i].draw()
+			self.chunks[i].draw()
 
-    def show_indices( self ):
-        for c in self.chunks: print(c.index, end=' ')
-        print()
+	def show_indices( self ):
+		for c in self.chunks: print(c.index, end=' ')
+		print()
 
-    def __getitem__( self , _key ): return self.chunks[_key]
+	def __getitem__( self , _key ): return self.chunks[_key]
 
-    def __setitem__( self , _key , _val ): self.chunks[ _key ] = _val
+	def __setitem__( self , _key , _val ): self.chunks[ _key ] = _val
