@@ -235,7 +235,8 @@ class Serializer:
         except Exception as e:
             consts.dbg(1, "EXCEPTION IN SERIALIZER INIT:", e)
 
-    def __setitem__( self, key, t ):
+    def set_chunk( self, key, t0, t1 ):
+        t = t0, t1
         c = self.conn.cursor()
         try:
             # Save string at new key location
@@ -247,7 +248,7 @@ class Serializer:
             c.execute( 'UPDATE terrain SET list =?, local =?  WHERE keys=?', ( bz2.compress( t[0] ), bz2.compress( t[1] ), key ) )
             self.conn.commit()
 
-    def __getitem__(self, key):
+    def get_chunk(self, key):
         c = self.conn.cursor()
         c.execute( '''SELECT list FROM terrain WHERE keys=?''', ( key, ) )
         li = c.fetchone()

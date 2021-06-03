@@ -356,7 +356,7 @@ class ChunkBuffer:
             li                      = [ self.chunks[self.len-1-i].blocks, self.chunks[self.len-1-i].walls ]
             lo                      = self.chunks[self.len-1-i].local_tile_table
 
-            self.serializer[pos]    = pickle.dumps( li ), pickle.dumps( lo )
+            self.serializer.set_chunk( pos, pickle.dumps( li ), pickle.dumps( lo ) )
 
         for i in range( self.len - 1, _delta - 1, -1 ):
 
@@ -365,7 +365,7 @@ class ChunkBuffer:
         loaded_chunks =  [None] * _delta
         for i , pos in enumerate( range( self.positions[0] - _delta , self.positions[0] ) ):
 
-            loaded_chunks[i]         = self.serializer[pos]
+            loaded_chunks[i]         = self.serializer.get_chunk( pos )
 
             if loaded_chunks[i] is None:
                 loaded_chunks[i] = Chunk( _index = pos )
@@ -390,7 +390,7 @@ class ChunkBuffer:
             li                      = [ self.chunks[i].blocks , self.chunks[i].walls ]
             lo                      = self.chunks[i].local_tile_table
 
-            self.serializer[pos]    = pickle.dumps( li ), pickle.dumps( lo )
+            self.serializer.set_chunk( pos, pickle.dumps( li ), pickle.dumps( lo ) )
 
         for i in range( self.len - _delta ):
 
@@ -399,7 +399,7 @@ class ChunkBuffer:
         loaded_chunks =  [None] * _delta
         for i , pos in enumerate( range( self.len - _delta , self.len ) ):
 
-            loaded_chunks[i]        = self.serializer[self.positions[2] + i + 1]
+            loaded_chunks[i]        = self.serializer.get_chunk( self.positions[2] + i + 1 )
 
             if loaded_chunks[i] is None:
                 loaded_chunks[i] = Chunk( _index = self.positions[2] + i + 1 )
@@ -423,12 +423,12 @@ class ChunkBuffer:
     def save( self ):
 
         for chunk in self.chunks:
-            self.serializer[chunk.index] = pickle.dumps( [ chunk.blocks , chunk.walls ] ) , pickle.dumps( chunk.local_tile_table )
+            self.serializer.set_chunk( chunk.index, pickle.dumps( [ chunk.blocks , chunk.walls ] ) , pickle.dumps( chunk.local_tile_table ) )
 
     def load( self ):
 
         for i in range( self.len ):
-            self.chunks[i] = self.serializer[self.positions[0] + i]
+            self.chunks[i] = self.serializer.get_chunk( self.positions[0] + i )
 
         for i in range( self.len ):
 
