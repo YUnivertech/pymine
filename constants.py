@@ -987,7 +987,7 @@ def break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, _da
             del table[(_x, _y)]
         chunk.draw()
 
-        pos = [_x, _y, _chunk.index]
+        pos = [_x, _y, chunk.index]
         _entity_buffer.add_item_entity( TILE_ATTR[which_block][tile_attr.DROP_ITEM], pos )
 
         return 1

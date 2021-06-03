@@ -425,7 +425,7 @@ class EntityBuffer:
         ind -= self.chunk_buffer.positions[0]
         y *= consts.TILE_WIDTH
 
-        x += _pos * consts.CHUNK_WIDTH
+        x += _pos[0] * consts.CHUNK_WIDTH
         x *= consts.TILE_WIDTH
 
         pos = [x, y]
