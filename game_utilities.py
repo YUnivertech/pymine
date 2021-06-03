@@ -292,12 +292,6 @@ class Serializer:
             consts.dbg( 1, "EXCEPTION IN SERIALIZER GET_ENTITY:", e )
             return None
 
-    def get_chunk_time( self, key ):
-        pass
-
-    def set_chunk_time( self, key, val ):
-        pass
-
     def save_player( self, name, pickled ):
         c = self.conn.cursor()
         try:
