@@ -1,115 +1,115 @@
 {
-	"button": {
-		"colours": {
-			"normal_bg": "#363636",
-			"hovered_text": "#FFFFFF",
-			"normal_border": "#242424",
-			"hovered_border": "#333333",
-			"hovered_bg": "#424242"
-		},
-		"font": {
-			"name": "game_font",
-			"size": "18",
-			"regular_path": "Resources/Fonts/pointfree.ttf"
-		},
-		"misc": {
-			"shape": "rounded_rectangle",
-			"shape_corner_radius": "9",
-			"border_width": "3",
-			"shadow_width": "1",
-			"tool_tip_delay": "0.5",
-			"state_transitions": {
-				"normal_hovered": "0.25",
-				"hovered_normal": "0.25"
-			}
-		}
-	},
-	"label": {
-		"colours": {
-			"dark_bg": "#363636",
-			"normal_text": "#FFFF00"
-		},
-		"font": {
-			"name": "game_font",
-			"size": "15",
-			"regular_path": "Resources/Fonts/pointfree.ttf"
-		},
-		"misc": {
-			"shape": "rounded_rectangle",
-			"shape_corner_radius": "9",
-			"border_width": "2",
-			"shadow_width": "1"
-		}
-	},
-	"text_box": {
-		"colours": {
-			"dark_bg": "#21282DEE",
-			"normal_border": "#666666DD"
-		},
-		"misc": {
-			"shape": "rounded_rectangle",
-			"shape_corner_radius": "9",
-			"border_width": "2"
-		}
-	},
-	"panel": {
-		"colours": {
-			"dark_bg": "#3F3F3F",
-			"normal_border": "#6F6F6F"
-		},
-		"misc": {
-			"shape": "rounded_rectangle",
-			"shape_corner_radius": "15",
-			"border_width": "3",
-			"shadow_width": "1"
-		}
-	},
-	"selection_list": {
-		"colours": {
-			"dark_bg": "#21282D",
-			"normal_border": "#999999"
-		},
-		"misc": {
-			"shape": "rounded_rectangle",
-			"shape_corner_radius": "9",
-			"border_width": "1",
-			"shadow_width": "1",
-			"list_item_height": "45"
-		}
-	},
-	"selection_list.vertical_scroll_bar": {
-		"misc": {
-			"shape": "rounded_rectangle",
-			"shape_corner_radius": "6",
-			"shadow_width": "2",
-			"enable_arrow_buttons": "0"
-		}
-	},
-	"selection_list.@selection_list_item": {
-		"misc": {
-			"shape": "rounded_rectangle",
-			"shape_corner_radius": "5",
-			"border_width": "2"
-		}
-	},
-	"selection_list.vertical_scroll_bar.#sliding_button": {
-		"misc": {
-			"shape": "rounded_rectangle",
-			"shape_corner_radius": "3",
-			"shadow_width": "3"
-		}
-	},
-	"text_entry_line": {
-		"font": {
-			"name": "game_font",
-			"size": "18",
-			"regular_path": "Resources/Fonts/pointfree.ttf"
-		},
-		"misc": {
-			"shape": "rounded_rectangle",
-			"shape_corner_radius": "9",
-			"shadow_width": "3",
-			"padding": "5,10"
-		}
-	}
+    "button": {
+        "colours": {
+            "normal_bg": "#363636",
+            "hovered_text": "#FFFFFF",
+            "normal_border": "#242424",
+            "hovered_border": "#333333",
+            "hovered_bg": "#424242"
+        },
+        "font": {
+            "name": "game_font",
+            "size": "18",
+            "regular_path": "Resources/Fonts/pointfree.ttf"
+        },
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "9",
+            "border_width": "3",
+            "shadow_width": "1",
+            "tool_tip_delay": "0.5",
+            "state_transitions": {
+                "normal_hovered": "0.25",
+                "hovered_normal": "0.25"
+            }
+        }
+    },
+    "label": {
+        "colours": {
+            "dark_bg": "#363636",
+            "normal_text": "#FFFF00"
+        },
+        "font": {
+            "name": "game_font",
+            "size": "15",
+            "regular_path": "Resources/Fonts/pointfree.ttf"
+        },
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "9",
+            "border_width": "2",
+            "shadow_width": "1"
+        }
+    },
+    "text_box": {
+        "colours": {
+            "dark_bg": "#21282DEE",
+            "normal_border": "#666666DD"
+        },
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "9",
+            "border_width": "2"
+        }
+    },
+    "panel": {
+        "colours": {
+            "dark_bg": "#3F3F3F",
+            "normal_border": "#6F6F6F"
+        },
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "15",
+            "border_width": "3",
+            "shadow_width": "1"
+        }
+    },
+    "selection_list": {
+        "colours": {
+            "dark_bg": "#21282D",
+            "normal_border": "#999999"
+        },
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "9",
+            "border_width": "1",
+            "shadow_width": "1",
+            "list_item_height": "45"
+        }
+    },
+    "selection_list.vertical_scroll_bar": {
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "6",
+            "shadow_width": "2",
+            "enable_arrow_buttons": "0"
+        }
+    },
+    "selection_list.@selection_list_item": {
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "5",
+            "border_width": "2"
+        }
+    },
+    "selection_list.vertical_scroll_bar.#sliding_button": {
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "3",
+            "shadow_width": "3"
+        }
+    },
+    "text_entry_line": {
+        "font": {
+            "name": "game_font",
+            "size": "18",
+            "regular_path": "Resources/Fonts/pointfree.ttf"
+        },
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "9",
+            "shadow_width": "3",
+            "padding": "5,10"
+        }
+    }
 }
