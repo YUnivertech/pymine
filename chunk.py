@@ -203,7 +203,8 @@ class Chunk:
         y_span  = consts.TILE_WIDTH * (_rect[3 ] - _rect[1 ])
 
         # make the region transparent
-        self.surf.fill( ( 0 , 0 , 0 , 0 ), [ x_start , y_start , x_span, y_span])
+        # self.surf.fill( ( 0 , 0 , 0 , 0 ), [ x_start , y_start , x_span, y_span])
+        self.surf.fill( ( 63 , 127 , 255 ), [ x_start , y_start , x_span, y_span])
 
         # loop for blitting the tiles and walls
         for i in range( _rect[1] , _rect[3] ):
