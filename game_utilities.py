@@ -226,7 +226,7 @@ class Serializer:
         c = self.conn.cursor()
         try:
             # Create Table
-            c.execute( '''CREATE TABLE terrain(keys INTEGER NOT NULL PRIMARY KEY, list TEXT, local TEXT, entity TEXT)''' )
+            c.execute( '''CREATE TABLE terrain(keys INTEGER NOT NULL PRIMARY KEY, list TEXT, local TEXT, chunk_time TEXT, entity TEXT)''' )
             self.conn.commit()
             c.execute( '''CREATE TABLE player(playername TEXT NOT NULL PRIMARY KEY, pickledplayer TEXT)''' )
             self.conn.commit()
@@ -263,6 +263,29 @@ class Serializer:
             consts.dbg( 1, "EXCEPTION IN SERIALIZER GETITEM:", e )
             return None
 
+    def set_chunk_time( self, _key, _time ):
+        c = self.conn.cursor()
+        try:
+            # Set world time for the first time
+            c.execute( '''INSERT INTO terrain (chunk_time) VALUES (?) WHERE keys=?''', ( bz2.compress( _time ), _key) )
+            self.conn.commit()
+        except Exception as e:
+            # Update world time
+            consts.dbg( 1, "EXCEPTION IN SERIALIZER SET_CHUNK_TIME:", e )
+            c.execute( '''UPDATE terrain SET chunk_time=? WHERE keys=?''', ( bz2.compress( _time ), _key) )
+            self.conn.commit()
+
+    def get_chunk_time( self, _key ):
+        c = self.conn.cursor()
+        c.execute( '''SELECT chunk_time FROM terrain WHERE keys=?''', ( _key, ))
+        res = c.fetchone()
+        self.conn.commit()
+        try:
+            return bz2.decompress( res[0] )
+        except Exception as e:
+            consts.dbg( 1, "EXCEPTION IN SERIALIZER GET_CHUNK_TIME:", e )
+            return res
+
     def set_entity(self, key, li):
         c = self.conn.cursor( )
         try:
@@ -279,8 +302,9 @@ class Serializer:
         c = self.conn.cursor()
         c.execute( '''SELECT entity FROM terrain WHERE keys=?''', ( key, ) )
         li = c.fetchone()
+        self.conn.commit()
         try:
-            li = bz2.decompress( li )
+            li = bz2.decompress( li[0] )
             return li
         except Exception as e:
             consts.dbg( 1, "EXCEPTION IN SERIALIZER GET_ENTITY:", e )
