@@ -26,6 +26,7 @@ class ItemEntity:
         self.entity_buffer  = _entity_buffer
         self.get_texture    = lambda : consts.ITEM_TABLE[self.id]
         self.draw           = lambda : None
+        self.get_pos        = lambda : self.pos
 
     def update( self ):
         pass
@@ -424,11 +425,10 @@ class EntityBuffer:
     def add_item_entity( self, _id, _pos ):
 
         x, y, ind = _pos
-        ind -= self.chunk_buffer.positions[0]
-        y *= consts.TILE_WIDTH
+        x += consts.CHUNK_WIDTH * ind
 
-        x += _pos[0] * consts.CHUNK_WIDTH
         x *= consts.TILE_WIDTH
+        y *= consts.TILE_WIDTH
 
         pos = [x, y]
 

@@ -170,9 +170,16 @@ class Renderer:
 
         self.entity_buffer.draw()
         coors = []
+
         for chunk_group in self.entity_buffer.entities:
-            for entity in chunk_group: pass
-                # self.screen.blit( entity.get_texture(), coors )
+            for entity in chunk_group:
+
+                coors = entity.get_pos().copy()
+                coors[0] += self.num_hor - self.camera[0]
+                coors[1] -= self.camera[1]
+                coors[1] =  self.num_ver - coors[1] - consts.TILE_WIDTH
+
+                self.screen.blit( entity.get_texture(), coors )
 
     def paint_inventory( self ):
         self.player.inventory.draw()

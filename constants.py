@@ -61,7 +61,8 @@ PLYR_HEIGHT         = TILE_WIDTH+14    # 54
 PLYR_RANGE          = 4*TILE_WIDTH
 INV_COLS            = 10
 INV_ROWS            = 3
-HAND_DAMAGE         = 30
+HAND_DAMAGE         = 33
+
 
 ALLOWED_CHARACTERS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
                       'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
@@ -976,8 +977,6 @@ def break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, _da
 
     table[(_x, _y)][tile_attr.HEALTH] -= ( _damage * _dt )
 
-    chunk.draw()
-
     if table[(_x, _y)][tile_attr.HEALTH] <= 0:
         which_block   = layer[_y][_x]
         layer[_y][_x] = tiles.air
@@ -991,6 +990,9 @@ def break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, _da
         _entity_buffer.add_item_entity( TILE_ATTR[which_block][tile_attr.DROP_ITEM], pos )
 
         return 1
+
+    else:
+        chunk.draw()
 
     return 0
 
