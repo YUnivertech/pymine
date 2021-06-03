@@ -61,6 +61,10 @@ class Entity:
         self.held_item_index = [ 0, 0 ]        # The index of the held item in the inventory
         self.sel_item        = [ None , 0 ]     # The selected item and its quantity
 
+        self.texture_strct   = TextureStructEntity()
+
+        self.get_texture     = lambda : self.texture_strct.texture
+
     def get_item_held( self ):
         return self.inventory.items[self.held_item_index[1]][self.held_item_index[0]]
 
@@ -203,8 +207,6 @@ class Player(Entity):
         self.bottom_left   = self.bottom[0]
         self.pos           = _pos  # World pos of surface in x-y-z coords
         # self.hitbox        = [(0, 0), (HITBOX_WIDTH, 0), (HITBOX_WIDTH, -HITBOX_HEIGHT), (0, -HITBOX_HEIGHT)]
-
-        self.texture_strct = TextureStructPlayer()
 
     def initialize( self, _chunk_buffer, _entity_buffer, _renderer, _serializer, _key_state, _mouse_state, _cursor_pos ):
 
@@ -637,7 +639,9 @@ class Inventory:
                 self.surf.blit( consts.ITEM_TABLE[self.items[y ][x ] ], (coors[0 ] + 4 , coors[1 ] + 4) )
                 self.surf.blit( quantity_text , ( coors[0] , coors[1] ) )
 
-class TextureStructPlayer:
+
+# Structure to hold all textures of an entity and to abstract animation
+class TextureStructEntity:
 
     def __init__( self, ):
         # 0 is during static

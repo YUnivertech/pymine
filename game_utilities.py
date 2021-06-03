@@ -90,9 +90,6 @@ class Renderer:
         # This remains constant if you are very high or very low
         # In the overworld, it changes from day to night
 
-        # right_walker    = self.middle
-        # left_walker     = self.middle - 1
-
         flag            = False
 
         for right_walker in range( self.middle , self.chunk_buffer.len ):
@@ -167,30 +164,15 @@ class Renderer:
         plyr_coors[1] = self.num_ver - plyr_coors[1]
 
         # Blit a small rectangle
-        self.screen.blit( self.player.texture_strct.texture, ( plyr_coors[0] - 8, plyr_coors[1] - 8))
-        # pygame.draw.rect( self.screen, (50, 50, 255), pygame.Rect( plyr_coors[0] - 8, plyr_coors[1] - 8, 17, 17 ) )
-        # pygame.draw.rect( self.screen, (255, 50, 50), pygame.Rect( camera_coors[0] - 2, camera_coors[1] - 2, 5, 5 ) )
+        # self.screen.blit( self.player.texture_strct.texture, ( plyr_coors[0] - 8, plyr_coors[1] - 8))
+        self.screen.blit( self.player.get_texture(), ( plyr_coors[0] - 8, plyr_coors[1] - 8))
+        pygame.draw.rect( self.screen, (255, 50, 50), pygame.Rect( camera_coors[0] - 2, camera_coors[1] - 2, 5, 5 ) )
 
-        # item = cls.player.inventory.getSelectedItem()
-        # name, quantity = 'Nothing', cls.player.inventory.getSelectedQuantity()
-        # if(tiles.TILE_NAMES.get( item, None )):
-        #     name = tiles.TILE_NAMES[item]
-        # elif(items.ITEM_NAMES.get( item, None )):
-        #     name = items.ITEM_NAMES[item]
-
-        # if(name != 'Nothing'): name += '  ' + str(quantity)
-        # toShow, rect = SC_DISPLAY_FONT.render( name , (0, 0, 0) )
-        # xVal = cls.screen.get_width() - toShow.get_width() - 8
-        # cls.screen.blit(toShow, [xVal, 16])
-
-        # cls.entityBuffer.draw()
-        # for group in cls.entityBuffer.entities:
-        #     for entity in group:
-        #         coors = entity.surfPos()
-        #         coors[1] -= cls.camera[1]
-        #         coors[1] = cls.numVer - coors[1]
-        #         coors[0] += cls.numHor - cls.camera[0]
-        #         cls.screen.blit( entity.surf, coors )
+        self.entity_buffer.draw()
+        coors = []
+        for chunk_group in self.entity_buffer.entities:
+            for entity in chunk_group: pass
+                # self.screen.blit( entity.get_texture(), coors )
 
     def paint_inventory( self ):
         self.player.inventory.draw()

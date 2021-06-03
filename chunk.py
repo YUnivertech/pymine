@@ -7,7 +7,6 @@ import pygame.freetype
 
 import constants as consts
 
-
 # class Shader:
 
 #     def __init__( self, parent ):
