@@ -19,13 +19,13 @@ def generate_chunk_temp( _chunk , noise_gen ):
         _chunk.blocks[0][i] = consts.tiles.bedrock
         _chunk.blocks[1][i] = consts.tiles.obsidian
         _chunk.blocks[2][i] = consts.tiles.hellstone
-        for j in range(10):
-            _chunk.blocks[j + 3][i] = consts.tiles.greystone
-            _chunk.blocks[j + 13][i] = consts.tiles.limestone
-            _chunk.blocks[j + 23][i] = consts.tiles.sandstone
-        _chunk.blocks[32][i] = consts.tiles.coal
-        _chunk.blocks[33][i] = consts.tiles.browndirt
-        _chunk.blocks[34][i] = consts.tiles.grass
+        # for j in range(10):
+        #     _chunk.blocks[j + 3][i] = consts.tiles.greystone
+        #     _chunk.blocks[j + 13][i] = consts.tiles.limestone
+        #     _chunk.blocks[j + 23][i] = consts.tiles.sandstone
+        # _chunk.blocks[32][i] = consts.tiles.coal
+        # _chunk.blocks[33][i] = consts.tiles.browndirt
+        # _chunk.blocks[34][i] = consts.tiles.grass
 
     # for i in range( CHUNK_WIDTH ):
     #     for j in range( CHUNK_HEIGHT ):
@@ -50,8 +50,8 @@ class Chunk:
         # self.created            = _time
         self.active_time        = _active_time
 
-        # self.surf               = pygame.Surface( ( CHUNK_WIDTH_P , CHUNK_HEIGHT_P ) , flags = pygame.SRCALPHA )
-        self.surf               = pygame.Surface( (consts.CHUNK_WIDTH_P , consts.CHUNK_HEIGHT_P) )
+        self.surf               = pygame.Surface( ( consts.CHUNK_WIDTH_P , consts.CHUNK_HEIGHT_P ) , flags = pygame.SRCALPHA )
+        # self.surf               = pygame.Surface( (consts.CHUNK_WIDTH_P , consts.CHUNK_HEIGHT_P) )
 
         if not self.blocks:
             self.blocks = [ [ consts.tiles.air for j in range( consts.CHUNK_WIDTH ) ] for i in range( consts.CHUNK_HEIGHT ) ]
@@ -69,8 +69,7 @@ class Chunk:
         y_span  = consts.TILE_WIDTH * (_rect[3 ] - _rect[1 ])
 
         # make the region transparent
-        # self.surf.fill( ( 0 , 0 , 0 , 0 ), [ x_start , y_start , x_span, y_span])
-        self.surf.fill( ( 63 , 127 , 255 ), [ x_start , y_start , x_span, y_span])
+        self.surf.fill( ( 0 , 0 , 0 , 0 ), [ x_start , y_start , x_span, y_span])
 
         # loop for blitting the tiles and walls
         for i in range( _rect[1] , _rect[3] ):

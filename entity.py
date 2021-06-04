@@ -275,10 +275,10 @@ class Player(Entity):
                         self.pos[ i ] += self.vel[ i ] * consts.SCALE_VEL * dt
                     if consts.CHUNK_HEIGHT_P < self.pos[ 1 ]:
                         self.pos[ 1 ] = consts.CHUNK_HEIGHT_P
-                        consts.dbg( 0, "IN UPDATE WHILE LOOP - IN MOVE - POS > MAX HEIGHT" )
+                        consts.dbg( -1, "IN UPDATE WHILE LOOP - IN MOVE - POS > MAX HEIGHT" )
                     elif 0 > self.pos[ 1 ]:
                         self.pos[ 1 ] = 0
-                        consts.dbg( 0, "IN UPDATE WHILE LOOP - IN MOVE - POS < MIN HEIGHT" )
+                        consts.dbg( -1, "IN UPDATE WHILE LOOP - IN MOVE - POS < MIN HEIGHT" )
                 else:
                     self.vel[ i ] = 0
             if self.vel == [0, 0]: break

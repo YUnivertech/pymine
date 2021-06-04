@@ -41,6 +41,10 @@ CHUNK_HEIGHT        = 512
 CHUNK_WIDTH_P       = TILE_WIDTH * CHUNK_WIDTH
 CHUNK_HEIGHT_P      = TILE_WIDTH * CHUNK_HEIGHT
 
+# Height at which space and overworld start
+SPACE_START         = ( CHUNK_HEIGHT - 1 - 64 ) * TILE_WIDTH
+OVER_START          = 64 * TILE_WIDTH
+
 # Constant to determine the linear interpolation of the camera
 LERP_C              = (10 / 3) * 3
 
@@ -488,6 +492,9 @@ TILE_MODIFIERS = {
 
 # Dictionary consisting of tile as key; surface (image) as value
 inventory_slot = pygame.image.load("Resources/Default/InventorySpace.png")
+cave_background = pygame.image.load("Resources/Default/cave_background.png")
+space_background = pygame.image.load("Resources/Default/space_background.png")
+
 TILE_TABLE = {
 
     tiles.air                   : pygame.image.load("Resources/Default/tile_air.png"),

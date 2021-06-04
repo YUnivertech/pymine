@@ -90,6 +90,18 @@ class Renderer:
         # This remains constant if you are very high or very low
         # In the overworld, it changes from day to night
 
+        if self.player.get_pos()[1] >= consts.SPACE_START:
+            # Put the space texture
+            self.screen.fill( (0, 0, 0) )
+        elif self.player.get_pos()[1] >= consts.OVER_START:
+            # Put the overworld texture
+            self.screen.fill( (63, 127, 255) )
+        else:
+            # Put the cave texture
+            self.screen.fill( (200, 200, 0) )
+
+        # print(consts.SPACE_START, consts.OVER_START, self.player.get_pos()[1])
+
         flag            = False
 
         for right_walker in range( self.middle , self.chunk_buffer.len ):
@@ -146,7 +158,7 @@ class Renderer:
             if flag : break
 
         # Temporary rendering of camera
-        camera_coors = [self.camera[0], self.camera[1]]
+        camera_coors = self.camera.copy()
 
         # Translate to camera's space
         camera_coors[0] -= self.camera[0]
