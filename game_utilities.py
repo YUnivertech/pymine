@@ -208,8 +208,11 @@ class Renderer:
 
 
 class Serializer:
+
     def __init__( self, target ):
         self.name = "Worlds/" + target + '.db'
+        self.world_time = 0
+
         if not os.path.isdir("Worlds"): os.mkdir("Worlds")
         self.conn = sqlite3.connect( self.name )
         c = self.conn.cursor()
@@ -223,6 +226,8 @@ class Serializer:
             self.conn.commit()
         except Exception as e:
             consts.dbg(1, "EXCEPTION IN SERIALIZER INIT:", e)
+
+        self.world_time = self.get_world_time()
 
     def set_chunk( self, key, t0, t1 ):
         t = t0, t1
@@ -344,6 +349,12 @@ class Serializer:
         except Exception as e:
             consts.dbg( 1, "EXCEPTION IN SERIALIZER GET_WORLD_TIME:", e )
             return res
+
+    def update_world_time( self, _dt ):
+        self.world_time += _dt
+
+    def use_world_time( self, _dt ):
+        return self.world_time
 
     def stop( self ):
         self.conn.close( )

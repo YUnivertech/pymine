@@ -196,6 +196,8 @@ def main_game_start( _world = 'World1' ):
         if player.vel != [0,0]: consts.dbg( 0, "IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER VEL:", player.vel )
         if player.acc != [0,0]: consts.dbg( 0, "IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER ACC:", player.acc )
 
+        chunk_buffer.update( dt )
+
         if cam_bound:
             camera[0] += ( player.pos[0] - camera[0] ) * consts.LERP_C * dt
             camera[1] += ( player.pos[1] - camera[1] ) * consts.LERP_C * dt

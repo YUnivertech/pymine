@@ -287,10 +287,81 @@ class Chunk:
         # Right click was done at the coordinates x, y for dt time using item item at the wall level
         # the behaviour of item is acted using its corresponding function which we can get from a dictionary
 
-    def update( self , _dt ): pass
-        # First we update the state of all the blocks using their respective function calls (growing trees, flowers, decaying blocks etc)
-        # Fire spread
-        # Liquid movement
+    def update( self, _dt ):
+
+        # Go through every block in this table
+        to_remove = []
+        for key in self.local_tile_table[0]:
+
+            to_remove_local = []
+            x, y = key
+
+            flag = 0
+
+            # Go through every attribute of this block
+            for attr in self.local_tile_table[0][key]:
+
+                if attr == consts.tile_attr.HEALTH:
+
+                    blck = self.walls[y][x]
+                    health_tot = consts.TILE_ATTR[blck][consts.tile_attr.HEALTH]
+                    self.local_tile_table[0][key][attr] += ( health_tot // 5 ) * _dt
+
+                    # If this is of no significance, then put it to a queue to be removed
+                    if self.local_tile_table[0][key][attr] >= health_tot:
+                        to_remove_local.append( attr )
+
+                    flag = 1
+
+            # Go through the queue and remove all redundant key-value pairs
+            for attr in to_remove_local:
+                del self.local_tile_table[0][key][attr]
+
+            if len( self.local_tile_table[0][key] ) <= 0:
+                to_remove.append( key )
+
+            if flag and self.blocks[y][x] == consts.tiles.air:
+                self.draw( [x, y, x + 1, y + 1] )
+
+        for key in to_remove:
+            del self.local_tile_table[0][key]
+
+        # Go through every block in this table
+        to_remove = []
+        for key in self.local_tile_table[1]:
+
+            to_remove_local = []
+            x, y = key
+
+            flag = 0
+
+            # Go through every attribute of this block
+            for attr in self.local_tile_table[1][key]:
+
+                if attr == consts.tile_attr.HEALTH:
+
+                    blck = self.blocks[y][x]
+                    health_tot = consts.TILE_ATTR[blck][consts.tile_attr.HEALTH]
+                    self.local_tile_table[1][key][attr] += ( health_tot // 5 ) * _dt
+
+                    # If this is of no significance, then put it to a queue to be removed
+                    if self.local_tile_table[1][key][attr] >= health_tot:
+                        to_remove_local.append( attr )
+
+                    flag = 1
+
+            # Go through the queue and remove all redundant key-value pairs
+            for attr in to_remove_local:
+                del self.local_tile_table[1][key][attr]
+
+            if len( self.local_tile_table[1][key] ) <= 0:
+                to_remove.append( key )
+
+            if flag:
+                self.draw( [x, y, x + 1, y + 1] )
+
+        for key in to_remove:
+            del self.local_tile_table[1][key]
 
     def get_surf( self ):
         return self.surf
@@ -301,7 +372,7 @@ class ChunkBuffer:
 
         # size and positions of chunks in the world
         self.len            = _len
-        self.mid            = math.floor( self.player.get_pos()[0] / consts.CHUNK_WIDTH_P )
+        self.mid            = 0
 
         # chunk and light surface data
         self.chunks         = [None] * _len
@@ -324,7 +395,7 @@ class ChunkBuffer:
         self.screen         = _screen
         self.noise_gen      = _noise_gen
 
-        self.mid            = self.player.get_pos()[0]
+        self.mid            = math.floor( _player.get_pos()[0] / consts.CHUNK_WIDTH_P )
 
         self.load()
 
@@ -338,8 +409,12 @@ class ChunkBuffer:
         return self.mid + ( self.len >> 1 )
 
     def draw( self ):
+        for chunk in self.chunks:
+            chunk.draw()
 
-        for chunk in self.chunks: chunk.draw()
+    def update( self, _dt ):
+        for chunk in self.chunks:
+            chunk.update( _dt )
 
     def shift( self , _delta ):
 
@@ -383,6 +458,8 @@ class ChunkBuffer:
 
             self.chunks[i]          = loaded_chunks[i]
 
+        self.mid -= _delta
+
     def shift_left( self , _delta ):
 
         for i , pos in enumerate( range( self.get_start_chunk_ind() , self.get_start_chunk_ind() + _delta ) ):
@@ -411,6 +488,8 @@ class ChunkBuffer:
 
             self.chunks[pos]        = loaded_chunks[i]
 
+        self.mid += _delta
+
     def calc_light( self ):
         pass
 
@@ -421,16 +500,13 @@ class ChunkBuffer:
 
     def load( self ):
 
-        mid = math.floor( self.player.get_pos()[0] / consts.CHUNK_WIDTH_P )
-        left = mid - ( self.len >> 1 )
-        left = mid + ( self.len >> 1 )
+        left = self.mid - ( self.len >> 1 )
+        right = self.mid + ( self.len >> 1 )
 
         for i in range( self.len ):
             self.chunks[i] = self.serializer.get_chunk( left + i )
 
-        for i in range( self.len ):
-
-            if( self.chunks[i] is None ):
+            if self.chunks[i] is None:
 
                 self.chunks[i] = Chunk( _index = left + i )
                 generate_chunk_temp( self.chunks[i] , self.noise_gen )
@@ -440,9 +516,10 @@ class ChunkBuffer:
                 li = pickle.loads( self.chunks[i][0] )
                 lo = pickle.loads( self.chunks[i][1] )
 
-                self.chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = self.get_start_chunk_ind() + i )
+                self.chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = left + i )
 
             self.chunks[i].draw()
+
 
     def show_indices( self ):
         for c in self.chunks: print(c.index, end=' ')
