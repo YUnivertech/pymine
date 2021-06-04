@@ -59,7 +59,9 @@ PLYR_HEIGHT         = TILE_WIDTH+14    # 54
 PLYR_RANGE          = 4 * TILE_WIDTH
 INV_COLS            = 10
 INV_ROWS            = 3
-HAND_DAMAGE         = 33
+# HAND_DAMAGE         = 33
+HAND_DAMAGE         = 10000
+
 
 ALLOWED_CHARS       = [chr(ord('a') + i) for i in range(26)] + [chr(ord('A') + i) for i in range(26)] + [str(i) for i in range(10)]
 

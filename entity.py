@@ -401,10 +401,14 @@ class EntityBuffer:
         x *= consts.TILE_WIDTH
         y *= consts.TILE_WIDTH
 
+        ind -= self.chunk_buffer.get_start_chunk_ind()
+
         pos = [x, y]
 
         item_entity = ItemEntity( pos, _id, self )
         self.add_entity( item_entity, ind )
+
+        print('IND:', ind)
 
     def load_player( self ):
         pass
@@ -466,7 +470,7 @@ class EntityBuffer:
                 self.save(self.entities[-i-1], self.chunk_buffer.get_end_chunk_ind() - i)
                 self.entities.pop(-1)
         if self.entities != prev_entities:
-            consts.dbg(-1, "ENTITY BUFFER - END OF SHIFT - ENTITIES LIST:", self.entities)
+            consts.dbg(1, "ENTITY BUFFER - END OF SHIFT - ENTITIES LIST:", self.entities)
 
 
 class Inventory:
