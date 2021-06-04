@@ -1,15 +1,24 @@
-import math
 import pickle
+from typing import Tuple, Union
 
 import pygame
 import pygame.freetype
 
+import chunk
 import constants as consts
+import game_utilities as utils
+
 
 class ItemEntity:
 
     def __init__( self, _pos, _id, _entity_buffer ):
+        """Initializes the ItemEntity object.
 
+        Args:
+            _pos (list): World position of the surface of the ItemEntity in x-y coordinate system. Also referred to as the position of the ItemEntity.
+            _id (int): Type of the ItemEntity.
+            _entity_buffer (EntityBuffer): Reference to the EntityBuffer object.
+        """
         self.pos            = _pos
         self.get_pos        = lambda : self.pos
 
@@ -23,12 +32,28 @@ class ItemEntity:
         pass
 
     def save( self ):
+        """Converts the ItemEntity into a list of attributes to be saved.
+
+        Returns:
+            list: List of attributes to be saved.
+        """
         return [ItemEntity, self.pos, self.id]
 
 class Entity:
 
     def __init__( self, _pos, _entity_buffer, _inventory, _width, _height, _hitbox, _bottom_left, _health = 100 ):
+        """Initializes the Entity object.
 
+        Args:
+            _pos (list): World position of the Surface of the Entity. Also referred to as the position of the Entity.
+            _entity_buffer (EntityBuffer): Reference to the EntityBuffer object.
+            _inventory (Inventory): Reference to the Inventory object.
+            _width (int): Width of the Entity's Surface.
+            _height (int): Height of the Entity's Surface.
+            _hitbox (list): Relative hitbox of the Entity.
+            _bottom_left (Tuple[ int, int ]): Bottom left point of the Entity's hitbox.
+            _health (int, optional): Health of the Entity. Defaults to 100.
+        """
         self.pos             = _pos
         self.get_pos         = lambda : self.pos
 
@@ -71,6 +96,9 @@ class Entity:
         self.held_item_index[1] = ( self.held_item_index[1] + _amt + consts.INV_COLS ) % consts.INV_COLS
 
     def calc_friction( self ):
+        """Updates the Entity's friction based on the tile in contact with
+            the bottom left point in the entity's hitbox.
+        """
         try:
             tile = self.tile( (self.friction_point(self.pos)[ 0 ], self.friction_point(self.pos)[ 1 ] - 1) )
             consts.dbg( 0, "IN CALC FRICTION - TILE:", tile )
@@ -97,6 +125,14 @@ class Entity:
         self.grounded = False
 
     def check_ground(self, _pos):
+        """Checks whether the entity's bottom line of hitbox is touching a tile.
+
+        Args:
+            _pos (list): Position of the entity from which the hitbox is calculated.
+
+        Returns:
+            bool: True if the entity is touching a tile else False.
+        """
         hitbox = self.hitbox(_pos)
         for point in hitbox:
             point2 = (point[0], point[1] - 1)
@@ -106,6 +142,14 @@ class Entity:
         self.grounded = False
 
     def check(self, _pos):
+        """Checks whether the hitbox of the Entity collides with a tile.
+
+        Args:
+            _pos (list): Position of the entity from which the hitbox is computed.
+
+        Returns:
+            bool: True if the hitbox is colliding else False.
+        """
         # For every corresponding tile between hitbox endpoints including the endpoints,
         # check that the hitbox and the tile don't intersect
         if self.tangibility:
@@ -154,18 +198,23 @@ class Entity:
 class Player(Entity):
 
     def __init__( self, _pos ):
+        """Initializes the Player object.
+
+        Args:
+            _pos (list): World position of the surface of the Player in x-y coordinate system. Also referred to as the position of the Player.
+        """
 
         # Set all references to main managers
-        self.chunk_buffer  = None
-        self.entity_buffer = None
-        self.renderer      = None
-        self.serializer    = None
-        self.camera        = None
+        self.chunk_buffer: Union[ None, chunk.ChunkBuffer ] = None
+        self.entity_buffer: Union[ None, EntityBuffer ]     = None
+        self.renderer: Union[ None, utils.Renderer ]        = None
+        self.serializer: Union[None , utils.Serializer]     = None
+        self.camera: Union[None, list]                      = None
 
-        self.key_state     = None
-        self.mouse_state   = None
-        self.cursor_pos    = None
-        self.inventory     = None
+        self.key_state: Union[None, dict]      = None
+        self.mouse_state: Union[None, dict]    = None
+        self.cursor_pos: Union[None, list]     = None
+        self.inventory: Union[None, Inventory] = None
 
         self.tangibility   = False
         x_off              = 0
@@ -180,6 +229,17 @@ class Player(Entity):
         # self.hitbox        = [(0, 0), (HITBOX_WIDTH, 0), (HITBOX_WIDTH, -HITBOX_HEIGHT), (0, -HITBOX_HEIGHT)]
 
     def initialize( self, _chunk_buffer, _entity_buffer, _renderer, _serializer, _key_state, _mouse_state, _cursor_pos ):
+        """Passes all the required references to the Player
+
+        Args:
+            _chunk_buffer (chunk.ChunkBuffer): Reference to the ChunkBuffer object
+            _entity_buffer ([type]): Reference to the EntityBuffer object
+            _renderer (utils.Renderer): Reference to the Renderer object
+            _serializer (utils.Serializer): Reference to the Serializer object
+            _key_state (dict): Reference to the dictionary containing the state of the keys
+            _mouse_state (dict): Reference to the dictionary containing the state of the mouse buttons
+            _cursor_pos (list): Reference to the position of the cursor
+        """
 
         # Set all references to main managers
         self.chunk_buffer  = _chunk_buffer
@@ -197,6 +257,11 @@ class Player(Entity):
         super().__init__( self.pos, self.entity_buffer, self.inventory, consts.PLYR_WIDTH, consts.PLYR_HEIGHT, self.rel_hitbox, self.bottom_left )
 
     def run( self, _dt ):
+        """Updates the Player's variables to handle the user's input.
+
+        Args:
+            _dt (float): Time passed between previous and current iteration.
+        """
         self.acc[ 0 ] = 0
         self.acc[ 1 ] = 0
         self.hitting  = False
@@ -227,17 +292,22 @@ class Player(Entity):
             consts.dbg( 1, "IN RUN - RIGHT MOUSE BUTTON PRESSED")
             self.right_click( _dt, self.cursor_pos )
 
-    def update( self, dt ):
+    def update( self, _dt ):
+        """Updates the Player's position, velocity and state.
+
+        Args:
+            _dt (float): Time passed between previous and current iteration.
+        """
         consts.dbg( 1, "ENTERING UPDATE" )
-        dt2 = dt
-        dt  = 16 / (consts.MAX_VEL * consts.SCALE_VEL)
+        dt2 = _dt
+        _dt  = 16 / (consts.MAX_VEL * consts.SCALE_VEL)
         while dt2 > 0:
-            if dt2 <= dt:
-                dt  = dt2
+            if dt2 <= _dt:
+                _dt  = dt2
                 dt2 = 0
             else:
-                dt2 -= dt
-            consts.dbg( 0, "IN UPDATE WHILE LOOP - AFTER CALCULATING - DT:", dt )
+                dt2 -= _dt
+            consts.dbg( 0, "IN UPDATE WHILE LOOP - AFTER CALCULATING - DT:", _dt )
             consts.dbg( 0, "IN UPDATE WHILE LOOP - AFTER CALCULATING - DT2:", dt2 )
             consts.dbg( 1, "INSIDE UPDATE WHILE LOOP" )
             self.calc_friction( )
@@ -248,11 +318,11 @@ class Player(Entity):
             consts.dbg( 0, "IN UPDATE - AT START - PLAYER ACC:", self.acc )
             for i in range( 0, 2 ):
                 next_pos = self.pos.copy( )
-                next_vel = self.vel[ i ] + self.acc[ i ] * dt
-                if next_vel >= abs( self.friction * dt ):
-                    self.vel[ i ] -= self.friction * dt
-                elif next_vel <= -abs( self.friction * dt ):
-                    self.vel[ i ] += self.friction * dt
+                next_vel = self.vel[ i ] + self.acc[ i ] * _dt
+                if next_vel >= abs( self.friction * _dt ):
+                    self.vel[ i ] -= self.friction * _dt
+                elif next_vel <= -abs( self.friction * _dt ):
+                    self.vel[ i ] += self.friction * _dt
                 else:
                     self.vel[ i ] = 0
                     self.acc[ i ] = 0
@@ -262,17 +332,17 @@ class Player(Entity):
                     elif self.acc[ i ] < -consts.MAX_ACC * 2:
                         self.acc[ i ] = -consts.MAX_ACC * 2
 
-                self.vel[ i ] += self.acc[ i ] * dt
+                self.vel[ i ] += self.acc[ i ] * _dt
                 if self.vel[ i ] < -consts.MAX_VEL * (1 - self.friction * 0.2):
                     self.vel[ i ] = -consts.MAX_VEL * (1 - self.friction * 0.2)
                 elif self.vel[ i ] > consts.MAX_VEL * (1 - self.friction * 0.2):
                     self.vel[ i ] = consts.MAX_VEL * (1 - self.friction * 0.2)
 
-                next_pos[ i ] += self.vel[ i ] * consts.SCALE_VEL * dt
+                next_pos[ i ] += self.vel[ i ] * consts.SCALE_VEL * _dt
                 move = self.check( next_pos )
                 if move:
                     if (i == 0) or (i == 1 and consts.CHUNK_HEIGHT_P >= next_pos[ i ] >= 0):
-                        self.pos[ i ] += self.vel[ i ] * consts.SCALE_VEL * dt
+                        self.pos[ i ] += self.vel[ i ] * consts.SCALE_VEL * _dt
                     if consts.CHUNK_HEIGHT_P < self.pos[ 1 ]:
                         self.pos[ 1 ] = consts.CHUNK_HEIGHT_P
                         consts.dbg( -1, "IN UPDATE WHILE LOOP - IN MOVE - POS > MAX HEIGHT" )
@@ -291,11 +361,15 @@ class Player(Entity):
         return self.surf
 
     def save( self ):
+        """Saves the Player's attributes in the database.
+        """
         li = [self.inventory.items, self.inventory.quantities, self.inventory.local_item_table, self.pos]
         li = pickle.dumps( li )
         self.serializer.save_player( 1, li )
 
     def load( self ):
+        """Gets the Player's attributes from the database.
+        """
         li = self.serializer.load_player( 1 )
         if li:
             li                              = pickle.loads( li )
@@ -310,11 +384,11 @@ class Player(Entity):
 
 class Projectile(Entity):
 
-    def __init__( self, pos, _entity_buffer, width, height ):
-        self.width  = width
-        self.height = height
+    def __init__( self, _pos, _entity_buffer, _width, _height ):
+        self.width  = _width
+        self.height = _height
         self.hitbox = [ ]
-        super( ).__init__( pos, _entity_buffer, width, height, self.hitbox )
+        super( ).__init__( _pos, _entity_buffer, _width, _height, self.hitbox )
         pass
 
     def update( self ):
@@ -354,6 +428,8 @@ class Zombie(Entity):
 class EntityBuffer:
 
     def __init__( self ):
+        """Initializes the EntityBuffer object.
+        """
 
         # References to other managers (must be provided in main)
         self.chunk_buffer       = None
@@ -374,6 +450,16 @@ class EntityBuffer:
         self.get_tile           = lambda p: self.chunk_buffer.chunks[self.get_curr_chunk_ind( p )].blocks[consts.get_y_pos_chunk( p )][consts.get_x_pos_chunk( p )]
 
     def initialize( self , _chunk_buffer, _renderer, _serializer, _player, _camera, _screen ):
+        """Passes all the required references to the EntityBuffer object.
+
+        Args:
+            _chunk_buffer (chunk.ChunkBuffer): Reference to the ChunkBuffer object.
+            _renderer (utils.Renderer): Reference to the Renderer object.
+            _serializer (utils.Serializer): Reference to the Serializer object.
+            _player (Player): Reference to the Player object.
+            _camera (list): Reference to the camera.
+            _screen (pygame.Surface): Reference to the screen.
+        """
 
         # Set all references to main managers
         self.chunk_buffer = _chunk_buffer
@@ -391,10 +477,21 @@ class EntityBuffer:
         pass
 
     def add_entity( self, _entity, _ind ):
+        """Adds the given Entity or ItemEntity to the EntityBuffer's entity list.
+
+        Args:
+            _entity (Entity | ItemEntity): Entity or ItemEntity object to be added.
+            _ind (int): Index at which the Entity or ItemEntity is to be added.
+        """
         self.entities[_ind].append(_entity)
 
     def add_item_entity( self, _id, _pos ):
+        """Adds the given ItemEntity to the EntityBuffer's entity list.
 
+        Args:
+            _id (int): The type of the ItemEntity to be added.
+            _pos (list): The position including the index at which the ItemEntity is to be added.
+        """
         x, y, ind = _pos
         x += consts.CHUNK_WIDTH * ind
 
@@ -417,6 +514,12 @@ class EntityBuffer:
         pass
 
     def save( self, _entities, _index ):
+        """Saves the given list of entities in the database at the given index.
+
+        Args:
+            _entities (list): List of entities to be saved.
+            _index (int): Index of database at which the entities are to be saved.
+        """
         raw_entities = [ ]
         for entity in _entities:
             raw_entities.append( entity.save( ) )
@@ -424,6 +527,14 @@ class EntityBuffer:
         self.serializer.set_entity( _index, pickled_raw_entities )
 
     def load( self, _index ):
+        """Loads the list of entities from the database at the given index.
+
+        Args:
+            _index (int): Index of database from which the entities are to be loaded.
+
+        Returns:
+            list: List of entities loaded from the database.
+        """
         entities = [ ]
         pickled_raw_entities = self.serializer.get_entity( _index )
         if pickled_raw_entities:
@@ -434,6 +545,8 @@ class EntityBuffer:
         return entities
 
     def save_complete( self ):
+        """Saves the complete EntityBuffer's list of entities in the database.
+        """
         for i in range(self.len):
             self.save(self.entities[i], self.chunk_buffer.get_start_chunk_ind() + i)
 
@@ -458,6 +571,11 @@ class EntityBuffer:
         pass
 
     def shift( self, _delta_chunk ):
+        """Updates the EntityBuffer's list of entities based on the player's movement.
+
+        Args:
+            _delta_chunk (int): Number of chunks the Player crossed after the previous iteration.
+        """
         prev_entities = self.entities.copy()
         if _delta_chunk > 0:
             for i in range( _delta_chunk ):
@@ -648,4 +766,3 @@ class TextureStructEntity:
     def run_static( self ):
         self.texture = consts.player_running[self.center_index]
         self.running_index = 0
-

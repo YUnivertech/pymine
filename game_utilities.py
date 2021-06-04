@@ -221,8 +221,13 @@ class Renderer:
 
 class Serializer:
 
-    def __init__( self, target ):
-        self.name = "Worlds/" + target + '.db'
+    def __init__( self, world_name ):
+        """Initializes the Serializer object.
+
+        Args:
+            world_name (str): Name of the world.
+        """
+        self.name = "Worlds/" + world_name + '.db'
         self.world_time = 0
 
         if not os.path.isdir("Worlds"): os.mkdir("Worlds")
@@ -241,24 +246,39 @@ class Serializer:
 
         self.world_time = self.get_world_time()
 
-    def set_chunk( self, key, t0, t1 ):
-        t = t0, t1
+    def set_chunk( self, _key, _t0, _t1 ):
+        """Saves/Updates the pickled chunk tile list and the local tile table in the database at the given key.
+
+        Args:
+            _key (int): Key at which the bytes object is to be saved.
+            _t0 (bytes): Pickled chunk tile list.
+            _t1 (bytes): Pickled chunk tile table.
+        """
+        t = _t0, _t1
         c = self.conn.cursor()
         try:
             # Save string at new key location
-            c.execute( '''INSERT INTO terrain (keys, list, local) VALUES (?,?,?)''', ( key, bz2.compress( t[0] ), bz2.compress( t[1] ) ) )
+            c.execute( '''INSERT INTO terrain (keys, list, local) VALUES (?,?,?)''', (_key, bz2.compress( t[0 ] ), bz2.compress( t[1 ] )) )
             self.conn.commit()
         except Exception as e:
             # Update string at existing key
             consts.dbg( 1, "EXCEPTION IN SERIALIZER SETITEM:", e )
-            c.execute( 'UPDATE terrain SET list =?, local =?  WHERE keys=?', ( bz2.compress( t[0] ), bz2.compress( t[1] ), key ) )
+            c.execute( 'UPDATE terrain SET list =?, local =?  WHERE keys=?', (bz2.compress( t[0] ), bz2.compress( t[1] ), _key) )
             self.conn.commit()
 
-    def get_chunk(self, key):
+    def get_chunk(self, _key):
+        """Gets the pickled chunk tile list and the local tile table from the database at the given key.
+
+        Args:
+            _key (int): Key at which the bytes object is to be loaded.
+
+        Returns:
+            Union[bytes, None]: The pickled chunk tile list and the local tile table or None if it does not exist.
+        """
         c = self.conn.cursor()
-        c.execute( '''SELECT list FROM terrain WHERE keys=?''', ( key, ) )
+        c.execute( '''SELECT list FROM terrain WHERE keys=?''', (_key,) )
         li = c.fetchone()
-        c.execute( '''SELECT local FROM terrain WHERE keys=?''', ( key, ) )
+        c.execute( '''SELECT local FROM terrain WHERE keys=?''', (_key,) )
         lo = c.fetchone()
         self.conn.commit()
         try:
@@ -270,6 +290,12 @@ class Serializer:
             return None
 
     def set_chunk_time( self, _key, _time ):
+        """Saves/Updates the pickled chunk time in the database at the given key.
+
+        Args:
+            _key (int): Key at which the bytes object is to be saved.
+            _time (bytes): Pickled chunk time.
+        """
         c = self.conn.cursor()
         try:
             # Set world time for the first time
@@ -282,6 +308,14 @@ class Serializer:
             self.conn.commit()
 
     def get_chunk_time( self, _key ):
+        """Gets the pickled chunk time from the database at the given key.
+
+        Args:
+            _key (int): Key at which the bytes object is to be loaded.
+
+        Returns:
+            Union[bytes, None]: The pickled chunk time or None if it does not exist.
+        """
         c = self.conn.cursor()
         c.execute( '''SELECT chunk_time FROM terrain WHERE keys=?''', ( _key, ))
         res = c.fetchone()
@@ -292,21 +326,35 @@ class Serializer:
             consts.dbg( 1, "EXCEPTION IN SERIALIZER GET_CHUNK_TIME:", e )
             return res
 
-    def set_entity(self, key, li):
+    def set_entity(self, _key, _li):
+        """Saves/Updates the pickled entity list in the database at the given key.
+
+        Args:
+            _key (int): Key at which the bytes object is to be saved.
+            _li (bytes): Pickled entity list.
+        """
         c = self.conn.cursor( )
         try:
             # Save string at new key location
-            c.execute( '''INSERT INTO terrain (entity, keys) VALUES (?,?)''', (bz2.compress( li ), key) )
+            c.execute( '''INSERT INTO terrain (entity, keys) VALUES (?,?)''', (bz2.compress( _li ), _key) )
             self.conn.commit( )
         except Exception as e:
             consts.dbg(1, "EXCEPTION IN SERIALIZER SET_ENTITY:", e )
             # Update string at existing key
-            c.execute( '''UPDATE terrain SET entity =? WHERE keys=?''', (bz2.compress( li ), key) )
+            c.execute( '''UPDATE terrain SET entity =? WHERE keys=?''', (bz2.compress( _li ), _key) )
             self.conn.commit( )
 
-    def get_entity(self, key):
+    def get_entity(self, _key):
+        """Gets the pickled entity list from the database at the given key.
+
+        Args:
+            _key (int): Key at which the bytes object is to be loaded.
+
+        Returns:
+            Union[bytes, None]: The pickled entity list or None if it does not exist.
+        """
         c = self.conn.cursor()
-        c.execute( '''SELECT entity FROM terrain WHERE keys=?''', ( key, ) )
+        c.execute( '''SELECT entity FROM terrain WHERE keys=?''', (_key,) )
         li = c.fetchone()
         self.conn.commit()
         try:
@@ -316,21 +364,35 @@ class Serializer:
             consts.dbg( 1, "EXCEPTION IN SERIALIZER GET_ENTITY:", e )
             return None
 
-    def save_player( self, name, pickled ):
+    def save_player( self, _id, _pickled_player ):
+        """Saves/Updates the pickled player in the database at the given ID.
+
+        Args:
+            _id (int): ID at which the pickled player is to be saved.
+            _pickled_player (bytes): Pickled player.
+        """
         c = self.conn.cursor()
         try:
             # Save pickledplayer at new playername
-            c.execute( '''INSERT INTO player (playername, pickledplayer) VALUES (?,?)''', ( name, bz2.compress( pickled ) ) )
+            c.execute( '''INSERT INTO player (playername, pickledplayer) VALUES (?,?)''', (_id, bz2.compress( _pickled_player )) )
             self.conn.commit()
         except Exception as e:
             # Update pickledplayer at existing playername
             consts.dbg( 1, "EXCEPTION IN SERIALIZER SAVE_PLAYER:", e )
-            c.execute( '''UPDATE player SET pickledplayer =?  WHERE playername=?''', ( bz2.compress( pickled ), name ) )
+            c.execute( '''UPDATE player SET pickledplayer =?  WHERE playername=?''', (bz2.compress( _pickled_player ), _id) )
             self.conn.commit()
 
-    def load_player( self, name ):
+    def load_player( self, _id ):
+        """Gets the pickled player from the database at the given ID.
+
+        Args:
+            _id (int): ID at which the pickled player is to be loaded.
+
+        Returns:
+            Union[bytes, None]: The pickled player or None if it does not exist.
+        """
         c = self.conn.cursor()
-        c.execute( '''SELECT pickledplayer FROM player WHERE playername=?''', ( name, ) )
+        c.execute( '''SELECT pickledplayer FROM player WHERE playername=?''', (_id,) )
         res = c.fetchone()
         self.conn.commit()
         try:
@@ -340,6 +402,11 @@ class Serializer:
             return res
 
     def set_world_time( self, _time ):
+        """Saves/Updates the pickled world time in the database.
+
+        Args:
+            _time (bytes): Pickled world time.
+        """
         c = self.conn.cursor()
         try:
             # Set world time for the first time
@@ -352,6 +419,11 @@ class Serializer:
             self.conn.commit()
 
     def get_world_time( self ):
+        """Gets the pickled world time from the database.
+
+        Returns:
+            Union[bytes, None]: The pickled world time or None if it does not exist.
+        """
         c = self.conn.cursor()
         c.execute( '''SELECT world_time FROM info''' )
         res = c.fetchone()
