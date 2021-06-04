@@ -948,7 +948,7 @@ ITEM_TABLE = {
 # Function only to be called if not colliding with the player or any other entity
 def place_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, _block ):
 
-    chunk = _chunk_buffer[_chunk]
+    chunk = _chunk_buffer.chunks[_chunk]
     blocks= chunk.blocks
     walls = chunk.walls
 
@@ -1012,8 +1012,7 @@ def r_use_grass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     player = _entity_buffer.player
     state = place_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, tiles.grass )
     if state != 0:
-        # player.inventory.rem_item_pos( player.get_held_pos() )
-        player.inventory.rem_item_stack( items.grass, 1 )
+        player.inventory.rem_item_pos( player.get_held_index() )
 
 def l_use_browndirt(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
@@ -1022,8 +1021,7 @@ def r_use_browndirt(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     player = _entity_buffer.player
     state = place_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, tiles.browndirt )
     if state != 0:
-        # player.inventory.rem_item_pos( player.get_held_pos() )
-        player.inventory.rem_item_stack( items.browndirt, 1 )
+        player.inventory.rem_item_pos( player.get_held_index() )
 
 def l_use_snowygrass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
@@ -1032,8 +1030,7 @@ def r_use_snowygrass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     player = _entity_buffer.player
     state = place_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, tiles.snowygrass )
     if state != 0:
-        # player.inventory.rem_item_pos( player.get_held_pos() )
-        player.inventory.rem_item_stack( items.snowygrass, 1 )
+        player.inventory.rem_item_pos( player.get_held_index() )
 
 # Dictionary consisting of item as key; dictionary consisting of item attribute as key and attribute as value as value
 ITEM_ATTR = {

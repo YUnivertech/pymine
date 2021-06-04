@@ -132,10 +132,10 @@ def main_game_start( _world = 'World1' ):
                         consts.SCALE_VEL *= 2
                     consts.dbg( 0, "SCALE VEL CHANGED:", consts.SCALE_VEL )
 
-                elif event.key == pygame.K_DOWN:            player.held_item_index[0] = (player.held_item_index[0] + 1) % consts.INV_ROWS
-                elif event.key == pygame.K_UP:              player.held_item_index[0] = (player.held_item_index[0] - 1 + consts.INV_ROWS) % consts.INV_ROWS
-                elif event.key == pygame.K_RIGHT:           player.held_item_index[1] = (player.held_item_index[1] + 1) % consts.INV_COLS
-                elif event.key == pygame.K_LEFT:            player.held_item_index[1] = (player.held_item_index[1] - 1 + consts.INV_COLS) % consts.INV_COLS
+                elif event.key == pygame.K_DOWN:            player.move_held_ver( 1 )
+                elif event.key == pygame.K_UP:              player.move_held_ver( -1 )
+                elif event.key == pygame.K_RIGHT:           player.move_held_hor( 1 )
+                elif event.key == pygame.K_LEFT:            player.move_held_hor( -1 )
 
                 elif event.key == pygame.K_c:
                     command = input(">> ")
@@ -221,7 +221,7 @@ def main_game_start( _world = 'World1' ):
             new_side, num_chunks = chunk_buffer.shift( delta_chunk )
 
             for i in range( num_chunks ):
-                chunk_buffer[new_side + i].draw()
+                chunk_buffer.chunks[new_side + i].draw()
 
         renderer.paint_screen()
         if player.inventory.enabled : renderer.paint_inventory()

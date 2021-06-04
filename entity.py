@@ -54,17 +54,21 @@ class Entity:
         self.friction_point  = lambda p: [p[ 0 ] + self.bottom_left[ 0 ], p[ 1 ] + self.bottom_left[ 1 ]]
         self.tile            = lambda p: self.entity_buffer.get_tile(p)
 
-        self.held_item_index = [ 0, 0 ]        # The index of the held item in the inventory
-        self.sel_item        = [ None , 0 ]    # The selected item and its quantity
+        self.held_item_index = [0, 0]        # The index of the held item in the inventory (x, y)
+        self.get_held_index  = lambda : self.held_item_index
+        self.get_held_item   = lambda : self.inventory.items[self.held_item_index[1]][self.held_item_index[0]]
+        self.get_held_quan   = lambda : self.inventory.quantities[self.held_item_index[1]][self.held_item_index[0]]
+
+        self.sel_item        = [None, 0]    # The selected item and its quantity
 
         self.texture_strct   = TextureStructEntity( self.width, self.height )
         self.get_texture     = lambda : self.texture_strct.texture
 
-    def get_item_held( self ):
-        return self.inventory.items[self.held_item_index[1]][self.held_item_index[0]]
+    def move_held_hor( self, _amt = 1 ):
+        self.held_item_index[0] = ( self.held_item_index[0] + _amt + consts.INV_COLS ) % consts.INV_COLS
 
-    def get_sel_item( self ):
-        return consts.ITEM_NAMES[self.sel_item[1]], self.sel_item[0]
+    def move_held_ver( self, _amt = 1 ):
+        self.held_item_index[1] = ( self.held_item_index[1] + _amt + consts.INV_COLS ) % consts.INV_COLS
 
     def calc_friction( self ):
         try:
@@ -117,8 +121,9 @@ class Entity:
 
     def left_click( self, _dt, _cursor_pos ):
         function = consts.l_use_hand
-        if self.get_item_held():
-            function = consts.ITEM_ATTR[self.get_item_held()][consts.item_attr.L_USE]
+        which_item = self.get_held_item()
+        if which_item:
+            function = consts.ITEM_ATTR[which_item][consts.item_attr.L_USE]
 
         pos_x           = consts.get_x_pos_chunk(_cursor_pos)
         pos_y           = consts.get_y_pos_chunk(_cursor_pos)
@@ -129,8 +134,9 @@ class Entity:
 
     def right_click( self, _dt, _cursor_pos ):
         function = consts.r_use_hand
-        if self.get_item_held():
-            function = consts.ITEM_ATTR[self.get_item_held()][consts.item_attr.R_USE]
+        which_item = self.get_held_item()
+        if which_item:
+            function = consts.ITEM_ATTR[which_item][consts.item_attr.R_USE]
 
         pos_x           = consts.get_x_pos_chunk(_cursor_pos)
         pos_y           = consts.get_y_pos_chunk(_cursor_pos)
@@ -365,7 +371,7 @@ class EntityBuffer:
         self.len                = None
 
         self.get_curr_chunk_ind = lambda p: int( consts.get_curr_chunk( p ) - self.chunk_buffer.get_start_chunk_ind() )
-        self.get_tile           = lambda p: self.chunk_buffer[self.get_curr_chunk_ind( p )].blocks[consts.get_y_pos_chunk( p )][consts.get_x_pos_chunk( p )]
+        self.get_tile           = lambda p: self.chunk_buffer.chunks[self.get_curr_chunk_ind( p )].blocks[consts.get_y_pos_chunk( p )][consts.get_x_pos_chunk( p )]
 
     def initialize( self , _chunk_buffer, _renderer, _serializer, _player, _camera, _screen ):
 
@@ -554,7 +560,7 @@ class Inventory:
 
         return _quantity
 
-    def rem_item_pos( self, _quantity, _pos ):
+    def rem_item_pos( self, _pos, _quantity = 1 ):
         """ Removes a given quantity of items from a given position
             If the supplied quantity is equal to/exceeds the present quantity, only the present quantity is removed
             The number of items which could successfully be removed are returned

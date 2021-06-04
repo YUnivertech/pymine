@@ -94,7 +94,7 @@ class Renderer:
 
         for right_walker in range( self.middle , self.chunk_buffer.len ):
 
-            slice_ind       = self.chunk_buffer[right_walker].index * consts.CHUNK_WIDTH       # Absolute index of current vertical slice
+            slice_ind       = self.chunk_buffer.chunks[right_walker].index * consts.CHUNK_WIDTH       # Absolute index of current vertical slice
             slice_pos       = [ 0 , 0 ]                                                 # List containing coordinates of the location where the slice must be blit
             slice_rect      = [ 0 , self.up_index , consts.TILE_WIDTH , self.down_index ]      # Rectangular region containing the "visible" area of the chunk's surface
 
@@ -103,7 +103,7 @@ class Renderer:
                 slice_pos[0]    = ( slice_ind + tile_walker ) * consts.TILE_WIDTH - self.camera[0 ] + self.num_hor
                 slice_rect[0]   = tile_walker * consts.TILE_WIDTH
 
-                slice_surf      = self.chunk_buffer[ right_walker ].get_surf().subsurface( slice_rect )            # Mini-surface containing the visible region of the chunk's surface
+                slice_surf      = self.chunk_buffer.chunks[ right_walker ].get_surf().subsurface( slice_rect )            # Mini-surface containing the visible region of the chunk's surface
 
                 if slice_pos[0] > self.window_size[0] :
                     flag = True
@@ -121,7 +121,7 @@ class Renderer:
 
         for left_walker in range( self.middle - 1, -1 , -1 ):
 
-            slice_ind       = self.chunk_buffer[left_walker].index * consts.CHUNK_WIDTH        # Absolute index of current vertical slice
+            slice_ind       = self.chunk_buffer.chunks[left_walker].index * consts.CHUNK_WIDTH        # Absolute index of current vertical slice
             slice_pos       = [ 0 , 0 ]                                                 # List containing coordinates of the location where the slice must be blit
             slice_rect      = [ 0 , self.up_index , consts.TILE_WIDTH , self.down_index ]      # Rectangular region containing the "visible" area of the chunk's surface
 
@@ -130,7 +130,7 @@ class Renderer:
                 slice_pos[0]    = ( slice_ind + tile_walker ) * consts.TILE_WIDTH - self.camera[0 ] + self.num_hor
                 slice_rect[0]   = tile_walker * consts.TILE_WIDTH
 
-                slice_surf      = self.chunk_buffer[ left_walker ].get_surf().subsurface( slice_rect )            # Mini-surface containing the visible region of the chunk's surface
+                slice_surf      = self.chunk_buffer.chunks[ left_walker ].get_surf().subsurface( slice_rect )            # Mini-surface containing the visible region of the chunk's surface
 
                 if slice_pos[0] < -consts.TILE_WIDTH :
                     flag = True
