@@ -1,5 +1,3 @@
-# todo Need to optimize the shift left and shift right methods
-
 import math
 import pickle
 import pygame
@@ -294,14 +292,16 @@ class Chunk:
         # Fire spread
         # Liquid movement
 
+    def get_surf( self ):
+        return self.surf
+
 class ChunkBuffer:
 
     def __init__( self , _len ):
 
         # size and positions of chunks in the world
         self.len            = _len
-        # self.positions      = [None] * 3
-        self.positions      = [ 0, 0, 0 ]
+        self.mid            = math.floor( self.player.get_pos()[0] / consts.CHUNK_WIDTH_P )
 
         # chunk and light surface data
         self.chunks         = [None] * _len
@@ -324,18 +324,18 @@ class ChunkBuffer:
         self.screen         = _screen
         self.noise_gen      = _noise_gen
 
-        self.positions[1]   = math.floor( self.player.pos[0] / consts.CHUNK_WIDTH_P )
-
-        self.positions[0]   = self.positions[1] - ( self.len // 2 )
-        self.positions[2]   = self.positions[1] + ( self.len // 2 )
+        self.mid            = self.player.get_pos()[0]
 
         self.load()
 
     def get_start_chunk_ind( self ):
-        return self.positions[0]
+        return self.mid - ( self.len >> 1 )
+
+    def get_middle_chunk_ind( self ):
+        return self.mid
 
     def get_end_chunk_ind( self ):
-        return self.positions[-1]
+        return self.mid + ( self.len >> 1 )
 
     def draw( self ):
 
@@ -357,7 +357,7 @@ class ChunkBuffer:
 
     def shift_right( self , _delta ):
 
-        for i , pos in enumerate( range( self.positions[2] , self.positions[2] - _delta , -1 ) ):
+        for i , pos in enumerate( range( self.get_end_chunk_ind() , self.get_end_chunk_ind() - _delta , -1 ) ):
 
             li                      = [ self.chunks[self.len-1-i].blocks, self.chunks[self.len-1-i].walls ]
             lo                      = self.chunks[self.len-1-i].local_tile_table
@@ -369,7 +369,7 @@ class ChunkBuffer:
             self.chunks[i]          = self.chunks[i - _delta]
 
         loaded_chunks =  [None] * _delta
-        for i , pos in enumerate( range( self.positions[0] - _delta , self.positions[0] ) ):
+        for i , pos in enumerate( range( self.get_start_chunk_ind() - _delta , self.get_start_chunk_ind() ) ):
 
             loaded_chunks[i]         = self.serializer.get_chunk( pos )
 
@@ -383,15 +383,9 @@ class ChunkBuffer:
 
             self.chunks[i]          = loaded_chunks[i]
 
-        self.positions[0] -= _delta
-        self.positions[1] -= _delta
-        self.positions[2] -= _delta
-
-        return self.positions[0]
-
     def shift_left( self , _delta ):
 
-        for i , pos in enumerate( range( self.positions[0] , self.positions[0] + _delta ) ):
+        for i , pos in enumerate( range( self.get_start_chunk_ind() , self.get_start_chunk_ind() + _delta ) ):
 
             li                      = [ self.chunks[i].blocks , self.chunks[i].walls ]
             lo                      = self.chunks[i].local_tile_table
@@ -405,23 +399,17 @@ class ChunkBuffer:
         loaded_chunks =  [None] * _delta
         for i , pos in enumerate( range( self.len - _delta , self.len ) ):
 
-            loaded_chunks[i]        = self.serializer.get_chunk( self.positions[2] + i + 1 )
+            loaded_chunks[i]        = self.serializer.get_chunk( self.get_end_chunk_ind() + i + 1 )
 
             if loaded_chunks[i] is None:
-                loaded_chunks[i] = Chunk( _index = self.positions[2] + i + 1 )
+                loaded_chunks[i] = Chunk( _index = self.get_end_chunk_ind() + i + 1 )
                 generate_chunk_temp( loaded_chunks[i] , self.noise_gen )
             else:
                 li = pickle.loads( loaded_chunks[i][0] )
                 lo = pickle.loads( loaded_chunks[i][1] )
-                loaded_chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = self.positions[2] + i + 1 )
+                loaded_chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = self.get_end_chunk_ind() + i + 1 )
 
             self.chunks[pos]        = loaded_chunks[i]
-
-        self.positions[0] += _delta
-        self.positions[1] += _delta
-        self.positions[2] += _delta
-
-        return self.positions[2]
 
     def calc_light( self ):
         pass
@@ -433,14 +421,18 @@ class ChunkBuffer:
 
     def load( self ):
 
+        mid = math.floor( self.player.get_pos()[0] / consts.CHUNK_WIDTH_P )
+        left = mid - ( self.len >> 1 )
+        left = mid + ( self.len >> 1 )
+
         for i in range( self.len ):
-            self.chunks[i] = self.serializer.get_chunk( self.positions[0] + i )
+            self.chunks[i] = self.serializer.get_chunk( left + i )
 
         for i in range( self.len ):
 
             if( self.chunks[i] is None ):
 
-                self.chunks[i] = Chunk( _index = self.positions[0] + i )
+                self.chunks[i] = Chunk( _index = left + i )
                 generate_chunk_temp( self.chunks[i] , self.noise_gen )
 
             else:
@@ -448,7 +440,7 @@ class ChunkBuffer:
                 li = pickle.loads( self.chunks[i][0] )
                 lo = pickle.loads( self.chunks[i][1] )
 
-                self.chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = self.positions[0] + i )
+                self.chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = self.get_start_chunk_ind() + i )
 
             self.chunks[i].draw()
 

@@ -103,7 +103,7 @@ class Renderer:
                 slice_pos[0]    = ( slice_ind + tile_walker ) * consts.TILE_WIDTH - self.camera[0 ] + self.num_hor
                 slice_rect[0]   = tile_walker * consts.TILE_WIDTH
 
-                slice_surf      = self.chunk_buffer[ right_walker ].surf.subsurface( slice_rect )            # Mini-surface containing the visible region of the chunk's surface
+                slice_surf      = self.chunk_buffer[ right_walker ].get_surf().subsurface( slice_rect )            # Mini-surface containing the visible region of the chunk's surface
 
                 if slice_pos[0] > self.window_size[0] :
                     flag = True
@@ -130,7 +130,7 @@ class Renderer:
                 slice_pos[0]    = ( slice_ind + tile_walker ) * consts.TILE_WIDTH - self.camera[0 ] + self.num_hor
                 slice_rect[0]   = tile_walker * consts.TILE_WIDTH
 
-                slice_surf      = self.chunk_buffer[ left_walker ].surf.subsurface( slice_rect )            # Mini-surface containing the visible region of the chunk's surface
+                slice_surf      = self.chunk_buffer[ left_walker ].get_surf().subsurface( slice_rect )            # Mini-surface containing the visible region of the chunk's surface
 
                 if slice_pos[0] < -consts.TILE_WIDTH :
                     flag = True
@@ -147,25 +147,25 @@ class Renderer:
 
         # Temporary rendering of camera
         camera_coors = [self.camera[0], self.camera[1]]
-        plyr_coors    = [self.player.pos[0], self.player.pos[1]]
 
         # Translate to camera's space
         camera_coors[0] -= self.camera[0]
         camera_coors[1] -= self.camera[1]
 
-        plyr_coors[0] -= self.camera[0]
-        plyr_coors[1] -= self.camera[1]
-
         # Translate to screen's space
         camera_coors[0] += self.num_hor
         camera_coors[1] = self.num_ver - camera_coors[1]
 
+        # Blit a small rectangle
+        plyr_coors = self.player.get_pos().copy()
+        plyr_coors[0] -= self.camera[0]
+        plyr_coors[1] -= self.camera[1]
         plyr_coors[0] += self.num_hor
         plyr_coors[1] = self.num_ver - plyr_coors[1]
 
-        # Blit a small rectangle
-        # self.screen.blit( self.player.texture_strct.texture, ( plyr_coors[0] - 8, plyr_coors[1] - 8))
         self.screen.blit( self.player.get_texture(), ( plyr_coors[0] - 8, plyr_coors[1] - 8))
+
+        # Temporary rendering of camera
         pygame.draw.rect( self.screen, (255, 50, 50), pygame.Rect( camera_coors[0] - 2, camera_coors[1] - 2, 5, 5 ) )
 
         self.entity_buffer.draw()
@@ -183,11 +183,11 @@ class Renderer:
 
     def paint_inventory( self ):
         self.player.inventory.draw()
-        self.screen.blit( self.player.inventory.surf , (20 , 20) )
+        self.screen.blit( self.player.inventory.get_texture() , (20 , 20) )
 
     def paint_inventory_top( self ):
         self.player.inventory.draw_top()
-        self.screen.blit( self.player.inventory.surf, (20, 20) )
+        self.screen.blit( self.player.inventory.get_texture(), (20, 20) )
 
     def update_size( self ):
 

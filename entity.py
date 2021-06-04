@@ -281,6 +281,9 @@ class Player(Entity):
         l = self.entity_buffer.pickItem( )
         for item in l: self.inventory.addItem(item, 1)
 
+    def get_surf( self ):
+        return self.surf
+
     def save( self ):
         li = [self.inventory.items, self.inventory.quantities, self.inventory.local_item_table, self.pos]
         li = pickle.dumps( li )
@@ -589,6 +592,9 @@ class Inventory:
                     quantity_text , quantity_rect = consts.INV_FONT.render( str( self.quantities[y ][x ] ), consts.INV_COLOR )
                     self.surf.blit( consts.ITEM_TABLE[self.items[y ][x ] ], (coors[0 ] + 4 , coors[1 ] + 4) )
                     self.surf.blit( quantity_text , ( coors[0] , coors[1] ) )
+
+    def get_texture( self ):
+        return self.surf
 
     def draw_top( self ):
 

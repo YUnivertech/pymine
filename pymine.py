@@ -85,7 +85,7 @@ def main_game_start( _world = 'World1' ):
     # Renderer
     renderer.initialize( chunk_buffer , entity_buffer , player , serializer , camera , screen , display_sz )
 
-    curr_chunk              = chunk_buffer.positions[1]
+    curr_chunk              = chunk_buffer.get_middle_chunk_ind()
     prev_chunk              = curr_chunk
     delta_chunk             = 0
 
