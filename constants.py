@@ -4,6 +4,8 @@ import math
 import pygame
 import pygame.freetype
 
+import time
+
 log_file = open('log_file.txt', 'w')
 # The debug verbosity level, can be from 0 to 4 (both inclusive)
 DBG                 = 0
@@ -21,6 +23,9 @@ def dbg( msg_priority , *args , **kwargs ):
     if msg_priority < DBG:
         print( *args, **kwargs )
 
+# Utility functions to get time
+get_time_us = lambda : time.time_ns() // 1_000_000
+get_time_s = lambda : get_time_us() / 1_000
 
 # Infinity
 INF                 = math.inf
@@ -51,14 +56,12 @@ HITBOX_WIDTH        = TILE_WIDTH-2
 HITBOX_HEIGHT       = TILE_WIDTH+6
 PLYR_WIDTH          = TILE_WIDTH+2      # 36
 PLYR_HEIGHT         = TILE_WIDTH+14    # 54
-PLYR_RANGE          = 4*TILE_WIDTH
+PLYR_RANGE          = 4 * TILE_WIDTH
 INV_COLS            = 10
 INV_ROWS            = 3
 HAND_DAMAGE         = 33
 
-ALLOWED_CHARS = [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-                  'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-                  '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' ]
+ALLOWED_CHARS       = [chr(ord('a') + i) for i in range(26)] + [chr(ord('A') + i) for i in range(26)] + [str(i) for i in range(10)]
 
 pygame.freetype.init()
 # # entities
@@ -202,20 +205,33 @@ class tiles( enum.Enum ):
     chest                = 102
 
 
-wood_list           = { tiles.junglewood, tiles.junglewood_plank, tiles.oakwood, tiles.oakwood_plank, tiles.borealwood, tiles.borealwood_plank, tiles.pinewood, tiles.pinewood_plank, tiles.cactuswood, tiles.cactuswood_plank, tiles.palmwood, tiles.palmwood_plank }
-metal_list          = { tiles.cosmonium_ore, tiles.cosmonium, tiles.unobtanium_ore, tiles.unobtanium, tiles.platinum_ore, tiles.platinum, tiles.gold_ore, tiles.gold, tiles.iron_ore, tiles.iron, tiles.copper_ore, tiles.copper }
-non_metal_list      = { tiles.diamond_ore, tiles.diamond_block, tiles.hellstone, tiles.adamantite, tiles.obsidian, tiles.bedrock }
+# Set of all blocks which are of wood type
+wood_list           = { tiles.junglewood, tiles.junglewood_plank, tiles.oakwood, tiles.oakwood_plank,
+                        tiles.borealwood, tiles.borealwood_plank, tiles.pinewood, tiles.pinewood_plank,
+                        tiles.cactuswood, tiles.cactuswood_plank, tiles.palmwood, tiles.palmwood_plank }
+
+# Set of all blocks which are of stone type
 stone_list          = { tiles.granite, tiles.quartz, tiles.limestone, tiles.greystone, tiles.sandstone }
+
+# Set of all blocks which are of metal type
+metal_list          = { tiles.cosmonium_ore, tiles.cosmonium, tiles.unobtanium_ore, tiles.unobtanium,
+                        tiles.platinum_ore, tiles.platinum, tiles.gold_ore, tiles.gold, tiles.iron_ore,
+                        tiles.iron, tiles.copper_ore, tiles.copper }
+
+# Set of all blocks which are of non-metal (crystalline) type
+non_metal_list      = { tiles.diamond_ore, tiles.diamond_block, tiles.hellstone, tiles.adamantite,
+                        tiles.obsidian, tiles.bedrock }
+
 broken_by_pickaxe   = stone_list.union( non_metal_list )
-broken_by_axe       = wood_list.copy()
+broken_by_axe       = wood_list
 
 class item_attr( enum.Enum ):
 
-    MAX_STACK           = 1
-    WEIGHT              = 2
-    L_USE               = 3
-    R_USE               = 4
-    DAMAGE              = 5
+    MAX_STACK           = 1     # Maximum Quantity an item can stack upto in an inventory
+    WEIGHT              = 2     # Weight of the item (and corresponding item entity)
+    L_USE               = 3     # Function to be called when the left clicked with
+    R_USE               = 4     # Function to be called when right clicked with
+    DAMAGE              = 5     # Damage done to entities When attacked with
 
 
 class item_modifs( enum.Enum ):
@@ -996,6 +1012,7 @@ def r_use_grass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     player = _entity_buffer.player
     state = place_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, tiles.grass )
     if state != 0:
+        # player.inventory.rem_item_pos( player.get_held_pos() )
         player.inventory.rem_item_stack( items.grass, 1 )
 
 def l_use_browndirt(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
@@ -1005,13 +1022,18 @@ def r_use_browndirt(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     player = _entity_buffer.player
     state = place_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, tiles.browndirt )
     if state != 0:
+        # player.inventory.rem_item_pos( player.get_held_pos() )
         player.inventory.rem_item_stack( items.browndirt, 1 )
 
 def l_use_snowygrass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_snowygrass(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    return place_block_generic( _x, _y, _chunk_buffer, _entity_buffer, _dt, tiles.snowygrass )
+    player = _entity_buffer.player
+    state = place_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, tiles.snowygrass )
+    if state != 0:
+        # player.inventory.rem_item_pos( player.get_held_pos() )
+        player.inventory.rem_item_stack( items.snowygrass, 1 )
 
 # Dictionary consisting of item as key; dictionary consisting of item attribute as key and attribute as value as value
 ITEM_ATTR = {
@@ -1155,10 +1177,10 @@ def r_use_stick(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     return 0
 
 def l_use_leaves(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_leaves(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    pass
+    return 0
 
 def l_use_junglewood(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )

@@ -331,6 +331,12 @@ class ChunkBuffer:
 
         self.load()
 
+    def get_start_chunk_ind( self ):
+        return self.positions[0]
+
+    def get_end_chunk_ind( self ):
+        return self.positions[-1]
+
     def draw( self ):
 
         for chunk in self.chunks: chunk.draw()
