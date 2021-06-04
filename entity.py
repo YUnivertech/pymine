@@ -32,7 +32,8 @@ class ItemEntity:
         pass
 
     def save( self ):
-        pass
+        return [ItemEntity, self.pos, self.id]
+
 
 class Entity:
     def __init__( self, _pos, _entity_buffer, _inventory, _width, _height, _hitbox, _bottom_left, _health=100 ):
@@ -250,11 +251,11 @@ class Player(Entity):
             self.jump( )
 
         if self.mouse_state[ pygame.BUTTON_LEFT ]:
-            consts.dbg( -1, "IN RUN - LEFT MOUSE BUTTON PRESSED")
+            consts.dbg( 1, "IN RUN - LEFT MOUSE BUTTON PRESSED")
             self.left_click( _dt, self.cursor_pos )
 
         if self.mouse_state[ pygame.BUTTON_RIGHT ]:
-            consts.dbg( -1, "IN RUN - RIGHT MOUSE BUTTON PRESSED")
+            consts.dbg( 1, "IN RUN - RIGHT MOUSE BUTTON PRESSED")
             self.right_click( _dt, self.cursor_pos )
 
     def update( self, dt ):
@@ -454,7 +455,8 @@ class EntityBuffer:
         if pickled_raw_entities:
             raw_entities = pickle.loads( pickled_raw_entities )
             for entity in raw_entities:
-                entities.append( entity.load( ) )
+                entity_obj = entity[0](*entity[1::], self)
+                entities.append( entity_obj )
         return entities
 
     def save_complete( self ):
@@ -482,6 +484,7 @@ class EntityBuffer:
         pass
 
     def shift( self, _delta_chunk):
+        prev_entities = self.entities.copy()
         if _delta_chunk > 0:
             for i in range( _delta_chunk ):
                 self.entities.append(self.load(self.chunk_buffer[-1].index + i + 1))
@@ -492,6 +495,8 @@ class EntityBuffer:
                 self.entities.insert(i, self.load(self.chunk_buffer[0].index - i - 1))
                 self.save(self.entities[-i-1], self.chunk_buffer[-1].index - i)
                 self.entities.pop(-1)
+        if self.entities != prev_entities:
+            consts.dbg(1, "ENTITY BUFFER - END OF SHIFT - ENTITIES LIST:", self.entities)
 
 
 class Inventory:
