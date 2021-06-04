@@ -19,13 +19,13 @@ def generate_chunk_temp( _chunk , noise_gen ):
         _chunk.blocks[0][i] = consts.tiles.bedrock
         _chunk.blocks[1][i] = consts.tiles.obsidian
         _chunk.blocks[2][i] = consts.tiles.hellstone
-        # for j in range(10):
-        #     _chunk.blocks[j + 3][i] = consts.tiles.greystone
-        #     _chunk.blocks[j + 13][i] = consts.tiles.limestone
-        #     _chunk.blocks[j + 23][i] = consts.tiles.sandstone
-        # _chunk.blocks[32][i] = consts.tiles.coal
-        # _chunk.blocks[33][i] = consts.tiles.browndirt
-        # _chunk.blocks[34][i] = consts.tiles.grass
+        for j in range(10):
+            _chunk.blocks[j + 3][i] = consts.tiles.greystone
+            _chunk.blocks[j + 13][i] = consts.tiles.limestone
+            _chunk.blocks[j + 23][i] = consts.tiles.sandstone
+        _chunk.blocks[32][i] = consts.tiles.coal
+        _chunk.blocks[33][i] = consts.tiles.browndirt
+        _chunk.blocks[34][i] = consts.tiles.grass
 
     # for i in range( CHUNK_WIDTH ):
     #     for j in range( CHUNK_HEIGHT ):

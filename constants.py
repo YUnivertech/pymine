@@ -42,8 +42,8 @@ CHUNK_WIDTH_P       = TILE_WIDTH * CHUNK_WIDTH
 CHUNK_HEIGHT_P      = TILE_WIDTH * CHUNK_HEIGHT
 
 # Height at which space and overworld start
-SPACE_START         = ( CHUNK_HEIGHT - 1 - 64 ) * TILE_WIDTH
-OVER_START          = 64 * TILE_WIDTH
+SPACE_START         = ( CHUNK_HEIGHT - 1 - 128 ) * TILE_WIDTH
+OVER_START          = 128 * TILE_WIDTH
 
 # Constant to determine the linear interpolation of the camera
 LERP_C              = (10 / 3) * 3
@@ -80,6 +80,7 @@ INV_COLOR        = ( 0, 0, 0 )
 get_curr_chunk     = lambda p: int( math.floor( p[0] / CHUNK_WIDTH_P ) )
 get_x_pos_chunk    = lambda p: int( p[0] // TILE_WIDTH - get_curr_chunk( p ) * CHUNK_WIDTH )
 get_y_pos_chunk    = lambda p: int( p[1] // TILE_WIDTH )
+pos_ceil           = lambda x, y : ( x + y - 1 ) // y
 
 # ! ----------------------------------------------------------------
 

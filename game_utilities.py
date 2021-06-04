@@ -92,13 +92,34 @@ class Renderer:
 
         if self.player.get_pos()[1] >= consts.SPACE_START:
             # Put the space texture
-            self.screen.fill( (0, 0, 0) )
+            bg_width        = consts.space_background.get_width()
+            bg_height       = consts.space_background.get_height()
+
+            num_blit_hor    = consts.pos_ceil( self.screen.get_width(), bg_width )
+            num_blit_ver    = consts.pos_ceil( self.screen.get_height(), bg_height )
+
+            coors = [0, 0]
+
+            for coors[0] in range( 0, num_blit_hor * bg_width, bg_width ):
+                for coors[1] in range( 0, num_blit_ver * bg_height, bg_height ):
+                    self.screen.blit( consts.space_background, coors )
+
         elif self.player.get_pos()[1] >= consts.OVER_START:
             # Put the overworld texture
             self.screen.fill( (63, 127, 255) )
         else:
             # Put the cave texture
-            self.screen.fill( (200, 200, 0) )
+            bg_width        = consts.cave_background.get_width()
+            bg_height       = consts.cave_background.get_height()
+
+            num_blit_hor    = consts.pos_ceil( self.screen.get_width(), bg_width )
+            num_blit_ver    = consts.pos_ceil( self.screen.get_height(), bg_height )
+
+            coors = [0, 0]
+
+            for coors[0] in range( 0, num_blit_hor * bg_width, bg_width ):
+                for coors[1] in range( 0, num_blit_ver * bg_height, bg_height ):
+                    self.screen.blit( consts.cave_background, coors )
 
         # print(consts.SPACE_START, consts.OVER_START, self.player.get_pos()[1])
 
