@@ -311,7 +311,7 @@ def init_menu_3( display_size, _manager ):
 
     menu_3 = UIPanel( pygame.Rect( menu_3_pos, menu_3_dim ), 1, _manager )
     create_world_text_entry = UITextEntryLine( pygame.Rect( create_world_text_entry_pos, create_world_text_entry_dim ), _manager, menu_3 )
-    create_world_text_entry.allowed_characters = consts.ALLOWED_CHARACTERS
+    create_world_text_entry.allowed_characters = consts.ALLOWED_CHARS
     char_error_label_1 = UILabel( pygame.Rect( char_error_label_1_pos, char_error_label_1_dim ), "Enter the world name. Only", _manager, menu_3 )
     char_error_label_2 = UILabel( pygame.Rect( char_error_label_2_pos, char_error_label_2_dim ), "alphabets and numbers allowed", _manager, menu_3 )
     world_exists_label = UILabel( pygame.Rect( world_exists_label_pos, world_exists_label_dim ), "World already exists", _manager, menu_3)
