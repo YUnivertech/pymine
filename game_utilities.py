@@ -106,21 +106,37 @@ class Renderer:
 
         elif self.player.get_pos()[1] >= consts.OVER_START:
             # fill the sky with the color which is is supposed to be there
-            day_time = int( self.serializer.get_day_time() ) % ( consts.DAY_DURATION * 2 )
-            # its either day or night
-            if day_time > consts.DAY_DURATION:
-                day_time = ( consts.DAY_DURATION * 2 ) - day_time
+            # day_time = int( self.serializer.get_day_time() ) % ( consts.DAY_DURATION * 2 )
+            # # its either day or night
+            # if day_time > consts.DAY_DURATION:
+            #     day_time = ( consts.DAY_DURATION * 2 ) - day_time
 
-            gradient_quantization = consts.sky_gradient.get_width()
-            gradient_quantization = ( day_time * gradient_quantization ) // consts.DAY_DURATION
-            gradient_quantization = min( gradient_quantization, 255 )
+            # gradient_quantization = consts.sky_gradient.get_width()
+            # gradient_quantization = ( day_time * gradient_quantization ) // consts.DAY_DURATION
+            # gradient_quantization = min( gradient_quantization, 255 )
 
-            clr = consts.sky_gradient.get_at( (int( gradient_quantization ), 0) )
-            self.screen.fill( clr )
+            # clr = consts.sky_gradient.get_at( (int( gradient_quantization ), 0) )
+            # self.screen.fill( clr )
+
+            bg_img = ( self.serializer.get_day_time() ) % ( consts.DAY_DURATION * 2 )
+            bg_img = int( bg_img > consts.DAY_DURATION )
+            bg_img = consts.overworld_backgrounds[bg_img]
+
+            bg_width        = bg_img.get_width()
+            bg_height       = bg_img.get_height()
+
+            num_blit_hor    = consts.pos_ceil( self.screen.get_width(), bg_width )
+            num_blit_ver    = consts.pos_ceil( self.screen.get_height(), bg_height )
+
+            coors = [0, 0]
+
+            for coors[0] in range( 0, num_blit_hor * bg_width, bg_width ):
+                for coors[1] in range( 0, num_blit_ver * bg_height, bg_height ):
+                    self.screen.blit( bg_img, coors )
 
         else:
             # Put the cave texture
-            bg_width        = consts.cave_background.get_width()
+            bg_width        = consts.get_width()
             bg_height       = consts.cave_background.get_height()
 
             num_blit_hor    = consts.pos_ceil( self.screen.get_width(), bg_width )

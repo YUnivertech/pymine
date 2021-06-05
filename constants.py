@@ -67,7 +67,7 @@ INV_ROWS            = 3
 HAND_DAMAGE         = 10000
 
 # Length of hald of an in-game day (in seconds)
-DAY_DURATION        = 360
+DAY_DURATION        = 2
 
 ALLOWED_CHARS       = [chr(ord('a') + i) for i in range(26)] + [chr(ord('A') + i) for i in range(26)] + [str(i) for i in range(10)]
 
@@ -499,6 +499,14 @@ inventory_slot = pygame.image.load("Resources/Default/InventorySpace.png")
 cave_background = pygame.image.load("Resources/Default/cave_background.png")
 space_background = pygame.image.load("Resources/Default/space_background.png")
 sky_gradient     = pygame.image.load("Resources/Default/sky_gradient.png")
+
+sky_orange      = pygame.Surface( (128, 128) )
+sky_blue        = pygame.Surface( (128, 128) )
+
+sky_orange.fill( (255, 127, 63) )
+sky_blue.fill( (63, 127, 255) )
+
+overworld_backgrounds = (sky_orange, sky_blue)
 
 TILE_TABLE = {
 

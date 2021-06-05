@@ -64,7 +64,7 @@ class Chunk:
 
     def draw( self, _rect = [ 0 , 0 , consts.CHUNK_WIDTH , consts.CHUNK_HEIGHT ] ):
 
-        x_start = consts.TILE_WIDTH * ( _rect[0 ])
+        x_start = consts.TILE_WIDTH * ( _rect[0])
         y_start = consts.TILE_WIDTH * (consts.CHUNK_HEIGHT - _rect[3 ])
 
         x_span  = consts.TILE_WIDTH * (_rect[2 ] - _rect[0 ])
