@@ -6,7 +6,7 @@ import pygame.freetype
 
 import time
 
-log_file = open('log_file.txt', 'w')
+# log_file = open('log_file.txt', 'w')
 # The debug verbosity level, can be from 0 to 4 (both inclusive)
 DBG                 = 0
 
@@ -46,7 +46,7 @@ SPACE_START         = ( CHUNK_HEIGHT - 1 - 128 ) * TILE_WIDTH
 OVER_START          = 128 * TILE_WIDTH
 
 # Constant to determine the linear interpolation of the camera
-LERP_C              = (10 / 3) * 3
+LERP_C              = 1
 
 # Constants for entity and physics (time_unit = seconds, length_unit = points)
 GRAVITY_ACC         = 0.98
@@ -57,7 +57,7 @@ DEFAULT_FRICTION    = 0.5
 MAX_ACC             = 1
 MAX_VEL             = 1
 HITBOX_WIDTH        = TILE_WIDTH-2
-HITBOX_HEIGHT       = TILE_WIDTH+6
+HITBOX_HEIGHT       = ( TILE_WIDTH << 1 ) - 1
 PLYR_WIDTH          = TILE_WIDTH+2      # 36
 PLYR_HEIGHT         = TILE_WIDTH+14    # 54
 PLYR_RANGE          = 4 * TILE_WIDTH
@@ -66,6 +66,8 @@ INV_ROWS            = 3
 # HAND_DAMAGE         = 33
 HAND_DAMAGE         = 10000
 
+# Length of hald of an in-game day (in seconds)
+DAY_DURATION        = 360
 
 ALLOWED_CHARS       = [chr(ord('a') + i) for i in range(26)] + [chr(ord('A') + i) for i in range(26)] + [str(i) for i in range(10)]
 
@@ -496,6 +498,7 @@ TILE_MODIFIERS = {
 inventory_slot = pygame.image.load("Resources/Default/InventorySpace.png")
 cave_background = pygame.image.load("Resources/Default/cave_background.png")
 space_background = pygame.image.load("Resources/Default/space_background.png")
+sky_gradient     = pygame.image.load("Resources/Default/sky_gradient.png")
 
 TILE_TABLE = {
 

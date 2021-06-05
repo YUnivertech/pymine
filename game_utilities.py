@@ -105,8 +105,19 @@ class Renderer:
                     self.screen.blit( consts.space_background, coors )
 
         elif self.player.get_pos()[1] >= consts.OVER_START:
-            # Put the overworld texture
-            self.screen.fill( (63, 127, 255) )
+            # fill the sky with the color which is is supposed to be there
+            day_time = int( self.serializer.get_day_time() ) % ( consts.DAY_DURATION * 2 )
+            # its either day or night
+            if day_time > consts.DAY_DURATION:
+                day_time = ( consts.DAY_DURATION * 2 ) - day_time
+
+            gradient_quantization = consts.sky_gradient.get_width()
+            gradient_quantization = ( day_time * gradient_quantization ) // consts.DAY_DURATION
+            gradient_quantization = min( gradient_quantization, 255 )
+
+            clr = consts.sky_gradient.get_at( (int( gradient_quantization ), 0) )
+            self.screen.fill( clr )
+
         else:
             # Put the cave texture
             bg_width        = consts.cave_background.get_width()
@@ -196,7 +207,7 @@ class Renderer:
         plyr_coors[0] += self.num_hor
         plyr_coors[1] = self.num_ver - plyr_coors[1]
 
-        self.screen.blit( self.player.get_texture(), ( plyr_coors[0] - 8, plyr_coors[1] - 8))
+        self.screen.blit( self.player.get_texture(), plyr_coors )
 
         # Temporary rendering of camera
         pygame.draw.rect( self.screen, (255, 50, 50), pygame.Rect( camera_coors[0] - 2, camera_coors[1] - 2, 5, 5 ) )
@@ -250,6 +261,7 @@ class Serializer:
         """
         self.name = "Worlds/" + world_name + '.db'
         self.world_time = 0
+        self.day_time   = 0
 
         if not os.path.isdir("Worlds"): os.mkdir("Worlds")
         self.conn = sqlite3.connect( self.name )
@@ -455,11 +467,11 @@ class Serializer:
             consts.dbg( 1, "EXCEPTION IN SERIALIZER GET_WORLD_TIME:", e )
             return res
 
-    def update_world_time( self, _dt ):
-        self.world_time += _dt
+    def set_day_time( self, _dt ):
+        self.day_time += _dt
 
-    def use_world_time( self, _dt ):
-        return self.world_time
+    def get_day_time( self ):
+        return self.day_time
 
     def stop( self ):
         self.conn.close( )
