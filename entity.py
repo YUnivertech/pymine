@@ -298,6 +298,7 @@ class Player(Entity):
         Args:
             _dt (float): Time passed between previous and current iteration.
         """
+        self.pick()
         consts.dbg( 1, "ENTERING UPDATE" )
         dt2 = _dt
         _dt  = 16 / (consts.MAX_VEL * consts.SCALE_VEL)
@@ -354,8 +355,8 @@ class Player(Entity):
             if self.vel == [0, 0]: break
 
     def pick( self ):
-        l = self.entity_buffer.pickItem( )
-        for item in l: self.inventory.addItem(item, 1)
+        l = self.entity_buffer.player_pick_item( )
+        for item in l: self.inventory.add_item(item.id, 1)
 
     def get_surf( self ):
         return self.surf
@@ -553,10 +554,17 @@ class EntityBuffer:
     def hit( self ):
         pass
 
-    def pick_item( self ):
-        pass
+    def player_pick_item( self ):
+        items = []
+        for index in range( self.len - 1, -1, -1 ):
+            for entity_ind in range( len( self.entities[ index ] ) - 1, -1, -1 ):
+                entity = self.entities[ index ][ entity_ind ]
+                if (isinstance( entity, ItemEntity )) and (consts.dist_between_points( entity.pos, self.player.pos ) <= consts.PLYR_RANGE):
+                    items.append( entity )
+                    self.entities[ index ].pop( entity_ind )
+        return items
 
-    def item_in_range( self ):
+    def item_in_range( self, _pos, _range ):
         pass
 
     def entity_in_range( self ):

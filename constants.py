@@ -77,10 +77,11 @@ INV_COLOR        = ( 0, 0, 0 )
 # SC_DISPLAY_FONT  = pygame.freetype.SysFont('Consolas', size=20, bold=True)
 
 # Global utility functions
-get_curr_chunk     = lambda p: int( math.floor( p[0] / CHUNK_WIDTH_P ) )
-get_x_pos_chunk    = lambda p: int( p[0] // TILE_WIDTH - get_curr_chunk( p ) * CHUNK_WIDTH )
-get_y_pos_chunk    = lambda p: int( p[1] // TILE_WIDTH )
-pos_ceil           = lambda x, y : ( x + y - 1 ) // y
+dist_between_points = lambda p1, p2: pow( pow( p1[ 0 ] - p2[ 0 ], 2 ) + pow( p1[ 1 ] - p2[ 1 ], 2 ), 0.5 )
+get_curr_chunk      = lambda p: int( math.floor( p[0] / CHUNK_WIDTH_P ) )
+get_x_pos_chunk     = lambda p: int( p[0] // TILE_WIDTH - get_curr_chunk( p ) * CHUNK_WIDTH )
+get_y_pos_chunk     = lambda p: int( p[1] // TILE_WIDTH )
+pos_ceil            = lambda x, y : ( x + y - 1 ) // y
 
 # ! ----------------------------------------------------------------
 
