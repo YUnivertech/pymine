@@ -3,6 +3,8 @@ import pickle
 import pygame
 import pygame.freetype
 
+import queue
+
 import constants as consts
 
 def generate_chunk_temp( _chunk , noise_gen ):
@@ -116,51 +118,13 @@ class Chunk:
         # Then we blit the tile modifiers (cracks, glows, etc.)
         # Then we blit the liquids / fire
 
-
-    def break_block_at( self , _x , _y , _item , _dt ):
-        # Left click was done at the coordinates x, y for dt time using item tool at the block level
-        # the behaviour of tool is acted using its corresponding function which we can get from a dictionary
-        if( ( _x, _y ) not in self.local_tile_table[1] ):
-            self.local_tile_table[ ( _x, _y ) ] = {}
-
-        if( consts.tile_attr.HEALTH not in self.local_tile_table[1][ ( _x, _y ) ] ):
-            self.local_tile_table[1][ ( _x, _y ) ][ consts.tile_attr.HEALTH ] = 100
-
-        self.local_tile_table[1][ ( _x, _y ) ][ consts.tile_attr.HEALTH ] -= (25 * _dt)
-
-        if(self.local_tile_table[1][ ( _x, _y ) ][ consts.tile_attr.HEALTH ] <= 0):
-            del self.local_tile_table[1][ ( _x, _y ) ]
-            self.blocks[_y][_x] = consts.tiles.air
-            return True
-
-        return False
-
-    def break_wall_at( self , _x , _y , _item , _dt ): pass
-        # Left click was done at the coordinates x, y for dt time using item tool at the wall level
-        # the behaviour of tool is acted using its corresponding function which we can get from a dictionary
-
-    def place_block_at( self , _x , _y , _tile, _local_entry = None ):
-        # Place _tile at (_x, _y) and put an entry for it in the local tile table if _local_entry is a valid dictionary
-        # Right click was done at the coordinates x, y for dt time using item item at the block level
-        # the behaviour of item is acted using its corresponding function which we can get from a dictionary
-        if self.blocks[_y][_x] != consts.tiles.air: return False
-        self.blocks[_y][_x] = _tile
-
-        if _local_entry: self.local_tile_table[ ( _x, _y, True) ] = _local_entry.copy()
-
-        return True
-
-    def place_wall_at( self , _x , _y , _item , _dt ): pass
-        # Right click was done at the coordinates x, y for dt time using item item at the wall level
-        # the behaviour of item is acted using its corresponding function which we can get from a dictionary
-
     def update( self, _dt ):
 
         # Go through every block in this table
-        to_remove = []
+        to_remove = queue.Queue( maxsize = consts.CHUNK_WIDTH * consts.CHUNK_HEIGHT )
         for key in self.local_tile_table[0]:
 
-            to_remove_local = []
+            to_remove_local = queue.Queue( maxsize = 256 )
             x, y = key
 
             flag = 0
@@ -176,13 +140,13 @@ class Chunk:
 
                     # If this is of no significance, then put it to a queue to be removed
                     if self.local_tile_table[0][key][attr] >= health_tot:
-                        to_remove_local.append( attr )
+                        to_remove_local.put( attr )
 
                     flag = 1
 
             # Go through the queue and remove all redundant key-value pairs
-            for attr in to_remove_local:
-                del self.local_tile_table[0][key][attr]
+            while to_remove_local.qsize():
+                del self.local_tile_table[0][key][to_remove_local.get()]
 
             if len( self.local_tile_table[0][key] ) <= 0:
                 to_remove.append( key )
@@ -190,14 +154,13 @@ class Chunk:
             if flag and self.blocks[y][x] == consts.tiles.air:
                 self.draw( [x, y, x + 1, y + 1] )
 
-        for key in to_remove:
-            del self.local_tile_table[0][key]
+        while to_remove.qsize():
+            del self.local_tile_table[0][to_remove.get()]
 
         # Go through every block in this table
-        to_remove = []
         for key in self.local_tile_table[1]:
 
-            to_remove_local = []
+            to_remove_local = queue.Queue( maxsize = consts.CHUNK_WIDTH * consts.CHUNK_HEIGHT )
             x, y = key
 
             flag = 0
@@ -218,8 +181,8 @@ class Chunk:
                     flag = 1
 
             # Go through the queue and remove all redundant key-value pairs
-            for attr in to_remove_local:
-                del self.local_tile_table[1][key][attr]
+            while to_remove_local.qsize():
+                del self.local_tile_table[1][key][to_remove_local.get()]
 
             if len( self.local_tile_table[1][key] ) <= 0:
                 to_remove.append( key )
@@ -227,8 +190,8 @@ class Chunk:
             if flag:
                 self.draw( [x, y, x + 1, y + 1] )
 
-        for key in to_remove:
-            del self.local_tile_table[1][key]
+        while to_remove.qsize():
+            del self.local_tile_table[1][to_remove.get()]
 
     def get_surf( self ):
         return self.surf
