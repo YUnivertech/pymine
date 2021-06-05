@@ -176,7 +176,7 @@ class Chunk:
 
                     # If this is of no significance, then put it to a queue to be removed
                     if self.local_tile_table[1][key][attr] >= health_tot:
-                        to_remove_local.append( attr )
+                        to_remove_local.put( attr )
 
                     flag = 1
 
@@ -185,7 +185,7 @@ class Chunk:
                 del self.local_tile_table[1][key][to_remove_local.get()]
 
             if len( self.local_tile_table[1][key] ) <= 0:
-                to_remove.append( key )
+                to_remove.put( key )
 
             if flag:
                 self.draw( [x, y, x + 1, y + 1] )
