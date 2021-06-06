@@ -46,6 +46,8 @@ class Chunk:
 
         self.blocks             = _blocks
         self.walls              = _walls
+        self.liquid_lvls        = [[[None, 0] for i in range( consts.CHUNK_WIDTH )] for j in range( consts.CHUNK_HEIGHT )]
+
         self.local_tile_table   = _local_tile_table
         self.index              = _index
 
@@ -53,7 +55,6 @@ class Chunk:
         self.active_time        = _active_time
 
         self.surf               = pygame.Surface( ( consts.CHUNK_WIDTH_P , consts.CHUNK_HEIGHT_P ) , flags = pygame.SRCALPHA )
-        # self.surf               = pygame.Surface( (consts.CHUNK_WIDTH_P , consts.CHUNK_HEIGHT_P) )
 
         if not self.blocks:
             self.blocks = [ [ consts.tiles.air for j in range( consts.CHUNK_WIDTH ) ] for i in range( consts.CHUNK_HEIGHT ) ]
@@ -93,6 +94,10 @@ class Chunk:
                     self.surf.blit( consts.TILE_TABLE[wall_ref ], coors )
                     if ( i , j ) in self.local_tile_table[0] : pass
 
+                if self.liquid_lvls[i][j][0]:
+                    which_liquid, my_level = self.liquid_lvls[i][j]
+                    self.surf.blit( consts.TILE_MODIFIERS[consts.tile_modifs.water][int( my_level )], coors )
+
         # Blitting modifiers on walls
         for key in self.local_tile_table[0]:
             x, y        = key
@@ -116,10 +121,6 @@ class Chunk:
             if consts.tile_attr.HEALTH in blck_attr:
                 break_state = int( ( blck_attr[consts.tile_attr.HEALTH] * 8 ) / consts.TILE_ATTR[blck][consts.tile_attr.HEALTH] )
                 self.surf.blit( consts.TILE_MODIFIERS[consts.tile_modifs.crack][8 - break_state], coors )
-
-            elif consts.tile_modifs.water in blck_attr:
-                water_logged_state = int( blck_attr[consts.tile_modifs.water] )
-                self.surf.blit( consts.TILE_MODIFIERS[consts.tile_modifs.water][water_logged_state], coors )
 
         # Then we blit the tile modifiers (cracks, glows, etc.)
         # Then we blit the liquids / fire
@@ -186,58 +187,6 @@ class Chunk:
 
                     flag = 1
 
-                elif attr == consts.tile_modifs.water:
-
-                    my_water_level  = self.local_tile_table[1][key][attr]
-                    transfer_rate   = consts.WATER_FLOW_RATE * _dt
-
-                    if ( x + 1 ) < consts.CHUNK_WIDTH and self.blocks[y][x + 1] == consts.tiles.air:
-
-                        if (x + 1, y) not in self.local_tile_table[1]:
-                            self.local_tile_table[1][(x + 1, y)] = {}
-
-                        if consts.tile_modifs.water not in self.local_tile_table[1][(x + 1, y)]:
-                            self.local_tile_table[1][(x + 1, y)][consts.tile_modifs.water] = 0
-
-                        diff = my_water_level - self.local_tile_table[1][(x + 1, y)][consts.tile_modifs.water]
-                        if diff > 0:
-                            amt_to_transfer = max( diff, transfer_rate )
-                            my_water_level -= amt_to_transfer
-                            self.local_tile_table[1][(x + 1, y)][consts.tile_modifs.water] += amt_to_transfer
-
-                    if ( x - 1 ) >= 0 and self.blocks[y][x - 1] == consts.tiles.air:
-
-                        if (x - 1, y) not in self.local_tile_table[1]:
-                            self.local_tile_table[1][(x - 1, y)] = {}
-
-                        if consts.tile_modifs.water not in self.local_tile_table[1][(x - 1, y)]:
-                            self.local_tile_table[1][(x - 1, y)][consts.tile_modifs.water] = 0
-
-                        diff = my_water_level - self.local_tile_table[1][(x - 1, y)][consts.tile_modifs.water]
-                        if diff > 0:
-                            amt_to_transfer = max( diff, transfer_rate )
-                            my_water_level -= amt_to_transfer
-                            self.local_tile_table[1][(x - 1, y)][consts.tile_modifs.water] += amt_to_transfer
-
-                    if ( y - 1 ) >= 0 and self.blocks[y - 1][x] == consts.tiles.air:
-
-                        if (x, y - 1) not in self.local_tile_table[1]:
-                            self.local_tile_table[1][(x, y - 1)] = {}
-
-                        if consts.tile_modifs.water not in self.local_tile_table[1][(x, y - 1)]:
-                            self.local_tile_table[1][(x, y - 1)][consts.tile_modifs.water] = 0
-
-                        diff = my_water_level - self.local_tile_table[1][(x, y - 1)][consts.tile_modifs.water]
-                        if diff > 0:
-                            amt_to_transfer = max( diff, transfer_rate )
-                            my_water_level -= amt_to_transfer
-                            self.local_tile_table[1][(x, y - 1)][consts.tile_modifs.water] += amt_to_transfer
-
-                    self.local_tile_table[1][key][attr] = my_water_level
-
-                    if my_water_level == 0:
-                        to_remove_local.put( attr )
-
             # Go through the queue and remove all redundant key-value pairs
             while to_remove_local.qsize():
                 del self.local_tile_table[1][key][to_remove_local.get()]
@@ -250,6 +199,11 @@ class Chunk:
 
         while to_remove.qsize():
             del self.local_tile_table[1][to_remove.get()]
+
+        for i in range( consts.CHUNK_HEIGHT ):
+            for j in range( consts.CHUNK_WIDTH ):
+                if self.liquid_lvls[i][j][0]:
+                    which_liquid, my_level = self.liquid_lvls[i][j]
 
     def get_surf( self ):
         return self.surf

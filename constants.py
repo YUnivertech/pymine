@@ -1187,14 +1187,10 @@ def l_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
 
 def r_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     chunk = _chunk_buffer.chunks[_chunk]
-    table = chunk.local_tile_table[1]
-
-    if (_x, _y) not in table:
-        table[(_x, _y)] = {}
-
-    if tile_modifs.water not in table[(_x, _y)]:
-        table[(_x, _y)][tile_modifs.water] = 127
-        chunk.draw()
+    if not chunk.liquid_lvls[_y][_x][0]:
+        chunk.liquid_lvls[_y][_x][0] = tile_modifs.water
+        chunk.liquid_lvls[_y][_x][1] = 127
+        chunk.draw( [_x, _y, _x + 1, _y + 1] )
 
     return 0
 
