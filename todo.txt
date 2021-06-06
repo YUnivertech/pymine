@@ -1,16 +1,27 @@
-template for all initializer methods
-_chunk_buffer , _entity_buffer , _player , _renderer , _serializer , _camera , _screen
+Aditya-
+    Liquids, Fire
+    Inventory which slot selected
+    Inventory operations (dropping, selecting etc.)
+    walls
+    Animation
+    lightmap gen, shaders
+    parallax
+----------------------------------------------------
 
-breaking placing based on key press and USE function
+Akshaj-
+    health, hunger, fall damage, hitting etc.
+    projectiles
+    NPCs
+----------------------------------------------------
 
-fix surfpos and other pos
-multiplayer(decentralized)
-crafting, furnace
-npc, projectiles
-walls
-entity surface vs hitbox diff
-multiprocesssing - shaders, populate chunk
-world gen
+Shared-
+    crafting, furnaces, chest
+    multiprocessing (Entity buffer loading (optional), chunk buffer loading (optional), lightmap gen, chunk population )
+    World Gen
+    Textures
+    Tile merging
+----------------------------------------------------
+
 
 ----------------------------------------------------
 user uid = pub+priv+time
@@ -23,51 +34,9 @@ User starts the game
         - start -> it will tell u the ip-code and then u choose the world
     - settings -> user settings(player customization, texture pack selection, audio settings, keys selection for movement)
 
-Game managers
-- ChunkBuffer
-- EntityBuffer
-- Tools -> serializer and renderer
-- Player
-
-shaders and populate chunk will be multiprocesssed
-
-Classes
-- Chunk -> list of blocks and walls, local tile table, lightmap, time passed while it is active
-- Entity -> worldpos, hitboxPos, surf, surfpos, movement related  -> inherited by player, zombie, slime, etc.
-- ItemEntity
-- Inventory
-
-Data
-- constants
-- tiles
-- tile behaviours
-- items
-- item behaviours
-- miscGUI
-- crafting
 
 In multiplayer, there is a server and there are clients
 Even the person running the server must connect to it as a client
 Each player has their own copy of the chunk buffer which they get from the server (changes are saved to the server, not on the client)
 Each player has their own copy of the entity buffer which they get from the server (changes are saved to the server, not on the client)
 All rendering business (on-screen and in-place) are done by the client
-
-liquids will be modifiers which will be used as overlays on top of existing blocks an empty slot
-can have a certain liquid level but not a regular block
-
-
-1> Get main menu running (Singleplayer only)
-2> Get worlds loading and unloading (including player)
-3> Get liquids and fire updating
-4> Game quits to main menu
-
-# def takeCommand( ):
-#     global cameraBound
-#     command = input(">> ")
-#     command = command.split()
-
-#     if(command[0] == 'add'):
-#         player.inventory.addItem(eval(command[1], globals(), locals()), eval(command[2]))
-
-#     elif(command[0] == 'rem'):
-#         player.inventory.remItemStack(eval(command[1], globals(), locals()), eval(command[2]))
