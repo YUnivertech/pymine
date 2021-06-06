@@ -67,7 +67,7 @@ INV_ROWS            = 3
 HAND_DAMAGE         = 10000
 
 # Length of hald of an in-game day (in seconds)
-DAY_DURATION        = 9
+DAY_DURATION        = 360
 
 ALLOWED_CHARS       = [chr(ord('a') + i) for i in range(26)] + [chr(ord('A') + i) for i in range(26)] + [str(i) for i in range(10)]
 
@@ -101,9 +101,7 @@ class tile_attr( enum.Enum ):
     FRICTION        = 4
 
     # Gameplay related attributes
-    DROPS           = 5
-    TYPE            = 6
-    DROP_ITEM       = 7
+    DROP_ITEM       = 5
 
 
 class tile_modifs( enum.Enum ):
@@ -118,7 +116,6 @@ class tile_modifs( enum.Enum ):
     # Modifier to indicate presence of fluid in tile
     water           = 3
     lava            = 4
-
 
 class tiles( enum.Enum ):
 
@@ -485,23 +482,23 @@ TILE_NAMES = {
     tiles.chest                 : "chest"
 }
 
-# Dictionary consisting of tile as key; list of surfaces of modifiers as value
+# Dictionary consisting of tile_modifs as key; list of surfaces of modifiers as value
 TILE_MODIFIERS = {
     tile_modifs.crack       : [ pygame.image.load("Resources/Default/break{}.png".format(i)) for i in range( 9 ) ],
     tile_modifs.on_fire     : [],
     tile_modifs.fire        : [],
-    tile_modifs.water       : [],
+    tile_modifs.water       : [ pygame.Surface( ( TILE_WIDTH, TILE_WIDTH ), flags = pygame.SRCALPHA ) for i in range( 256 ) ],
     tile_modifs.lava        : []
 }
 
 # Dictionary consisting of tile as key; surface (image) as value
-inventory_slot = pygame.image.load("Resources/Default/InventorySpace.png")
-cave_background = pygame.image.load("Resources/Default/cave_background.png")
-space_background = pygame.image.load("Resources/Default/space_background.png")
-sky_gradient     = pygame.image.load("Resources/Default/sky_gradient.png")
+inventory_slot      = pygame.image.load("Resources/Default/InventorySpace.png")
+cave_background     = pygame.image.load("Resources/Default/cave_background.png")
+space_background    = pygame.image.load("Resources/Default/space_background.png")
+sky_gradient        = pygame.image.load("Resources/Default/sky_gradient.png")
 
-sky_orange      = pygame.Surface( (128, 128) )
-sky_blue        = pygame.Surface( (128, 128) )
+sky_orange          = pygame.Surface( (128, 128) )
+sky_blue            = pygame.Surface( (128, 128) )
 
 sky_orange.fill( (255, 127, 63) )
 sky_blue.fill( (63, 127, 255) )
@@ -1187,6 +1184,16 @@ def l_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
+    chunk = _chunk_buffer.chunks[_chunk]
+    table = chunk.local_tile_table[1]
+
+    if (_x, _y) not in table:
+        table[(_x, _y)] = {}
+
+    if tile_modifs.water not in table[(_x, _y)]:
+        table[(_x, _y)][tile_modifs.water] = 127
+        chunk.draw()
+
     return 0
 
 def l_use_stick(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
@@ -1862,6 +1869,17 @@ def r_use_chest(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     pass
 
 def loadImageTable():
+
+    for i in range( 256 ):
+
+        # TILE_MODIFIERS[tile_modifs.water][i].fill( (0, 0, 255, 96) )
+
+        TILE_MODIFIERS[tile_modifs.water][i].fill( (0, 0, 0, 0) )
+
+        h = ( i * TILE_WIDTH ) // 255
+        y = TILE_WIDTH - h
+
+        TILE_MODIFIERS[tile_modifs.water][i].fill( (0, 96, 192, 100), [0, y, TILE_WIDTH, h] )
 
     for key in TILE_TABLE:
 
