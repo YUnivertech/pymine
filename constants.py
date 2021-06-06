@@ -65,7 +65,7 @@ INV_COLS            = 10
 INV_ROWS            = 3
 # HAND_DAMAGE         = 33
 HAND_DAMAGE         = 10000
-WATER_FLOW_RATE     = 128
+WATER_FLOW_RATE     = 32
 LAVA_FLOW_RATE      = 84
 
 # Length of hald of an in-game day (in seconds)
@@ -1189,7 +1189,7 @@ def r_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     chunk = _chunk_buffer.chunks[_chunk]
     if not chunk.liquid_lvls[_y][_x][0]:
         chunk.liquid_lvls[_y][_x][0] = tile_modifs.water
-        chunk.liquid_lvls[_y][_x][1] = 127
+        chunk.liquid_lvls[_y][_x][1] = 255
         chunk.draw( [_x, _y, _x + 1, _y + 1] )
 
     return 0

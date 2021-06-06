@@ -47,6 +47,7 @@ class Chunk:
         self.blocks             = _blocks
         self.walls              = _walls
         self.liquid_lvls        = [[[None, 0] for i in range( consts.CHUNK_WIDTH )] for j in range( consts.CHUNK_HEIGHT )]
+        self.liquid_lvls_nxt    = [[[None, 0] for i in range( consts.CHUNK_WIDTH )] for j in range( consts.CHUNK_HEIGHT )]
 
         self.local_tile_table   = _local_tile_table
         self.index              = _index
@@ -202,8 +203,56 @@ class Chunk:
 
         for i in range( consts.CHUNK_HEIGHT ):
             for j in range( consts.CHUNK_WIDTH ):
+
                 if self.liquid_lvls[i][j][0]:
                     which_liquid, my_level = self.liquid_lvls[i][j]
+                    transfer_amt = consts.WATER_FLOW_RATE * _dt
+
+                    if i >= 1 and self.blocks[i - 1][j] == consts.tiles.air:
+                        transfer_amt = max( transfer_amt, my_level )
+                        my_level -= transfer_amt
+                        self.liquid_lvls_nxt[i - 1][j][1] += transfer_amt
+                        self.liquid_lvls_nxt[i - 1][j][1] = which_liquid
+
+                    else:
+                        transfer_amt_rt = 0
+                        transfer_amt_lt = 0
+
+                        if j+1 < consts.CHUNK_WIDTH and self.blocks[i][j + 1] == consts.tiles.air:
+                            diff = my_level - self.liquid_lvls[i][j + 1][1]
+                            if diff > 0:
+                                transfer_amt_rt = max( consts.WATER_FLOW_RATE * _dt, diff )
+                        if j-1 >= 0 and self.blocks[i][j - 1] == consts.tiles.air:
+                            diff = my_level - self.liquid_lvls[i][j - 1][1]
+                            if diff > 0:
+                                transfer_amt_lt = max( consts.WATER_FLOW_RATE * _dt, diff )
+
+                        if transfer_amt_rt + transfer_amt_lt > my_level:
+                            transfer_amt_rt = transfer_ant_lt = my_level / 2
+                            my_level = 0
+                        else:
+                            my_level -= transfer_amt_lt + transfer_amt_rt
+
+                        if transfer_amt_lt:
+                            self.liquid_lvls_nxt[i][j - 1][0] = which_liquid
+                            self.liquid_lvls_nxt[i][j - 1][1] += transfer_amt_lt
+
+                        if transfer_amt_rt:
+                            self.liquid_lvls_nxt[i][j + 1][0] = which_liquid
+                            self.liquid_lvls_nxt[i][j + 1][1] += transfer_amt_rt
+
+                    if my_level <= 0:
+                        self.liquid_lvls_nxt[i][j][0] = None
+
+                    self.liquid_lvls_nxt[i][j][1] = my_level
+
+        for i in range( consts.CHUNK_HEIGHT ):
+            for j in range( consts.CHUNK_WIDTH ):
+                self.liquid_lvls[i][j][0], self.liquid_lvls[i][j][1]            = self.liquid_lvls_nxt[i][j][0], self.liquid_lvls_nxt[i][j][1]
+                self.liquid_lvls_nxt[i][j][0], self.liquid_lvls_nxt[i][j][1]    = None, 0
+
+        self.draw()
+
 
     def get_surf( self ):
         return self.surf
