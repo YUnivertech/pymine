@@ -65,6 +65,8 @@ INV_COLS            = 10
 INV_ROWS            = 3
 # HAND_DAMAGE         = 33
 HAND_DAMAGE         = 10000
+WATER_FLOW_RATE     = 128
+LAVA_FLOW_RATE      = 84
 
 # Length of hald of an in-game day (in seconds)
 DAY_DURATION        = 360
@@ -1871,8 +1873,6 @@ def r_use_chest(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
 def loadImageTable():
 
     for i in range( 256 ):
-
-        # TILE_MODIFIERS[tile_modifs.water][i].fill( (0, 0, 255, 96) )
 
         TILE_MODIFIERS[tile_modifs.water][i].fill( (0, 0, 0, 0) )
 

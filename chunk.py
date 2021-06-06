@@ -186,6 +186,58 @@ class Chunk:
 
                     flag = 1
 
+                elif attr == consts.tile_modifs.water:
+
+                    my_water_level  = self.local_tile_table[1][key][attr]
+                    transfer_rate   = consts.WATER_FLOW_RATE * _dt
+
+                    if ( x + 1 ) < consts.CHUNK_WIDTH and self.blocks[y][x + 1] == consts.tiles.air:
+
+                        if (x + 1, y) not in self.local_tile_table[1]:
+                            self.local_tile_table[1][(x + 1, y)] = {}
+
+                        if consts.tile_modifs.water not in self.local_tile_table[1][(x + 1, y)]:
+                            self.local_tile_table[1][(x + 1, y)][consts.tile_modifs.water] = 0
+
+                        diff = my_water_level - self.local_tile_table[1][(x + 1, y)][consts.tile_modifs.water]
+                        if diff > 0:
+                            amt_to_transfer = max( diff, transfer_rate )
+                            my_water_level -= amt_to_transfer
+                            self.local_tile_table[1][(x + 1, y)][consts.tile_modifs.water] += amt_to_transfer
+
+                    if ( x - 1 ) >= 0 and self.blocks[y][x - 1] == consts.tiles.air:
+
+                        if (x - 1, y) not in self.local_tile_table[1]:
+                            self.local_tile_table[1][(x - 1, y)] = {}
+
+                        if consts.tile_modifs.water not in self.local_tile_table[1][(x - 1, y)]:
+                            self.local_tile_table[1][(x - 1, y)][consts.tile_modifs.water] = 0
+
+                        diff = my_water_level - self.local_tile_table[1][(x - 1, y)][consts.tile_modifs.water]
+                        if diff > 0:
+                            amt_to_transfer = max( diff, transfer_rate )
+                            my_water_level -= amt_to_transfer
+                            self.local_tile_table[1][(x - 1, y)][consts.tile_modifs.water] += amt_to_transfer
+
+                    if ( y - 1 ) >= 0 and self.blocks[y - 1][x] == consts.tiles.air:
+
+                        if (x, y - 1) not in self.local_tile_table[1]:
+                            self.local_tile_table[1][(x, y - 1)] = {}
+
+                        if consts.tile_modifs.water not in self.local_tile_table[1][(x, y - 1)]:
+                            self.local_tile_table[1][(x, y - 1)][consts.tile_modifs.water] = 0
+
+                        diff = my_water_level - self.local_tile_table[1][(x, y - 1)][consts.tile_modifs.water]
+                        if diff > 0:
+                            amt_to_transfer = max( diff, transfer_rate )
+                            my_water_level -= amt_to_transfer
+                            self.local_tile_table[1][(x, y - 1)][consts.tile_modifs.water] += amt_to_transfer
+
+                    self.local_tile_table[1][key][attr] = my_water_level
+
+                    if my_water_level == 0:
+                        to_remove_local.put( attr )
+
             # Go through the queue and remove all redundant key-value pairs
             while to_remove_local.qsize():
                 del self.local_tile_table[1][key][to_remove_local.get()]
