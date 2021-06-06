@@ -67,7 +67,7 @@ INV_ROWS            = 3
 HAND_DAMAGE         = 10000
 
 # Length of hald of an in-game day (in seconds)
-DAY_DURATION        = 2
+DAY_DURATION        = 9
 
 ALLOWED_CHARS       = [chr(ord('a') + i) for i in range(26)] + [chr(ord('A') + i) for i in range(26)] + [str(i) for i in range(10)]
 
@@ -506,7 +506,7 @@ sky_blue        = pygame.Surface( (128, 128) )
 sky_orange.fill( (255, 127, 63) )
 sky_blue.fill( (63, 127, 255) )
 
-overworld_backgrounds = (sky_orange, sky_blue)
+overworld_backgrounds = (sky_blue, sky_orange)
 
 TILE_TABLE = {
 

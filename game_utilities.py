@@ -118,9 +118,22 @@ class Renderer:
             # clr = consts.sky_gradient.get_at( (int( gradient_quantization ), 0) )
             # self.screen.fill( clr )
 
-            bg_img = ( self.serializer.get_day_time() ) % ( consts.DAY_DURATION * 2 )
-            bg_img = int( bg_img > consts.DAY_DURATION )
-            bg_img = consts.overworld_backgrounds[bg_img]
+            # bg_img = ( self.serializer.get_day_time() ) % ( consts.DAY_DURATION * 2 )
+            # bg_img = int( bg_img > consts.DAY_DURATION )
+            time_of_day = self.serializer.get_day_time() % consts.DAY_DURATION
+            alpha_val = int(time_of_day / consts.DAY_DURATION * 255*9 % (255*9)) - 255*4
+            # if alpha_val > 255:
+            #     alpha_val = 510 - alpha_val
+            # print(alpha_val)
+            bg_img_1 = consts.overworld_backgrounds[0]
+            bg_img_1.set_alpha( max(210, 255 - alpha_val) )
+            # if alpha_val < 180:
+            #     alpha_val = min(180, 1.1**alpha_val)
+            bg_img_2 = consts.overworld_backgrounds[1]
+            bg_img_2.set_alpha( alpha_val )
+            bg_img = pygame.Surface((bg_img_1.get_width(), bg_img_1.get_height()))
+            bg_img.blit( bg_img_1, (0,0) )
+            bg_img.blit( bg_img_2, (0, 0) )
 
             bg_width        = bg_img.get_width()
             bg_height       = bg_img.get_height()
@@ -136,7 +149,7 @@ class Renderer:
 
         else:
             # Put the cave texture
-            bg_width        = consts.get_width()
+            bg_width        = consts.cave_background.get_width()
             bg_height       = consts.cave_background.get_height()
 
             num_blit_hor    = consts.pos_ceil( self.screen.get_width(), bg_width )
