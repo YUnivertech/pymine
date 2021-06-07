@@ -201,50 +201,70 @@ class Chunk:
         while to_remove.qsize():
             del self.local_tile_table[1][to_remove.get()]
 
+
+        # Go through every single block
         for i in range( consts.CHUNK_HEIGHT ):
             for j in range( consts.CHUNK_WIDTH ):
 
-                if self.liquid_lvls[i][j][0]:
-                    which_liquid, my_level = self.liquid_lvls[i][j]
-                    transfer_amt = consts.WATER_FLOW_RATE * _dt
+                # If the current cell holds no liquid then move on
+                if self.liquid_lvls[i][j][0] is None: continue
 
-                    if i >= 1 and self.blocks[i - 1][j] == consts.tiles.air:
-                        transfer_amt = max( transfer_amt, my_level )
-                        my_level -= transfer_amt
-                        self.liquid_lvls_nxt[i - 1][j][1] += transfer_amt
-                        self.liquid_lvls_nxt[i - 1][j][1] = which_liquid
+                # Get the current cell's data and calculate how much liquid should flow
+                which_liquid, my_lvl    = self.liquid_lvls[i][j]
+                trans_amt               = consts.WATER_FLOW_RATE * _dt
 
+                # If a block is free below go there
+                if i >= 1 and self.blocks[i - 1][j] == consts.tiles.air:
+                    trans_amt = min( my_lvl, trans_amt )
+
+                    self.liquid_lvls_nxt[i - 1][j][0] = which_liquid
+                    my_lvl -= trans_amt
+                    self.liquid_lvls_nxt[i - 1][j][1] += trans_amt
+
+                # Only check the sides if current cell has atleast 1 unit of water
+                elif my_lvl > 1:
+                    trans_rt = 0
+                    trans_lt = 0
+
+                    # If can go right, get how much water should flow to it
+                    if j - 1 >= 0:
+                        if self.blocks[i][j - 1] == consts.tiles.air:
+                            diff = my_lvl - self.liquid_lvls[i][j - 1][1]
+                            if diff > 0:
+                                trans_lt = min( diff, trans_amt )
                     else:
-                        transfer_amt_rt = 0
-                        transfer_amt_lt = 0
+                        pass
 
-                        if j+1 < consts.CHUNK_WIDTH and self.blocks[i][j + 1] == consts.tiles.air:
-                            diff = my_level - self.liquid_lvls[i][j + 1][1]
+                    # If can go left, get how much water should flow to it
+                    if j + 1 < consts.CHUNK_WIDTH:
+                        if self.blocks[i][j + 1] == consts.tiles.air:
+                            diff = my_lvl - self.liquid_lvls[i][j + 1][1]
                             if diff > 0:
-                                transfer_amt_rt = max( consts.WATER_FLOW_RATE * _dt, diff )
-                        if j-1 >= 0 and self.blocks[i][j - 1] == consts.tiles.air:
-                            diff = my_level - self.liquid_lvls[i][j - 1][1]
-                            if diff > 0:
-                                transfer_amt_lt = max( consts.WATER_FLOW_RATE * _dt, diff )
+                                trans_rt = min( diff, trans_amt )
+                    else:
+                        pass
 
-                        if transfer_amt_rt + transfer_amt_lt > my_level:
-                            transfer_amt_rt = transfer_ant_lt = my_level / 2
-                            my_level = 0
-                        else:
-                            my_level -= transfer_amt_lt + transfer_amt_rt
+                    # If required water exceeds available water, then cap it
+                    if trans_lt + trans_lt > my_lvl:
+                        trans_lt = trans_rt = my_lvl // 2
+                        my_lvl = 0
+                    else:
+                        my_lvl -= trans_lt + trans_rt
 
-                        if transfer_amt_lt:
-                            self.liquid_lvls_nxt[i][j - 1][0] = which_liquid
-                            self.liquid_lvls_nxt[i][j - 1][1] += transfer_amt_lt
+                    # If water should move to the left, then do
+                    if trans_lt:
+                        self.liquid_lvls_nxt[i][j - 1][0] = which_liquid
+                        self.liquid_lvls_nxt[i][j - 1][1] += trans_lt
 
-                        if transfer_amt_rt:
-                            self.liquid_lvls_nxt[i][j + 1][0] = which_liquid
-                            self.liquid_lvls_nxt[i][j + 1][1] += transfer_amt_rt
+                    # If water should move to the right, then do
+                    if trans_rt:
+                        self.liquid_lvls_nxt[i][j + 1][0] = which_liquid
+                        self.liquid_lvls_nxt[i][j + 1][1] += trans_rt
 
-                    if my_level <= 0:
+                    # If current level is 0 or below, then change liquid to none in current cell
+                    if my_lvl <= 0:
                         self.liquid_lvls_nxt[i][j][0] = None
-
-                    self.liquid_lvls_nxt[i][j][1] = my_level
+                    self.liquid_lvls_nxt[i][j][1] = my_lvl
 
         for i in range( consts.CHUNK_HEIGHT ):
             for j in range( consts.CHUNK_WIDTH ):

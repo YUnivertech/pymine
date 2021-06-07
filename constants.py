@@ -65,8 +65,8 @@ INV_COLS            = 10
 INV_ROWS            = 3
 # HAND_DAMAGE         = 33
 HAND_DAMAGE         = 10000
-WATER_FLOW_RATE     = 32
-LAVA_FLOW_RATE      = 84
+WATER_FLOW_RATE     = 2
+LAVA_FLOW_RATE      = 1
 
 # Length of hald of an in-game day (in seconds)
 DAY_DURATION        = 360
@@ -489,7 +489,7 @@ TILE_MODIFIERS = {
     tile_modifs.crack       : [ pygame.image.load("Resources/Default/break{}.png".format(i)) for i in range( 9 ) ],
     tile_modifs.on_fire     : [],
     tile_modifs.fire        : [],
-    tile_modifs.water       : [ pygame.Surface( ( TILE_WIDTH, TILE_WIDTH ), flags = pygame.SRCALPHA ) for i in range( 256 ) ],
+    tile_modifs.water       : [ pygame.Surface( ( TILE_WIDTH, TILE_WIDTH ), flags = pygame.SRCALPHA ) for i in range( 16 ) ],
     tile_modifs.lava        : []
 }
 
@@ -1189,7 +1189,7 @@ def r_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     chunk = _chunk_buffer.chunks[_chunk]
     if not chunk.liquid_lvls[_y][_x][0]:
         chunk.liquid_lvls[_y][_x][0] = tile_modifs.water
-        chunk.liquid_lvls[_y][_x][1] = 255
+        chunk.liquid_lvls[_y][_x][1] = 15
         chunk.draw( [_x, _y, _x + 1, _y + 1] )
 
     return 0
@@ -1868,14 +1868,10 @@ def r_use_chest(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
 
 def loadImageTable():
 
-    for i in range( 256 ):
+    for i in range( 16 ):
 
         TILE_MODIFIERS[tile_modifs.water][i].fill( (0, 0, 0, 0) )
-
-        h = ( i * TILE_WIDTH ) // 255
-        y = TILE_WIDTH - h
-
-        TILE_MODIFIERS[tile_modifs.water][i].fill( (0, 96, 192, 100), [0, y, TILE_WIDTH, h] )
+        TILE_MODIFIERS[tile_modifs.water][i].fill( (0, 96, 192, 100), [0, i, TILE_WIDTH, TILE_WIDTH - i] )
 
     for key in TILE_TABLE:
 
