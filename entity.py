@@ -225,14 +225,14 @@ class Player(Entity):
         self.tangibility   = False
         x_off              = 0
         y_off              = 0
-        self.up            = [ (x + x_off, y_off) for x in range( 0, consts.HITBOX_WIDTH - 1, 16 ) ] + [ (consts.HITBOX_WIDTH - 1 + x_off, y_off) ]
-        self.left          = [ (x_off, -y + y_off) for y in range( 0, consts.HITBOX_HEIGHT - 1, 16 ) ] + [ (x_off, -consts.HITBOX_HEIGHT + 1 + y_off) ]
-        self.right         = [ (consts.HITBOX_WIDTH - 1 + x_off, -y + y_off) for y in range( 0, consts.HITBOX_HEIGHT - 1, 16 ) ] + [ (consts.HITBOX_WIDTH - 1 + x_off, -consts.HITBOX_HEIGHT + 1 + y_off) ]
-        self.bottom        = [ (x + x_off, -consts.HITBOX_HEIGHT + 1 + y_off) for x in range( 0, consts.HITBOX_WIDTH - 1, 16 ) ] + [ (consts.HITBOX_WIDTH - 1 + x_off, -consts.HITBOX_HEIGHT + 1 + y_off) ]
+        self.up            = [ (x + x_off, y_off) for x in range( 0, consts.PLYR_HITBOX_WIDTH - 1, 16 ) ] + [ (consts.PLYR_HITBOX_WIDTH - 1 + x_off, y_off) ]
+        self.left          = [ (x_off, -y + y_off) for y in range( 0, consts.PLYR_HITBOX_HEIGHT - 1, 16 ) ] + [ (x_off, -consts.PLYR_HITBOX_HEIGHT + 1 + y_off) ]
+        self.right         = [ (consts.PLYR_HITBOX_WIDTH - 1 + x_off, -y + y_off) for y in range( 0, consts.PLYR_HITBOX_HEIGHT - 1, 16 ) ] + [ (consts.PLYR_HITBOX_WIDTH - 1 + x_off, -consts.PLYR_HITBOX_HEIGHT + 1 + y_off) ]
+        self.bottom        = [ (x + x_off, -consts.PLYR_HITBOX_HEIGHT + 1 + y_off) for x in range( 0, consts.PLYR_HITBOX_WIDTH - 1, 16 ) ] + [ (consts.PLYR_HITBOX_WIDTH - 1 + x_off, -consts.PLYR_HITBOX_HEIGHT + 1 + y_off) ]
         self.rel_hitbox    = self.up + self.right + self.bottom + self.left
         self.bottom_left   = self.bottom[0]
         self.pos           = _pos  # World pos of surface in x-y-z coords
-        # self.hitbox        = [(0, 0), (HITBOX_WIDTH, 0), (HITBOX_WIDTH, -HITBOX_HEIGHT), (0, -HITBOX_HEIGHT)]
+        # self.hitbox        = [(0, 0), (PLYR_HITBOX_WIDTH, 0), (PLYR_HITBOX_WIDTH, -PLYR_HITBOX_HEIGHT), (0, -PLYR_HITBOX_HEIGHT)]
 
     def initialize( self, _chunk_buffer, _entity_buffer, _renderer, _serializer, _key_state, _mouse_state, _cursor_pos ):
         """Passes all the required references to the Player
