@@ -1,4 +1,6 @@
+import math
 import pickle
+import time
 from typing import Tuple, Union
 
 import pygame
@@ -484,13 +486,15 @@ class EntityBuffer:
         # To be implemented in multiplayer
         pass
 
-    def add_entity( self, _entity, _ind ):
+    def add_entity( self, _entity ):
         """Adds the given Entity or ItemEntity to the EntityBuffer's entity list.
 
         Args:
             _entity (Entity | ItemEntity): Entity or ItemEntity object to be added.
             _ind (int): Index at which the Entity or ItemEntity is to be added.
         """
+        _ind = self.get_curr_chunk_ind(_entity.get_pos().copy())
+        consts.dbg(1, "ADD ENTITY INDEX:", _ind)
         self.entities[_ind].append(_entity)
 
     def add_item_entity( self, _id, _pos ):
@@ -511,9 +515,7 @@ class EntityBuffer:
         pos = [x, y]
 
         item_entity = ItemEntity( pos, _id, self )
-        self.add_entity( item_entity, ind )
-
-        print('IND:', ind)
+        self.add_entity( item_entity )
 
     def load_player( self ):
         pass
