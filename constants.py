@@ -1186,12 +1186,6 @@ def l_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
 
 def r_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
-    chunk = _chunk_buffer.chunks[_chunk]
-    if not chunk.liquid_lvls[_y][_x][0]:
-        chunk.liquid_lvls[_y][_x][0] = tile_modifs.water
-        chunk.liquid_lvls[_y][_x][1] = 15
-        chunk.draw( [_x, _y, _x + 1, _y + 1] )
-
     return 0
 
 def l_use_stick(  _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
