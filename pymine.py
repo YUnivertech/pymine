@@ -197,6 +197,9 @@ def main_game_start( _world = 'World1' ):
         if player.vel != [0,0]: consts.dbg( 0, "IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER VEL:", player.vel )
         if player.acc != [0,0]: consts.dbg( 0, "IN MAIN LOOP - AFTER PLAYER UPDATE - PLAYER ACC:", player.acc )
 
+        # chk_a = time.time()
+        entity_buffer.update( dt )
+        # print("ENTITY BUFFER UPDATE TIME TAKEN(in milliseconds):", (time.time()-chk_a)*1000)
         chunk_buffer.update( dt )
         serializer.set_day_time( dt )
 

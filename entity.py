@@ -29,6 +29,9 @@ class ItemEntity:
         self.get_texture    = lambda : consts.ITEM_TABLE[self.id]
         self.draw           = lambda : None
 
+    def run( self, _dt ):
+        pass
+
     def update( self, _dt ):
         pass
 
@@ -590,10 +593,38 @@ class EntityBuffer:
     def entity_in_range( self ):
         pass
 
-    def update( self ):
-        for _i in self.entities:
-            for _entity in _i:
-                _entity.update()
+    def update_ind( self, _entity, _new_index ):
+        pass
+
+    def update( self, _dt ):
+        update_index_entites = []
+        index = 0
+        entities_copy = [self.entities[_ind].copy() for _ind in range(self.len)]
+        while index < self.len:
+            entity_ind = 0
+            while entity_ind < len( entities_copy[index] ):
+                entity = entities_copy[ index ][ entity_ind ]
+                prev_entity_ind = entity_ind
+                entity_ind += 1
+                if entity not in self.entities[ index ]:
+                    continue
+
+                # prev_entity_pos = entity.get_pos( ).copy( )
+                chk_a = time.time()
+                entity.run( _dt )
+                entity.update( _dt )
+                print("ENTITY UPDATE TIME TAKEN(in milliseconds):", (time.time()-chk_a)*1000)
+                new_index = self.get_curr_chunk_ind(entity.get_pos())
+                if new_index != prev_entity_ind:
+                    self.entities[ index ].remove( entity )
+                    update_index_entites.append( entity )
+            index += 1
+
+        for entity in update_index_entites:
+            consts.dbg(1, "UPDATE ENTITY INDEX:", update_index_entites)
+            index = self.get_curr_chunk_ind(entity.get_pos())
+            consts.dbg(1, "NEW INDEX OF ENTITY:", index)
+            self.entities[index].append(entity)
 
     def draw( self ):
         pass
