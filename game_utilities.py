@@ -96,9 +96,13 @@ class Renderer:
         elif self.player.get_pos()[1] >= consts.OVER_START:
             # fill the sky with the color which is is supposed to be there
 
-            # get the time of day and calculate alpha value depending on it
             time_of_day = self.serializer.get_day_time() % ( consts.DAY_DURATION * 2 )
-            alpha_val = ( time_of_day * 255 * 9 ) // consts.DAY_DURATION % ( 255 * 9 ) - ( 255 * 4 )
+
+            if time_of_day >= consts.DAY_DURATION:
+                time_of_day = ( consts.DAY_DURATION * 2 ) - time_of_day
+
+            alpha_val = ( time_of_day * 255 * 9 ) // consts.DAY_DURATION
+            alpha_val = alpha_val % ( 255 * 9 ) - ( 255 * 4 )
 
             # Set the appropriate alpha values for respective images
             consts.sky_blue.set_alpha( 255 - alpha_val )
