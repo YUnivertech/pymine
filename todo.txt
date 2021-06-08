@@ -9,6 +9,25 @@ Aditya-
 ----------------------------------------------------
 
 Akshaj-
+    When a Slime is in middle of 2 chunks, out of which one is saved in the database,
+    whereas the Slime is still active, then the Slime's hitbox requires points from
+    the saved chunk causing the program to error out.
+
+    When update is simulated at a smaller delta time (_dt = 1 / (consts.MAX_VEL * consts.SCALE_VEL)),
+    the player jumps lower while Slime jumps higher than when update is simulated at a larger
+    delta time (_dt = 16 / (consts.MAX_VEL * consts.SCALE_VEL)). This shows that some parts of the
+    update function still depends on the FPS and is inconsistent. The Entity Update function is messy
+    and its various calculations need to be verified again (including the concept of maximum velocity
+    lying between -1 and 1 and then being scaled).
+
+    When an Entity picks an ItemEntity, there is no verification whether the Entity was successfully able
+    to pick the ItemEntity. In the situation where an Entity tries to pick an ItemEntity but fails as
+    it has no space in its inventory, the ItemEntity is still removed from the EntityBuffer and is lost.
+
+    When there are several Slime objects (> 100) in the EntityBuffer, the FPS of the game drops massively.
+    The Update function of the EntityBuffer, which updates every Entity in the EntityBuffer, is the main
+    cause of this drop in FPS.
+
     health, hunger, fall damage, hitting etc.
     projectiles
     NPCs
