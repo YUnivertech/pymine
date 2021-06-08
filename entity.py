@@ -40,9 +40,10 @@ class ItemEntity:
         """
         return [ItemEntity, self.pos, self.id]
 
+
 class Entity:
 
-    def __init__( self, _pos, _entity_buffer, _inventory, _width, _height, _hitbox, _bottom_left, _health = 100 ):
+    def __init__( self, _pos, _entity_buffer, _inventory, _width, _height, _hitbox, _bottom_left, _range, _health = 100 ):
         """Initializes the Entity object.
 
         Args:
@@ -62,6 +63,7 @@ class Entity:
         self.inventory              = _inventory
 
         self.health                 = _health
+        self.range                  = _range
 
         self.friction               = consts.DEFAULT_FRICTION
         self.vel                    = [0.0, 0.0]
@@ -201,116 +203,22 @@ class Entity:
     def get_hit( self ):
         pass
 
-class Player(Entity):
-
-    def __init__( self, _pos ):
-        """Initializes the Player object.
-
-        Args:
-            _pos (list): World position of the surface of the Player in x-y coordinate system. Also referred to as the position of the Player.
-        """
-
-        # Set all references to main managers
-        self.chunk_buffer: Union[ None, chunk.ChunkBuffer ] = None
-        self.entity_buffer: Union[ None, EntityBuffer ]     = None
-        self.renderer: Union[ None, utils.Renderer ]        = None
-        self.serializer: Union[None , utils.Serializer]     = None
-        self.camera: Union[None, list]                      = None
-
-        self.key_state: Union[None, dict]      = None
-        self.mouse_state: Union[None, dict]    = None
-        self.cursor_pos: Union[None, list]     = None
-        self.inventory: Union[None, Inventory] = None
-
-        self.tangibility   = False
-        x_off              = 0
-        y_off              = 0
-        self.up            = [ (x + x_off, y_off) for x in range( 0, consts.PLYR_HITBOX_WIDTH - 1, 16 ) ] + [ (consts.PLYR_HITBOX_WIDTH - 1 + x_off, y_off) ]
-        self.left          = [ (x_off, -y + y_off) for y in range( 0, consts.PLYR_HITBOX_HEIGHT - 1, 16 ) ] + [ (x_off, -consts.PLYR_HITBOX_HEIGHT + 1 + y_off) ]
-        self.right         = [ (consts.PLYR_HITBOX_WIDTH - 1 + x_off, -y + y_off) for y in range( 0, consts.PLYR_HITBOX_HEIGHT - 1, 16 ) ] + [ (consts.PLYR_HITBOX_WIDTH - 1 + x_off, -consts.PLYR_HITBOX_HEIGHT + 1 + y_off) ]
-        self.bottom        = [ (x + x_off, -consts.PLYR_HITBOX_HEIGHT + 1 + y_off) for x in range( 0, consts.PLYR_HITBOX_WIDTH - 1, 16 ) ] + [ (consts.PLYR_HITBOX_WIDTH - 1 + x_off, -consts.PLYR_HITBOX_HEIGHT + 1 + y_off) ]
-        self.rel_hitbox    = self.up + self.right + self.bottom + self.left
-        self.bottom_left   = self.bottom[0]
-        self.pos           = _pos  # World pos of surface in x-y-z coords
-        # self.hitbox        = [(0, 0), (PLYR_HITBOX_WIDTH, 0), (PLYR_HITBOX_WIDTH, -PLYR_HITBOX_HEIGHT), (0, -PLYR_HITBOX_HEIGHT)]
-
-    def initialize( self, _chunk_buffer, _entity_buffer, _renderer, _serializer, _key_state, _mouse_state, _cursor_pos ):
-        """Passes all the required references to the Player
-
-        Args:
-            _chunk_buffer (chunk.ChunkBuffer): Reference to the ChunkBuffer object
-            _entity_buffer ([type]): Reference to the EntityBuffer object
-            _renderer (utils.Renderer): Reference to the Renderer object
-            _serializer (utils.Serializer): Reference to the Serializer object
-            _key_state (dict): Reference to the dictionary containing the state of the keys
-            _mouse_state (dict): Reference to the dictionary containing the state of the mouse buttons
-            _cursor_pos (list): Reference to the position of the cursor
-        """
-
-        # Set all references to main managers
-        self.chunk_buffer  = _chunk_buffer
-        self.entity_buffer = _entity_buffer
-        self.renderer      = _renderer
-        self.serializer    = _serializer
-
-        self.key_state     = _key_state
-        self.mouse_state   = _mouse_state
-        self.cursor_pos    = _cursor_pos
-
-        self.tangibility   = False
-        self.inventory     = Inventory( consts.INV_COLS, consts.INV_ROWS )
-
-        self.load()
-        super().__init__( self.pos, self.entity_buffer, self.inventory, consts.PLYR_WIDTH, consts.PLYR_HEIGHT, self.rel_hitbox, self.bottom_left )
-
-        self.inventory.held_item_index = self.held_item_index
-
-    def run( self, _dt ):
-        """Updates the Player's variables to handle the user's input.
-
-        Args:
-            _dt (float): Time passed between previous and current iteration.
-        """
-        self.acc[ 0 ] = 0
-        self.acc[ 1 ] = 0
-        self.hitting  = False
-        self.placing  = False
-        if self.key_state[ pygame.K_a ] and not self.key_state[ pygame.K_d ]:
-            consts.dbg( 1, "IN RUN - MOVING LEFT" )
-            self.move_left( )
-            self.texture_strct.run_left( _dt )
-        elif self.key_state[ pygame.K_d ] and not self.key_state[ pygame.K_a ]:
-            consts.dbg( 1, "IN RUN - MOVING RIGHT" )
-            self.move_right( )
-            self.texture_strct.run_right( _dt )
-        else:
-            self.texture_strct.run_static()
-
-        if self.key_state[ pygame.K_s ] and not self.key_state[ pygame.K_w ]:
-            consts.dbg( 1, "IN RUN - MOVING DOWN" )
-            self.move_down( )
-        elif (self.tangibility or self.grounded) and self.key_state[ pygame.K_w ] and not self.key_state[ pygame.K_s ]:
-            consts.dbg( 1, "IN RUN - MOVING UP" )
-            self.jump( )
-
-        if self.mouse_state[ pygame.BUTTON_LEFT ]:
-            consts.dbg( 1, "IN RUN - LEFT MOUSE BUTTON PRESSED")
-            self.left_click( _dt, self.cursor_pos )
-
-        if self.mouse_state[ pygame.BUTTON_RIGHT ]:
-            consts.dbg( 1, "IN RUN - RIGHT MOUSE BUTTON PRESSED")
-            self.right_click( _dt, self.cursor_pos )
+    def pick( self ):
+        items = self.entity_buffer.pick_item( self.pos.copy(), self.range )
+        if items:
+            consts.dbg(1, "ITEMS TO PICK:", items)
+        for item in items: self.inventory.add_item(item.id, 1)
 
     def update( self, _dt ):
-        """Updates the Player's position, velocity and state.
+        """Updates the Entity's position, velocity and state.
 
         Args:
             _dt (float): Time passed between previous and current iteration.
         """
         self.pick()
-        consts.dbg( 1, "ENTERING UPDATE" )
+        consts.dbg( 1, "IN ENTITY - ENTERING UPDATE" )
         dt2 = _dt
-        _dt  = 16 / (consts.MAX_VEL * consts.SCALE_VEL)
+        _dt  = 1 / (consts.MAX_VEL * consts.SCALE_VEL)
         while dt2 > 0:
             if dt2 <= _dt:
                 _dt  = dt2
@@ -363,12 +271,107 @@ class Player(Entity):
                     self.vel[ i ] = 0
             if self.vel == [0, 0]: break
 
-    def pick( self ):
-        l = self.entity_buffer.player_pick_item( )
-        for item in l: self.inventory.add_item(item.id, 1)
 
-    def get_surf( self ):
-        return self.surf
+class Player(Entity):
+
+    def __init__( self, _pos ):
+        """Initializes the Player object.
+
+        Args:
+            _pos (list): World position of the surface of the Player in x-y coordinate system. Also referred to as the position of the Player.
+        """
+
+        # Set all references to main managers
+        self.chunk_buffer: Union[ None, chunk.ChunkBuffer ] = None
+        self.entity_buffer: Union[ None, EntityBuffer ]     = None
+        self.renderer: Union[ None, utils.Renderer ]        = None
+        self.serializer: Union[None , utils.Serializer]     = None
+        self.camera: Union[None, list]                      = None
+
+        self.key_state: Union[None, dict]      = None
+        self.mouse_state: Union[None, dict]    = None
+        self.cursor_pos: Union[None, list]     = None
+        self.inventory: Union[None, Inventory] = None
+
+        self.tangibility   = False
+        x_off              = 0
+        y_off              = 0
+        self.up            = [ (x + x_off, y_off) for x in range( 0, consts.PLYR_HITBOX_WIDTH - 1, 16 ) ] + [ (consts.PLYR_HITBOX_WIDTH - 1 + x_off, y_off) ]
+        self.left          = [ (x_off, -y + y_off) for y in range( 0, consts.PLYR_HITBOX_HEIGHT - 1, 16 ) ] + [ (x_off, -consts.PLYR_HITBOX_HEIGHT + 1 + y_off) ]
+        self.right         = [ (consts.PLYR_HITBOX_WIDTH - 1 + x_off, -y + y_off) for y in range( 0, consts.PLYR_HITBOX_HEIGHT - 1, 16 ) ] + [ (consts.PLYR_HITBOX_WIDTH - 1 + x_off, -consts.PLYR_HITBOX_HEIGHT + 1 + y_off) ]
+        self.bottom        = [ (x + x_off, -consts.PLYR_HITBOX_HEIGHT + 1 + y_off) for x in range( 0, consts.PLYR_HITBOX_WIDTH - 1, 16 ) ] + [ (consts.PLYR_HITBOX_WIDTH - 1 + x_off, -consts.PLYR_HITBOX_HEIGHT + 1 + y_off) ]
+        self.rel_hitbox    = self.up + self.right + self.bottom + self.left
+        self.bottom_left   = self.bottom[0]
+        self.range         = consts.PLYR_RANGE
+        self.pos           = _pos  # World pos of surface in x-y-z coords
+        # self.hitbox        = [(0, 0), (PLYR_HITBOX_WIDTH, 0), (PLYR_HITBOX_WIDTH, -PLYR_HITBOX_HEIGHT), (0, -PLYR_HITBOX_HEIGHT)]
+
+    def initialize( self, _chunk_buffer, _entity_buffer, _renderer, _serializer, _key_state, _mouse_state, _cursor_pos ):
+        """Passes all the required references to the Player
+
+        Args:
+            _chunk_buffer (chunk.ChunkBuffer): Reference to the ChunkBuffer object
+            _entity_buffer ([type]): Reference to the EntityBuffer object
+            _renderer (utils.Renderer): Reference to the Renderer object
+            _serializer (utils.Serializer): Reference to the Serializer object
+            _key_state (dict): Reference to the dictionary containing the state of the keys
+            _mouse_state (dict): Reference to the dictionary containing the state of the mouse buttons
+            _cursor_pos (list): Reference to the position of the cursor
+        """
+
+        # Set all references to main managers
+        self.chunk_buffer  = _chunk_buffer
+        self.entity_buffer = _entity_buffer
+        self.renderer      = _renderer
+        self.serializer    = _serializer
+
+        self.key_state     = _key_state
+        self.mouse_state   = _mouse_state
+        self.cursor_pos    = _cursor_pos
+
+        self.tangibility   = False
+        self.inventory     = Inventory( consts.INV_COLS, consts.INV_ROWS )
+
+        self.load()
+        super().__init__( self.pos, self.entity_buffer, self.inventory, consts.PLYR_WIDTH, consts.PLYR_HEIGHT, self.rel_hitbox, self.bottom_left, self.range )
+
+        self.inventory.held_item_index = self.held_item_index
+
+    def run( self, _dt ):
+        """Updates the Player's variables to handle the user's input.
+
+        Args:
+            _dt (float): Time passed between previous and current iteration.
+        """
+        self.acc[ 0 ] = 0
+        self.acc[ 1 ] = 0
+        self.hitting  = False
+        self.placing  = False
+        if self.key_state[ pygame.K_a ] and not self.key_state[ pygame.K_d ]:
+            consts.dbg( 1, "IN RUN - MOVING LEFT" )
+            self.move_left( )
+            self.texture_strct.run_left( _dt )
+        elif self.key_state[ pygame.K_d ] and not self.key_state[ pygame.K_a ]:
+            consts.dbg( 1, "IN RUN - MOVING RIGHT" )
+            self.move_right( )
+            self.texture_strct.run_right( _dt )
+        else:
+            self.texture_strct.run_static()
+
+        if self.key_state[ pygame.K_s ] and not self.key_state[ pygame.K_w ]:
+            consts.dbg( 1, "IN RUN - MOVING DOWN" )
+            self.move_down( )
+        elif (self.tangibility or self.grounded) and self.key_state[ pygame.K_w ] and not self.key_state[ pygame.K_s ]:
+            consts.dbg( 1, "IN RUN - MOVING UP" )
+            self.jump( )
+
+        if self.mouse_state[ pygame.BUTTON_LEFT ]:
+            consts.dbg( 1, "IN RUN - LEFT MOUSE BUTTON PRESSED")
+            self.left_click( _dt, self.cursor_pos )
+
+        if self.mouse_state[ pygame.BUTTON_RIGHT ]:
+            consts.dbg( 1, "IN RUN - RIGHT MOUSE BUTTON PRESSED")
+            self.right_click( _dt, self.cursor_pos )
 
     def save( self ):
         """Saves the Player's attributes in the database.
@@ -563,13 +566,14 @@ class EntityBuffer:
     def hit( self ):
         pass
 
-    def player_pick_item( self ):
+    def pick_item( self, _pos, _range ):
         items = []
         for index in range( self.len - 1, -1, -1 ):
             for entity_ind in range( len( self.entities[ index ] ) - 1, -1, -1 ):
                 entity = self.entities[ index ][ entity_ind ]
-                if (isinstance( entity, ItemEntity )) and (consts.dist_between_points( entity.pos, self.player.pos ) <= consts.PLYR_RANGE):
+                if (isinstance( entity, ItemEntity )) and (consts.dist_between_points( entity.pos, _pos ) <= _range):
                     items.append( entity )
+                    consts.dbg(1, "ENTITY BUFFER BEFORE PICK ITEM:", self.entities)
                     self.entities[ index ].pop( entity_ind )
         return items
 
