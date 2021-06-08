@@ -460,7 +460,14 @@ class EntityBuffer:
         self.len                = None
 
         self.get_curr_chunk_ind = lambda p: int( consts.get_curr_chunk( p ) - self.chunk_buffer.get_start_chunk_ind() )
-        self.get_tile           = lambda p: self.chunk_buffer.chunks[self.get_curr_chunk_ind( p )].blocks[consts.get_y_pos_chunk( p )][consts.get_x_pos_chunk( p )]
+        # self.get_tile           = lambda p: self.chunk_buffer.chunks[self.get_curr_chunk_ind( p )].blocks[consts.get_y_pos_chunk( p )][consts.get_x_pos_chunk( p )]
+
+    def get_tile( self, p ):
+        curr_chunk_ind = self.get_curr_chunk_ind( p )
+        curr_chunk = self.chunk_buffer.chunks[ curr_chunk_ind ]
+        tiles_at_y_pos = curr_chunk.blocks[ consts.get_y_pos_chunk( p ) ]
+        tile = tiles_at_y_pos[ consts.get_x_pos_chunk( p ) ]
+        return tile
 
     def initialize( self , _chunk_buffer, _renderer, _serializer, _player, _camera, _screen ):
         """Passes all the required references to the EntityBuffer object.
