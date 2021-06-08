@@ -495,6 +495,7 @@ TILE_MODIFIERS = {
 
 # Dictionary consisting of tile as key; surface (image) as value
 inventory_slot      = pygame.image.load("Resources/Default/InventorySpace.png")
+selected_slot       = pygame.image.load("Resources/Default/InventorySpaceSelected.png")
 cave_background     = pygame.image.load("Resources/Default/cave_background.png")
 space_background    = pygame.image.load("Resources/Default/space_background.png")
 sky_gradient        = pygame.image.load("Resources/Default/sky_gradient.png")

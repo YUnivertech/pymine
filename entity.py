@@ -253,8 +253,11 @@ class Player(Entity):
 
         self.tangibility   = False
         self.inventory     = Inventory( consts.INV_COLS, consts.INV_ROWS )
+
         self.load()
         super().__init__( self.pos, self.entity_buffer, self.inventory, consts.PLYR_WIDTH, consts.PLYR_HEIGHT, self.rel_hitbox, self.bottom_left )
+
+        self.inventory.held_item_index = self.held_item_index
 
     def run( self, _dt ):
         """Updates the Player's variables to handle the user's input.
@@ -611,6 +614,8 @@ class Inventory:
         self.positions          = {}
         self.local_item_table   = []
 
+        self.held_item_index    = [0, 0]
+
         self.cols               = _cols
         self.rows               = _rows
 
@@ -739,10 +744,13 @@ class Inventory:
         y = 0
 
         for x , coors[0] in enumerate( range( 0 , 40 * self.cols , 40 ) ):
-            self.surf.blit( consts.inventory_slot, coors )
+
+            if self.held_item_index[0] == x:
+                self.surf.blit( consts.selected_slot, coors )
+            else:
+                self.surf.blit( consts.inventory_slot, coors )
 
             if self.quantities[y][x]:
-
                 quantity_text , quantity_rect = consts.INV_FONT.render( str( self.quantities[y ][x ] ), consts.INV_COLOR )
                 self.surf.blit( consts.ITEM_TABLE[self.items[y ][x ] ], (coors[0 ] + 4 , coors[1 ] + 4) )
                 self.surf.blit( quantity_text , ( coors[0] , coors[1] ) )
