@@ -250,7 +250,7 @@ class Renderer:
                 coors = entity.get_pos().copy()
                 coors[0] += self.num_hor - self.camera[0]
                 coors[1] -= self.camera[1]
-                coors[1] =  self.num_ver - coors[1] - consts.TILE_WIDTH
+                coors[1] =  self.num_ver - coors[1]
 
                 self.screen.blit( entity.get_texture(), coors )
 
