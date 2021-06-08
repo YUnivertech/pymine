@@ -81,6 +81,8 @@ class Renderer:
 
         self.window_size    = _window_size
 
+        self.overworld_bg   = pygame.Surface( consts.sky_orange.get_size(), flags = pygame.SRCALPHA )
+
         self.update_size()
         self.update_camera()
 
@@ -106,46 +108,29 @@ class Renderer:
 
         elif self.player.get_pos()[1] >= consts.OVER_START:
             # fill the sky with the color which is is supposed to be there
-            # day_time = int( self.serializer.get_day_time() ) % ( consts.DAY_DURATION * 2 )
-            # # its either day or night
-            # if day_time > consts.DAY_DURATION:
-            #     day_time = ( consts.DAY_DURATION * 2 ) - day_time
 
-            # gradient_quantization = consts.sky_gradient.get_width()
-            # gradient_quantization = ( day_time * gradient_quantization ) // consts.DAY_DURATION
-            # gradient_quantization = min( gradient_quantization, 255 )
+            # Random constants
+            c1 = 255 * 9
+            c2 = 255 * 4
 
-            # clr = consts.sky_gradient.get_at( (int( gradient_quantization ), 0) )
-            # self.screen.fill( clr )
+            # get the time of day and calculate alpha value depending on it
+            time_of_day = self.serializer.get_day_time() % ( consts.DAY_DURATION * 2 )
+            alpha_val = ( time_of_day * c1 ) // consts.DAY_DURATION % c1 - c2
 
-            # bg_img = ( self.serializer.get_day_time() ) % ( consts.DAY_DURATION * 2 )
-            # bg_img = int( bg_img > consts.DAY_DURATION )
-            time_of_day = self.serializer.get_day_time() % consts.DAY_DURATION
-            alpha_val = int(time_of_day / consts.DAY_DURATION * 255*9 % (255*9)) - 255*4
-            # if alpha_val > 255:
-            #     alpha_val = 510 - alpha_val
-            # print(alpha_val)
-            bg_img_1 = consts.overworld_backgrounds[0]
-            bg_img_1.set_alpha( max(210, 255 - alpha_val) )
-            # if alpha_val < 180:
-            #     alpha_val = min(180, 1.1**alpha_val)
-            bg_img_2 = consts.overworld_backgrounds[1]
-            bg_img_2.set_alpha( alpha_val )
-            bg_img = pygame.Surface((bg_img_1.get_width(), bg_img_1.get_height()))
-            bg_img.blit( bg_img_1, (0,0) )
-            bg_img.blit( bg_img_2, (0, 0) )
+            # Set the appropriate alpha values for respective images
+            consts.sky_blue.set_alpha( 255 - alpha_val )
+            consts.sky_orange.set_alpha( alpha_val )
 
-            bg_width        = bg_img.get_width()
-            bg_height       = bg_img.get_height()
+            # Fill the current image with the appropriate images
+            self.overworld_bg.fill( (0, 0, 0, 0) )
+            self.overworld_bg.blit( consts.sky_blue, (0, 0) )
+            self.overworld_bg.blit( consts.sky_orange, (0, 0) )
 
-            num_blit_hor    = consts.pos_ceil( self.screen.get_width(), bg_width )
-            num_blit_ver    = consts.pos_ceil( self.screen.get_height(), bg_height )
-
+            # Render onto screen
             coors = [0, 0]
-
-            for coors[0] in range( 0, num_blit_hor * bg_width, bg_width ):
-                for coors[1] in range( 0, num_blit_ver * bg_height, bg_height ):
-                    self.screen.blit( bg_img, coors )
+            for coors[0] in range( 0, self.screen.get_width(), self.overworld_bg.get_width() ):
+                for coors[1] in range( 0, self.screen.get_height(), self.overworld_bg.get_height() ):
+                    self.screen.blit( self.overworld_bg, coors )
 
         else:
             # Put the cave texture

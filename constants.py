@@ -69,7 +69,7 @@ WATER_FLOW_RATE     = 2
 LAVA_FLOW_RATE      = 1
 
 # Length of hald of an in-game day (in seconds)
-DAY_DURATION        = 360
+DAY_DURATION        = 30
 
 ALLOWED_CHARS       = [chr(ord('a') + i) for i in range(26)] + [chr(ord('A') + i) for i in range(26)] + [str(i) for i in range(10)]
 
