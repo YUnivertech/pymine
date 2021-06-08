@@ -86,6 +86,8 @@ class Entity:
 
         self.sel_item        = [None, 0]    # The selected item and its quantity
 
+        self.interaction_mode= 1            # 0 for walls, 1 for tiles
+
         self.texture_strct   = TextureStructEntity( self.width, self.height )
         self.get_texture     = lambda : self.texture_strct.texture
 
