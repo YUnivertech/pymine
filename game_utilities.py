@@ -88,34 +88,17 @@ class Renderer:
 
     def paint_screen( self ):
 
-        # First we need to put the background picture
-        # This remains constant if you are very high or very low
-        # In the overworld, it changes from day to night
+        bg_txtr = consts.cave_background
 
         if self.player.get_pos()[1] >= consts.SPACE_START:
-            # Put the space texture
-            bg_width        = consts.space_background.get_width()
-            bg_height       = consts.space_background.get_height()
-
-            num_blit_hor    = consts.pos_ceil( self.screen.get_width(), bg_width )
-            num_blit_ver    = consts.pos_ceil( self.screen.get_height(), bg_height )
-
-            coors = [0, 0]
-
-            for coors[0] in range( 0, num_blit_hor * bg_width, bg_width ):
-                for coors[1] in range( 0, num_blit_ver * bg_height, bg_height ):
-                    self.screen.blit( consts.space_background, coors )
+            bg_txtr = consts.space_background
 
         elif self.player.get_pos()[1] >= consts.OVER_START:
             # fill the sky with the color which is is supposed to be there
 
-            # Random constants
-            c1 = 255 * 9
-            c2 = 255 * 4
-
             # get the time of day and calculate alpha value depending on it
             time_of_day = self.serializer.get_day_time() % ( consts.DAY_DURATION * 2 )
-            alpha_val = ( time_of_day * c1 ) // consts.DAY_DURATION % c1 - c2
+            alpha_val = ( time_of_day * 255 * 9 ) // consts.DAY_DURATION % ( 255 * 9 ) - ( 255 * 4 )
 
             # Set the appropriate alpha values for respective images
             consts.sky_blue.set_alpha( 255 - alpha_val )
@@ -126,27 +109,13 @@ class Renderer:
             self.overworld_bg.blit( consts.sky_blue, (0, 0) )
             self.overworld_bg.blit( consts.sky_orange, (0, 0) )
 
-            # Render onto screen
-            coors = [0, 0]
-            for coors[0] in range( 0, self.screen.get_width(), self.overworld_bg.get_width() ):
-                for coors[1] in range( 0, self.screen.get_height(), self.overworld_bg.get_height() ):
-                    self.screen.blit( self.overworld_bg, coors )
+            bg_txtr = self.overworld_bg
 
-        else:
-            # Put the cave texture
-            bg_width        = consts.cave_background.get_width()
-            bg_height       = consts.cave_background.get_height()
-
-            num_blit_hor    = consts.pos_ceil( self.screen.get_width(), bg_width )
-            num_blit_ver    = consts.pos_ceil( self.screen.get_height(), bg_height )
-
-            coors = [0, 0]
-
-            for coors[0] in range( 0, num_blit_hor * bg_width, bg_width ):
-                for coors[1] in range( 0, num_blit_ver * bg_height, bg_height ):
-                    self.screen.blit( consts.cave_background, coors )
-
-        # print(consts.SPACE_START, consts.OVER_START, self.player.get_pos()[1])
+        # Render background
+        coors = [0, 0]
+        for coors[0] in range( 0, self.screen.get_width(), bg_txtr.get_width() ):
+            for coors[1] in range( 0, self.screen.get_height(), bg_txtr.get_height() ):
+                self.screen.blit( bg_txtr, coors )
 
         flag            = False
 
