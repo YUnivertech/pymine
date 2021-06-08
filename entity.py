@@ -401,29 +401,68 @@ class Player(Entity):
 class Projectile(Entity):
 
     def __init__( self, _pos, _entity_buffer, _width, _height ):
+        self.pos = _pos
         self.width  = _width
         self.height = _height
-        self.hitbox = [ ]
+        self.rel_hitbox = [ ]
+        self.rel_hitbox_calc = [ [_point[0]*math.cos(self.angle) - _point[1]*math.sin(self.angle), _point[0]*math.sin(self.angle) + _point[1]*math.cos(self.angle)] for _point in self.rel_hitbox ]
+        self.angle = 0.0
+        self.rotation_point = [ ]
+        self.vel = []
+        self.acc = []
         super( ).__init__( _pos, _entity_buffer, _width, _height, self.hitbox )
         pass
 
-    def update( self ):
+    def update( self , _dt):
+        self.vel[1] = self.vel[1] - consts.GRAVITY_ACC * _dt
+        self.angle = math.atan( self.vel[1]/self.vel[0] )
         pass
 
 
 class Slime(Entity):
     def __init__( self, _pos, _entity_buffer ):
-        self.width  = 15
-        self.height = 15
-        self.hitbox = [ ]
-        super( ).__init__( _pos, _entity_buffer, self.width, self.height, self.hitbox )
-        pass
+        self.pos = _pos
+        self.entity_buffer = _entity_buffer
+        self.width  = consts.PLYR_WIDTH
+        self.height = consts.PLYR_HEIGHT
+        x_off = 0
+        y_off = 0
+        self.cooldown = 2
+        self.HITBOX_WIDTH = 30
+        self.HITBOX_HEIGHT = 18
+        self.range = 3 * consts.TILE_WIDTH
+        self.up = [ (x + x_off, y_off) for x in range( 0, self.HITBOX_WIDTH - 1, 16 ) ] + [ (self.HITBOX_WIDTH - 1 + x_off, y_off) ]
+        self.left = [ (x_off, -y + y_off) for y in range( 0, self.HITBOX_HEIGHT - 1, 16 ) ] + [ (x_off, -self.HITBOX_HEIGHT + 1 + y_off) ]
+        self.right = [ (self.HITBOX_WIDTH - 1 + x_off, -y + y_off) for y in range( 0, self.HITBOX_HEIGHT - 1, 16 ) ] + [ (self.HITBOX_WIDTH - 1 + x_off, -self.HITBOX_HEIGHT + 1 + y_off) ]
+        self.bottom = [ (x + x_off, -self.HITBOX_HEIGHT + 1 + y_off) for x in range( 0, self.HITBOX_WIDTH - 1, 16 ) ] + [ (self.HITBOX_WIDTH - 1 + x_off, -self.HITBOX_HEIGHT + 1 + y_off) ]
+        self.rel_hitbox = self.up + self.right + self.bottom + self.left
+        self.bottom_left = self.bottom[ 0 ]
+        self.inventory = Inventory( 1, 1 )
+        super( ).__init__( self.pos, self.entity_buffer, self.inventory, self.width, self.height, self.rel_hitbox, self.bottom_left, self.range )
+        self.get_texture = lambda : consts.slime
 
-    def run( self ):
-        pass
+    def run( self, _dt ):
+        self.acc = [0, 0]
+        player_pos = self.entity_buffer.player.pos
+        if self.grounded:
+            self.vel = [0, 0]
+            self.cooldown = max(0, self.cooldown - _dt)
+            if not self.cooldown:
+                consts.dbg(1, "IN RUN - SLIME TOUCHED GROUND")
+                # self.vel = [0, 0]
+                self.jump()
+                self.cooldown = 2
+        else:
+            if not self.grounded:
+                if player_pos[0] > self.pos[0]:
+                    consts.dbg( 1, "SLIME - IN RUN - MOVING RIGHT" )
+                    self.vel[0] = 0.5
+                elif player_pos[0] < self.pos[0]:
+                    consts.dbg( 1, "SLIME - IN RUN - MOVING LEFT" )
+                    self.vel[0] = -0.5
 
-    def update( self ):
-        pass
+    def save(self):
+        return [Slime, self.pos]
 
 
 class Zombie(Entity):
@@ -613,7 +652,7 @@ class EntityBuffer:
                 chk_a = time.time()
                 entity.run( _dt )
                 entity.update( _dt )
-                print("ENTITY UPDATE TIME TAKEN(in milliseconds):", (time.time()-chk_a)*1000)
+                consts.dbg(1, "ENTITY UPDATE TIME TAKEN(in milliseconds):", (time.time()-chk_a)*1000)
                 new_index = self.get_curr_chunk_ind(entity.get_pos())
                 if new_index != prev_entity_ind:
                     self.entities[ index ].remove( entity )

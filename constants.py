@@ -1182,6 +1182,7 @@ ITEM_ATTR = {
 player_running = [pygame.image.load("Resources/Default/running{}.png".format(1-i)) for i in range(2)] + [pygame.image.load("Resources/Default/static.png")] + [pygame.image.load("Resources/Default/running{}.png".format(i)) for i in range(2)]
 player_running[0] = pygame.transform.flip(player_running[0], True, False)
 player_running[1] = pygame.transform.flip(player_running[1], True, False)
+slime = pygame.image.load("Resources/Default/slime.png")
 
 def l_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
     return break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, HAND_DAMAGE )
