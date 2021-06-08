@@ -192,6 +192,12 @@ class Chunk:
     def get_surf( self ):
         return self.surf
 
+    def print_info( self, _x, _y ):
+        lst = (_x, _y)
+        print('INDEX:', self.index, sep='\t' )
+        print('COORS (x, y):', lst, sep='\t')
+        print('TILE:', self.blocks[_y][_x], sep='\t' )
+        print('WALL:', self.walls[_y][_x], sep='\t' )
 class ChunkBuffer:
 
     def __init__( self , _len ):

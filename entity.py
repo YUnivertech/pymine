@@ -93,7 +93,7 @@ class Entity:
         self.held_item_index[0] = ( self.held_item_index[0] + _amt + consts.INV_COLS ) % consts.INV_COLS
 
     def move_held_ver( self, _amt = 1 ):
-        self.held_item_index[1] = ( self.held_item_index[1] + _amt + consts.INV_COLS ) % consts.INV_COLS
+        self.held_item_index[1] = ( self.held_item_index[1] + _amt + consts.INV_ROWS ) % consts.INV_ROWS
 
     def calc_friction( self ):
         """Updates the Entity's friction based on the tile in contact with

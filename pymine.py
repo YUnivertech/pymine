@@ -132,11 +132,6 @@ def main_game_start( _world = 'World1' ):
                         consts.SCALE_VEL *= 2
                     consts.dbg( 0, "SCALE VEL CHANGED:", consts.SCALE_VEL )
 
-                elif event.key == pygame.K_DOWN:            player.move_held_ver( 1 )
-                elif event.key == pygame.K_UP:              player.move_held_ver( -1 )
-                elif event.key == pygame.K_RIGHT:           player.move_held_hor( 1 )
-                elif event.key == pygame.K_LEFT:            player.move_held_hor( -1 )
-
                 elif event.key == pygame.K_c:
                     command = input(">> ")
                     if command[0] == '.':
@@ -146,6 +141,14 @@ def main_game_start( _world = 'World1' ):
                             quantity = eval( command[2] )
                             remainder = player.inventory.add_item( which_item, quantity )
                             print('Added {} items succesfully'.format(quantity - remainder))
+
+                elif event.key == pygame.K_p:
+                    print('CHUNK INFO')
+                    x = consts.get_x_pos_chunk( cursor_pos )
+                    y = consts.get_y_pos_chunk( cursor_pos )
+
+                    which_chunk = consts.get_curr_chunk( cursor_pos )
+                    chunk_buffer.chunks[which_chunk].print_info( x, y )
 
                 key_states[ event.key ] = True
 
@@ -162,9 +165,7 @@ def main_game_start( _world = 'World1' ):
 
             elif    event.type == pygame.MOUSEBUTTONDOWN:   button_states[event.button] = True
             elif    event.type == pygame.MOUSEBUTTONUP:     button_states[event.button] = False
-            elif    event.type == pygame.MOUSEWHEEL:
-                # event.y is 1 for upward motion and -1 for downward motion
-                player.held_item_index[0] = (player.held_item_index + consts.INV_ROWS + event.y) % consts.INV_ROWS
+            elif    event.type == pygame.MOUSEWHEEL:        player.move_held_hor( event.y )
 
             elif    event.type == pygame.VIDEORESIZE:
 
