@@ -46,7 +46,6 @@ class Chunk:
 
         self.blocks             = _blocks
         self.walls              = _walls
-
         self.local_tile_table   = _local_tile_table
         self.index              = _index
 
@@ -54,6 +53,7 @@ class Chunk:
         self.active_time        = _active_time
 
         self.surf               = pygame.Surface( ( consts.CHUNK_WIDTH_P , consts.CHUNK_HEIGHT_P ) , flags = pygame.SRCALPHA )
+        # self.surf               = pygame.Surface( (consts.CHUNK_WIDTH_P , consts.CHUNK_HEIGHT_P) )
 
         if not self.blocks:
             self.blocks = [ [ consts.tiles.air for j in range( consts.CHUNK_WIDTH ) ] for i in range( consts.CHUNK_HEIGHT ) ]
@@ -67,8 +67,8 @@ class Chunk:
         x_start = consts.TILE_WIDTH * ( _rect[0])
         y_start = consts.TILE_WIDTH * (consts.CHUNK_HEIGHT - _rect[3 ])
 
-        x_span  = consts.TILE_WIDTH * (_rect[2] - _rect[0])
-        y_span  = consts.TILE_WIDTH * (_rect[3] - _rect[1])
+        x_span  = consts.TILE_WIDTH * (_rect[2 ] - _rect[0 ])
+        y_span  = consts.TILE_WIDTH * (_rect[3 ] - _rect[1 ])
 
         # make the region transparent
         self.surf.fill( ( 0 , 0 , 0 , 0 ), [ x_start , y_start , x_span, y_span])
@@ -89,7 +89,6 @@ class Chunk:
                 elif wall_ref != consts.tiles.air :
                     self.surf.blit( consts.TILE_TABLE[wall_ref ], coors )
 
-        # Blitting modifiers on walls
         for key in self.local_tile_table[0]:
             x, y        = key
             wall        = self.walls[y][x]
@@ -101,7 +100,6 @@ class Chunk:
                 break_state = int( ( wall_attr[consts.tile_attr.HEALTH] * 8 ) / consts.TILE_ATTR[wall][consts.tile_attr.HEALTH] )
                 self.surf.blit( consts.TILE_MODIFIERS[consts.tile_attr.crack][8 - break_state], coors )
 
-        # Blitting modifiers on tiles
         for key in self.local_tile_table[1]:
             x, y        = key
             blck        = self.blocks[y][x]
