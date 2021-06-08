@@ -7,7 +7,7 @@ import queue
 
 import constants as consts
 
-def generate_chunk_temp( _chunk , noise_gen ):
+def generate_chunk_temp( _chunk, noise_gen ):
     # one layer of bedrock
     # one layer of obsidian
     # one layer of hellstone
@@ -42,7 +42,7 @@ def generate_chunk_temp( _chunk , noise_gen ):
 
 class Chunk:
 
-    def __init__( self , _blocks = None , _walls = None , _local_tile_table = None , _index = None , _active_time = None ):
+    def __init__( self, _blocks = None, _walls = None, _local_tile_table = None, _index = None, _active_time = None ):
 
         self.blocks             = _blocks
         self.walls              = _walls
@@ -52,49 +52,54 @@ class Chunk:
         # self.created            = _time
         self.active_time        = _active_time
 
-        self.surf               = pygame.Surface( ( consts.CHUNK_WIDTH_P , consts.CHUNK_HEIGHT_P ) , flags = pygame.SRCALPHA )
-        # self.surf               = pygame.Surface( (consts.CHUNK_WIDTH_P , consts.CHUNK_HEIGHT_P) )
+        self.surf               = pygame.Surface( ( consts.CHUNK_WIDTH_P, consts.CHUNK_HEIGHT_P ), flags = pygame.SRCALPHA )
+        self.liq_surf           = pygame.Surface( ( consts.CHUNK_WIDTH_P, consts.CHUNK_HEIGHT_P ), flags = pygame.SRCALPHA )
+        self.shad_surf          = pygame.Surface( ( consts.CHUNK_WIDTH_P, consts.CHUNK_HEIGHT_P ), flags = pygame.SRCALPHA )
+
+        self.get_surf           = lambda : self.surf
+        self.get_liq_surf       = lambda : self.liq_surf
+        self.get_shad_surf      = lambda : self.shad_surf
 
         if not self.blocks:
-            self.blocks = [ [ consts.tiles.air for j in range( consts.CHUNK_WIDTH ) ] for i in range( consts.CHUNK_HEIGHT ) ]
+            self.blocks = [[consts.tiles.air for j in range( consts.CHUNK_WIDTH )] for i in range( consts.CHUNK_HEIGHT )]
         if not self.walls:
-            self.walls = [ [ consts.tiles.air for j in range( consts.CHUNK_WIDTH ) ] for i in range( consts.CHUNK_HEIGHT ) ]
+            self.walls = [[consts.tiles.air for j in range( consts.CHUNK_WIDTH )] for i in range( consts.CHUNK_HEIGHT )]
         if not self.local_tile_table:
-            self.local_tile_table = [ {}, {} ]
+            self.local_tile_table = [{}, {}]
 
-    def draw( self, _rect = [ 0 , 0 , consts.CHUNK_WIDTH , consts.CHUNK_HEIGHT ] ):
+    def draw( self, _rect = [0, 0, consts.CHUNK_WIDTH, consts.CHUNK_HEIGHT] ):
 
-        x_start = consts.TILE_WIDTH * ( _rect[0])
-        y_start = consts.TILE_WIDTH * (consts.CHUNK_HEIGHT - _rect[3 ])
+        x_start = consts.TILE_WIDTH * ( _rect[0] )
+        y_start = consts.TILE_WIDTH * ( consts.CHUNK_HEIGHT - _rect[3] )
 
-        x_span  = consts.TILE_WIDTH * (_rect[2 ] - _rect[0 ])
-        y_span  = consts.TILE_WIDTH * (_rect[3 ] - _rect[1 ])
+        x_span  = consts.TILE_WIDTH * ( _rect[2] - _rect[0] )
+        y_span  = consts.TILE_WIDTH * ( _rect[3] - _rect[1] )
 
         # make the region transparent
-        self.surf.fill( ( 0 , 0 , 0 , 0 ), [ x_start , y_start , x_span, y_span])
+        self.surf.fill( (0, 0, 0, 0), [x_start, y_start, x_span, y_span] )
 
         # loop for blitting the tiles and walls
-        for i in range( _rect[1] , _rect[3] ):
+        for i in range( _rect[1], _rect[3] ):
 
-            coors = [ 0 , consts.TILE_WIDTH * (consts.CHUNK_HEIGHT - i - 1) ]
+            coors = [0, consts.TILE_WIDTH * (consts.CHUNK_HEIGHT - i - 1)]
 
-            for j in range( _rect[0] , _rect[2] ):
+            for j in range( _rect[0], _rect[2] ):
 
                 coors[0]            = consts.TILE_WIDTH * j
-                tile_ref , wall_ref = self.blocks[i][j] , self.walls[i][j]
+                tile_ref, wall_ref  = self.blocks[i][j], self.walls[i][j]
 
                 if tile_ref != consts.tiles.air :
-                    self.surf.blit( consts.TILE_TABLE[tile_ref ], coors )
+                    self.surf.blit( consts.TILE_TABLE[tile_ref], coors )
 
                 elif wall_ref != consts.tiles.air :
-                    self.surf.blit( consts.TILE_TABLE[wall_ref ], coors )
+                    self.surf.blit( consts.TILE_TABLE[wall_ref], coors )
 
         for key in self.local_tile_table[0]:
             x, y        = key
             wall        = self.walls[y][x]
             wall_attr   = self.local_tile_table[0][key]
 
-            coors       = [ x * consts.TILE_WIDTH, ( consts.CHUNK_HEIGHT - y - 1) * consts.TILE_WIDTH ]
+            coors       = [x * consts.TILE_WIDTH, ( consts.CHUNK_HEIGHT - y - 1) * consts.TILE_WIDTH]
 
             if consts.tile_attr.HEALTH in wall_attr:
                 break_state = int( ( wall_attr[consts.tile_attr.HEALTH] * 8 ) / consts.TILE_ATTR[wall][consts.tile_attr.HEALTH] )
@@ -105,7 +110,7 @@ class Chunk:
             blck        = self.blocks[y][x]
             blck_attr   = self.local_tile_table[1][key]
 
-            coors       = [ x * consts.TILE_WIDTH, ( consts.CHUNK_HEIGHT - y - 1) * consts.TILE_WIDTH ]
+            coors       = [x * consts.TILE_WIDTH, ( consts.CHUNK_HEIGHT - y - 1) * consts.TILE_WIDTH]
 
             if consts.tile_attr.HEALTH in blck_attr:
                 break_state = int( ( blck_attr[consts.tile_attr.HEALTH] * 8 ) / consts.TILE_ATTR[blck][consts.tile_attr.HEALTH] )
@@ -121,24 +126,22 @@ class Chunk:
         for key in self.local_tile_table[0]:
 
             to_remove_local = queue.Queue( maxsize = 256 )
-            x, y = key
+            x, y            = key
 
-            flag = 0
+            flag            = 0
 
             # Go through every attribute of this block
             for attr in self.local_tile_table[0][key]:
-
                 if attr == consts.tile_attr.HEALTH:
-
-                    blck = self.walls[y][x]
-                    health_tot = consts.TILE_ATTR[blck][consts.tile_attr.HEALTH]
-                    self.local_tile_table[0][key][attr] += ( health_tot // 5 ) * _dt
+                    blck        = self.walls[y][x]
+                    health_tot  = consts.TILE_ATTR[blck][consts.tile_attr.HEALTH]
+                    self.local_tile_table[0][key][attr] += ( health_tot * _dt ) // 5
 
                     # If this is of no significance, then put it to a queue to be removed
                     if self.local_tile_table[0][key][attr] >= health_tot:
                         to_remove_local.put( attr )
 
-                    flag = 1
+                    flag        = 1
 
             # Go through the queue and remove all redundant key-value pairs
             while to_remove_local.qsize():
@@ -189,9 +192,6 @@ class Chunk:
         while to_remove.qsize():
             del self.local_tile_table[1][to_remove.get()]
 
-    def get_surf( self ):
-        return self.surf
-
     def print_info( self, _x, _y ):
         lst = (_x, _y)
         print('INDEX:', self.index, sep='\t' )
@@ -200,7 +200,7 @@ class Chunk:
         print('WALL:', self.walls[_y][_x], sep='\t' )
 class ChunkBuffer:
 
-    def __init__( self , _len ):
+    def __init__( self, _len ):
 
         # size and positions of chunks in the world
         self.len            = _len
@@ -216,7 +216,7 @@ class ChunkBuffer:
         self.serializer     = None
         self.player         = None
 
-    def initialize( self , _entity_buffer , _renderer , _serializer , _player , _camera , _screen , _noise_gen ):
+    def initialize( self, _entity_buffer, _renderer, _serializer, _player, _camera, _screen, _noise_gen ):
 
         # Set all references to main managers
         self.entity_buffer  = _entity_buffer
@@ -248,25 +248,25 @@ class ChunkBuffer:
         for chunk in self.chunks:
             chunk.update( _dt )
 
-    def shift( self , _delta ):
+    def shift( self, _delta ):
 
-        flag ,_delta = (True, _delta) if _delta > 0 else (False, -_delta)
-        num_times , extra = _delta // self.len , _delta % self.len
+        flag,_delta = (True, _delta) if _delta > 0 else (False, -_delta)
+        num_times, extra = _delta // self.len, _delta % self.len
 
         side = self.shift_left if flag else self.shift_right
 
         for i in range( num_times ): side( self.len )
         if extra: side( extra )
 
-        if num_times: return ( 0 , self.len )
+        if num_times: return ( 0, self.len )
         elif flag:    return ( self.len - extra, extra )
         else:         return ( 0, extra)
 
-    def shift_right( self , _delta ):
+    def shift_right( self, _delta ):
 
-        for i , pos in enumerate( range( self.get_end_chunk_ind() , self.get_end_chunk_ind() - _delta , -1 ) ):
+        for i, pos in enumerate( range( self.get_end_chunk_ind(), self.get_end_chunk_ind() - _delta, -1 ) ):
 
-            li                      = [ self.chunks[self.len-1-i].blocks, self.chunks[self.len-1-i].walls ]
+            li                      = [self.chunks[self.len-1-i].blocks, self.chunks[self.len-1-i].walls]
             lo                      = self.chunks[self.len-1-i].local_tile_table
 
             self.serializer.set_chunk( pos, pickle.dumps( li ), pickle.dumps( lo ) )
@@ -276,27 +276,27 @@ class ChunkBuffer:
             self.chunks[i]          = self.chunks[i - _delta]
 
         loaded_chunks =  [None] * _delta
-        for i , pos in enumerate( range( self.get_start_chunk_ind() - _delta , self.get_start_chunk_ind() ) ):
+        for i, pos in enumerate( range( self.get_start_chunk_ind() - _delta, self.get_start_chunk_ind() ) ):
 
             loaded_chunks[i]         = self.serializer.get_chunk( pos )
 
             if loaded_chunks[i] is None:
                 loaded_chunks[i] = Chunk( _index = pos )
-                generate_chunk_temp( loaded_chunks[i] , self.noise_gen )
+                generate_chunk_temp( loaded_chunks[i], self.noise_gen )
             else:
                 li = pickle.loads( loaded_chunks[i][0] )
                 lo = pickle.loads( loaded_chunks[i][1] )
-                loaded_chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = pos )
+                loaded_chunks[i] = Chunk( _blocks = li[0], _walls = li[1], _local_tile_table = lo, _index = pos )
 
             self.chunks[i]          = loaded_chunks[i]
 
         self.mid -= _delta
 
-    def shift_left( self , _delta ):
+    def shift_left( self, _delta ):
 
-        for i , pos in enumerate( range( self.get_start_chunk_ind() , self.get_start_chunk_ind() + _delta ) ):
+        for i, pos in enumerate( range( self.get_start_chunk_ind(), self.get_start_chunk_ind() + _delta ) ):
 
-            li                      = [ self.chunks[i].blocks , self.chunks[i].walls ]
+            li                      = [self.chunks[i].blocks, self.chunks[i].walls]
             lo                      = self.chunks[i].local_tile_table
 
             self.serializer.set_chunk( pos, pickle.dumps( li ), pickle.dumps( lo ) )
@@ -306,17 +306,17 @@ class ChunkBuffer:
             self.chunks[i]          = self.chunks[i + _delta]
 
         loaded_chunks =  [None] * _delta
-        for i , pos in enumerate( range( self.len - _delta , self.len ) ):
+        for i, pos in enumerate( range( self.len - _delta, self.len ) ):
 
             loaded_chunks[i]        = self.serializer.get_chunk( self.get_end_chunk_ind() + i + 1 )
 
             if loaded_chunks[i] is None:
                 loaded_chunks[i] = Chunk( _index = self.get_end_chunk_ind() + i + 1 )
-                generate_chunk_temp( loaded_chunks[i] , self.noise_gen )
+                generate_chunk_temp( loaded_chunks[i], self.noise_gen )
             else:
                 li = pickle.loads( loaded_chunks[i][0] )
                 lo = pickle.loads( loaded_chunks[i][1] )
-                loaded_chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = self.get_end_chunk_ind() + i + 1 )
+                loaded_chunks[i] = Chunk( _blocks = li[0], _walls = li[1], _local_tile_table = lo, _index = self.get_end_chunk_ind() + i + 1 )
 
             self.chunks[pos]        = loaded_chunks[i]
 
@@ -328,7 +328,7 @@ class ChunkBuffer:
     def save( self ):
 
         for chunk in self.chunks:
-            self.serializer.set_chunk( chunk.index, pickle.dumps( [ chunk.blocks , chunk.walls ] ) , pickle.dumps( chunk.local_tile_table ) )
+            self.serializer.set_chunk( chunk.index, pickle.dumps( [chunk.blocks, chunk.walls] ), pickle.dumps( chunk.local_tile_table ) )
 
     def load( self ):
 
@@ -341,14 +341,14 @@ class ChunkBuffer:
             if self.chunks[i] is None:
 
                 self.chunks[i] = Chunk( _index = left + i )
-                generate_chunk_temp( self.chunks[i] , self.noise_gen )
+                generate_chunk_temp( self.chunks[i], self.noise_gen )
 
             else:
 
                 li = pickle.loads( self.chunks[i][0] )
                 lo = pickle.loads( self.chunks[i][1] )
 
-                self.chunks[i] = Chunk( _blocks = li[0] , _walls = li[1] , _local_tile_table = lo , _index = left + i )
+                self.chunks[i] = Chunk( _blocks = li[0], _walls = li[1], _local_tile_table = lo, _index = left + i )
 
             self.chunks[i].draw()
 

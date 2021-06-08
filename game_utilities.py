@@ -101,7 +101,7 @@ class Renderer:
             if time_of_day >= consts.DAY_DURATION:
                 time_of_day = ( consts.DAY_DURATION << 1 ) - time_of_day
 
-            alpha_val = ( ( time_of_day * 255 << 2 ) // consts.DAY_DURATION ) - ( 255 >> 1 )
+            alpha_val = ( ( time_of_day * 255 * 4 ) // consts.DAY_DURATION ) - ( 255 * 2 )
 
             # Set the appropriate alpha values for respective images
             consts.sky_blue.set_alpha( 255 - alpha_val )

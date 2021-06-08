@@ -1,0 +1,23 @@
+Function parameters start with _
+All indentation should be done with tabs converted to spaces
+Pass parameters padded with spaces
+No camel-case/hungarian in variable/object names
+All class/struct names to use CamelCase
+Individual tokens to be space padded in expressions (including brackets)
+No wildcard imports
+
+
+Sample code-
+
+Class MyClass
+    def func( self, _param1, _param2, _param3, _param4 ):
+        a       = _param1 - 5
+        bb      = _param2 - 5
+        ccc     = _param3 - 5
+        dddd    = _param4 - 5
+
+        sum     = ( a * 1 + bb * 2 + ccc * 3 + dddd * 4 )
+        lst     = [1, 2]
+
+my_object = MyClass()
+print( my_object.func( 1, 2, 3, 4 ) )

@@ -8,7 +8,6 @@ import chunk
 import constants as consts
 import game_utilities as utils
 
-
 class ItemEntity:
 
     def __init__( self, _pos, _id, _entity_buffer ):
@@ -54,42 +53,45 @@ class Entity:
             _bottom_left (Tuple[ int, int ]): Bottom left point of the Entity's hitbox.
             _health (int, optional): Health of the Entity. Defaults to 100.
         """
-        self.pos             = _pos
-        self.get_pos         = lambda : self.pos
+        self.pos                    = _pos
+        self.get_pos                = lambda : self.pos
 
-        self.entity_buffer   = _entity_buffer
-        self.inventory       = _inventory
+        self.entity_buffer          = _entity_buffer
+        self.inventory              = _inventory
 
-        self.health          = _health
+        self.health                 = _health
 
-        self.friction        = consts.DEFAULT_FRICTION
-        self.vel             = [0.0, 0.0]
-        self.acc             = [0.0, 0.0]
+        self.friction               = consts.DEFAULT_FRICTION
+        self.vel                    = [0.0, 0.0]
+        self.acc                    = [0.0, 0.0]
 
-        self.width           = _width
-        self.height          = _height
-        self.rel_hitbox      = _hitbox
-        self.bottom_left     = _bottom_left
+        self.width                  = _width
+        self.height                 = _height
+        self.rel_hitbox             = _hitbox
+        self.bottom_left            = _bottom_left
 
-        self.grounded        = True
-        self.tangibility     = False
+        self.grounded               = True
+        self.tangibility            = False
 
         # In the following lambda functions, 'p' means position which is a tuple
-        self.hitbox          = lambda p: [(p[0]+i[0], p[1]+i[1]) for i in self.rel_hitbox]
-        self.friction_point  = lambda p: [p[ 0 ] + self.bottom_left[ 0 ], p[ 1 ] + self.bottom_left[ 1 ]]
-        self.tile            = lambda p: self.entity_buffer.get_tile(p)
+        self.hitbox                 = lambda p: [(p[0]+i[0], p[1]+i[1]) for i in self.rel_hitbox]
+        self.friction_point         = lambda p: [p[ 0 ] + self.bottom_left[ 0 ], p[ 1 ] + self.bottom_left[ 1 ]]
+        self.tile                   = lambda p: self.entity_buffer.get_tile(p)
 
-        self.held_item_index = [0, 0]        # The index of the held item in the inventory (x, y)
-        self.get_held_index  = lambda : self.held_item_index
-        self.get_held_item   = lambda : self.inventory.items[self.held_item_index[1]][self.held_item_index[0]]
-        self.get_held_quan   = lambda : self.inventory.quantities[self.held_item_index[1]][self.held_item_index[0]]
+        self.held_item_index        = [0, 0]        # The index of the held item in the inventory (x, y)
+        self.get_held_index         = lambda : self.held_item_index
+        self.get_held_item          = lambda : self.inventory.items[self.held_item_index[1]][self.held_item_index[0]]
+        self.get_held_quan          = lambda : self.inventory.quantities[self.held_item_index[1]][self.held_item_index[0]]
 
-        self.sel_item        = [None, 0]    # The selected item and its quantity
+        self.sel_item               = [None, 0]    # The selected item and its quantity
 
-        self.interaction_mode= 1            # 0 for walls, 1 for tiles
+        self.interaction_mode       = 1            # 0 for walls, 1 for tiles
 
-        self.texture_strct   = TextureStructEntity( self.width, self.height )
-        self.get_texture     = lambda : self.texture_strct.texture
+        self.texture_strct          = TextureStructEntity( self.width, self.height )
+        self.get_texture            = lambda : self.texture_strct.texture
+
+    def change_interation( self ):
+        self.interaction_mode = 1 - self.interaction_mode
 
     def move_held_hor( self, _amt = 1 ):
         self.held_item_index[0] = ( self.held_item_index[0] + _amt + consts.INV_COLS ) % consts.INV_COLS
