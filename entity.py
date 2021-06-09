@@ -21,6 +21,7 @@ class ItemEntity:
             _entity_buffer (EntityBuffer): Reference to the EntityBuffer object.
         """
         self.pos            = _pos
+        print(_pos)
         self.get_pos        = lambda : self.pos
 
         self.id             = _id
@@ -108,6 +109,25 @@ class Entity:
 
     def move_held_ver( self, _amt = 1 ):
         self.held_item_index[1] = ( self.held_item_index[1] + _amt + consts.INV_ROWS ) % consts.INV_ROWS
+
+    def eject_held_item( self, _pos = None ):
+        pass
+
+    def eject_sel_item( self, _pos = None, _quantity = 1 ):
+
+        if self.sel_item[0] is None: return None
+
+        if _pos is None:
+            _pos = self.pos
+
+        pos = consts.get_pos_triplet( _pos )
+
+        for i in range( _quantity ):
+            self.entity_buffer.add_item_entity( self.sel_item[0], pos )
+
+        self.sel_item[1]    -= _quantity
+        if self.sel_item[1] == 0:
+            self.sel_item[0]    = None
 
     def calc_friction( self ):
         """Updates the Entity's friction based on the tile in contact with
@@ -406,6 +426,13 @@ class Player(Entity):
                         self.sel_item[1] -= to_rem
 
                         if self.sel_item[1] == 0: self.sel_item[0] = None
+
+            elif self.sel_item[0] is not None:
+                quantity = 1
+                if self.key_state[pygame.KMOD_CTRL]:
+                    quantity = self.sel_item[1]
+
+                self.eject_sel_item( list( map(int, self.cursor_pos) ), quantity )
 
         else:
             function = consts.l_use_hand

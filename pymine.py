@@ -115,7 +115,9 @@ def main_game_start( _world = 'World1' ):
             elif    event.type == pygame.KEYDOWN:
 
                 # The inventory state must only be toggled when the key is pressed (not while it is being held down)
-                if event.key == pygame.K_e: player.inventory.enabled = not player.inventory.enabled
+                if event.key == pygame.K_e:
+                    player.inventory.enabled = not player.inventory.enabled
+                    player.eject_sel_item()
                 elif event.key == pygame.K_t:
                     player.tangibility = not player.tangibility
                     consts.dbg( 0, "PLAYER TANGIBILITY CHANGED:", player.tangibility )
