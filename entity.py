@@ -309,7 +309,7 @@ class Player(Entity):
         self.pos           = _pos  # World pos of surface in x-y-z coords
         # self.hitbox        = [(0, 0), (PLYR_HITBOX_WIDTH, 0), (PLYR_HITBOX_WIDTH, -PLYR_HITBOX_HEIGHT), (0, -PLYR_HITBOX_HEIGHT)]
 
-    def initialize( self, _chunk_buffer, _entity_buffer, _renderer, _serializer, _key_state, _mouse_state, _cursor_pos ):
+    def initialize( self, _chunk_buffer, _entity_buffer, _renderer, _serializer, _key_state, _mouse_state, _cursor_pos, _mouse_pos ):
         """Passes all the required references to the Player
 
         Args:
@@ -331,6 +331,7 @@ class Player(Entity):
         self.key_state     = _key_state
         self.mouse_state   = _mouse_state
         self.cursor_pos    = _cursor_pos
+        self.mouse_pos      = _mouse_pos
 
         self.tangibility   = False
         self.inventory     = Inventory( consts.INV_COLS, consts.INV_ROWS )
@@ -375,6 +376,69 @@ class Player(Entity):
         if self.mouse_state[ pygame.BUTTON_RIGHT ]:
             consts.dbg( 1, "IN RUN - RIGHT MOUSE BUTTON PRESSED")
             self.right_click( _dt, self.cursor_pos )
+
+    def left_click( self, _dt, _cursor_pos ):
+
+        # check where i am clicking
+        # Is this in the inventory region?
+        # If yes, then remove one item from the selected inventory slot
+        # If control is pressed, remove all items from the selected inventory slot
+        # Removed items are transferred to self.sel_item
+
+        if self.inventory.enabled:
+            max_down    = 40 * self.inventory.rows
+            max_right   = 40 * self.inventory.cols
+
+            if self.mouse_pos[0] < max_right and  self.mouse_pos[1] < max_down:
+                curr_row    = round( self.mouse_pos[1] / 40 ) - 1
+                curr_col    = round( self.mouse_pos[0] / 40 ) - 1
+
+                which_item  = self.inventory.get_item_at( [curr_col, curr_row] )
+
+                if curr_row >= 0 and curr_col >= 0 and which_item is not None:
+
+                    if self.sel_item[0] == None:
+                        self.sel_item[0]    = which_item
+
+                    if self.sel_item[0] == self.inventory.get_item_at( [curr_col, curr_row] ):
+                        # if self.sel_item[1] < consts.ITEM_ATTR[which_item][consts.item_attr.MAX_STACK]:
+                        to_add = 1
+                        if self.key_state[pygame.KMOD_CTRL]:
+                            to_add              = self.inventory.quantities[curr_row][curr_col]
+
+                        self.sel_item[1]    += to_add
+                        self.inventory.rem_item_pos( [curr_col, curr_row], to_add )
+
+        else:
+            function = consts.l_use_hand
+            which_item = self.get_held_item()
+            if which_item:
+                function = consts.ITEM_ATTR[which_item][consts.item_attr.L_USE]
+
+            pos_x           = consts.get_x_pos_chunk(_cursor_pos)
+            pos_y           = consts.get_y_pos_chunk(_cursor_pos)
+
+            which_chunk     = consts.get_curr_chunk(_cursor_pos) - self.entity_buffer.chunk_buffer.get_start_chunk_ind()
+
+            function( pos_x, pos_y, which_chunk, self.entity_buffer.chunk_buffer, self.entity_buffer, _dt )
+
+    def right_click( self, _dt, _cursor_pos ):
+
+        if self.inventory.enabled:
+            pass
+
+        else:
+            function = consts.r_use_hand
+            which_item = self.get_held_item()
+            if which_item:
+                function = consts.ITEM_ATTR[which_item][consts.item_attr.R_USE]
+
+            pos_x           = consts.get_x_pos_chunk(_cursor_pos)
+            pos_y           = consts.get_y_pos_chunk(_cursor_pos)
+
+            which_chunk     = consts.get_curr_chunk(_cursor_pos) - self.entity_buffer.chunk_buffer.get_start_chunk_ind()
+
+            function( pos_x, pos_y, which_chunk, self.entity_buffer.chunk_buffer, self.entity_buffer, _dt )
 
     def save( self ):
         """Saves the Player's attributes in the database.
@@ -821,9 +885,6 @@ class Inventory:
                     self.surf.blit( consts.ITEM_TABLE[self.items[y ][x ] ], (coors[0 ] + 4 , coors[1 ] + 4) )
                     self.surf.blit( quantity_text , ( coors[0] , coors[1] ) )
 
-    def get_texture( self ):
-        return self.surf
-
     def draw_top( self ):
 
         self.surf.fill( ( 0 , 0 , 0 , 0 ), [ 0 , 0 , 800 , 500 ])
@@ -841,6 +902,12 @@ class Inventory:
                 quantity_text , quantity_rect = consts.INV_FONT.render( str( self.quantities[y ][x ] ), consts.INV_COLOR )
                 self.surf.blit( consts.ITEM_TABLE[self.items[y ][x ] ], (coors[0 ] + 4 , coors[1 ] + 4) )
                 self.surf.blit( quantity_text , ( coors[0] , coors[1] ) )
+
+    def get_texture( self ):
+        return self.surf
+
+    def get_item_at( self, _pos ):
+        return self.items[_pos[1]][_pos[0]]
 
 
 # Structure to hold all textures of an entity and to abstract animation
