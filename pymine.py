@@ -74,7 +74,7 @@ def main_game_start( _world = 'World1' ):
     # ---------- INITIALIZE MANAGERS ---------- #
 
     # Player
-    player.initialize( chunk_buffer , entity_buffer , renderer , serializer , key_states , button_states , cursor_pos )
+    player.initialize( chunk_buffer , entity_buffer , renderer , serializer , key_states , button_states , cursor_pos , mouse_pos )
 
     # Chunk Buffer
     chunk_buffer.initialize( entity_buffer , renderer , serializer , player , camera , screen , noise_gen )
@@ -83,7 +83,7 @@ def main_game_start( _world = 'World1' ):
     entity_buffer.initialize( chunk_buffer , renderer , serializer , player , camera , screen )
 
     # Renderer
-    renderer.initialize( chunk_buffer , entity_buffer , player , serializer , camera , screen , display_sz )
+    renderer.initialize( chunk_buffer , entity_buffer , player , serializer , camera , screen , mouse_pos, display_sz )
 
     curr_chunk              = chunk_buffer.get_middle_chunk_ind()
     prev_chunk              = curr_chunk

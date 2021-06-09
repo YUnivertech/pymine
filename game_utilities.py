@@ -69,7 +69,7 @@ class Renderer:
 
         self.camera_upper   = None
 
-    def initialize( self , _chunk_buffer , _entity_buffer , _player , _serializer , _camera , _screen , _window_size ):
+    def initialize( self , _chunk_buffer , _entity_buffer , _player , _serializer , _camera , _screen , _mouse_pos, _window_size ):
 
         # Set all references to main managers
         self.chunk_buffer   = _chunk_buffer
@@ -80,6 +80,7 @@ class Renderer:
         self.screen         = _screen
 
         self.window_size    = _window_size
+        self.mouse_pos      = _mouse_pos
 
         self.overworld_bg   = pygame.Surface( consts.sky_orange.get_size(), flags = pygame.SRCALPHA )
 
@@ -214,6 +215,18 @@ class Renderer:
     def paint_inventory( self ):
         self.player.inventory.draw()
         self.screen.blit( self.player.inventory.get_texture() , (20 , 20) )
+
+        which_item, quantity    = self.player.sel_item
+        coors_item              = self.mouse_pos.copy()
+        coors_quantity          = self.mouse_pos.copy()
+
+        coors_item[0]           += consts.TILE_WIDTH
+        coors_quantity[0]       += ( consts.TILE_WIDTH * 3 ) >> 1
+
+        if which_item is not None:
+            quantity_text , quantity_rect = consts.INV_FONT.render( str( quantity ), consts.INV_COLOR )
+            self.screen.blit( consts.ITEM_TABLE[which_item], coors_item )
+            self.screen.blit( quantity_text , coors_quantity )
 
     def paint_inventory_top( self ):
         self.player.inventory.draw_top()
