@@ -103,6 +103,9 @@ class Entity:
     def move_held_hor( self, _amt = 1 ):
         self.held_item_index[0] = ( self.held_item_index[0] + _amt + consts.INV_COLS ) % consts.INV_COLS
 
+    def move_held_to( self, _pos ):
+        self.held_item_index[0] = _pos
+
     def move_held_ver( self, _amt = 1 ):
         self.held_item_index[1] = ( self.held_item_index[1] + _amt + consts.INV_ROWS ) % consts.INV_ROWS
 
@@ -379,11 +382,45 @@ class Player(Entity):
 
     def left_click( self, _dt, _cursor_pos ):
 
-        # check where i am clicking
-        # Is this in the inventory region?
-        # If yes, then remove one item from the selected inventory slot
-        # If control is pressed, remove all items from the selected inventory slot
-        # Removed items are transferred to self.sel_item
+        if self.inventory.enabled:
+            max_down    = 40 * self.inventory.rows
+            max_right   = 40 * self.inventory.cols
+
+            if self.mouse_pos[0] < max_right and  self.mouse_pos[1] < max_down:
+                curr_row    = round( self.mouse_pos[1] / 40 ) - 1
+                curr_col    = round( self.mouse_pos[0] / 40 ) - 1
+
+                if curr_row >= 0 and curr_col >= 0 and self.sel_item[0] is not None:
+                    if self.inventory.get_item_at( [curr_col, curr_row] ) == None:
+                        self.inventory.items[curr_row][curr_col] = self.sel_item[0]
+
+                    if self.sel_item[0] == self.inventory.get_item_at( [curr_col, curr_row] ):
+                        to_rem = 1
+                        if self.key_state[pygame.KMOD_CTRL]:
+                            to_rem              = self.sel_item[1]
+
+                        # max_val = consts.ITEM_ATTR[self.sel_item[0]][consts.item_attr.MAX_STACK]
+                        max_val = 64
+                        to_rem = min( to_rem, max_val - self.inventory.get_quantity_at( [curr_col, curr_row] ) )
+                        self.inventory.quantities[curr_row][curr_col] += to_rem
+                        self.sel_item[1] -= to_rem
+
+                        if self.sel_item[1] == 0: self.sel_item[0] = None
+
+        else:
+            function = consts.l_use_hand
+            which_item = self.get_held_item()
+            if which_item:
+                function = consts.ITEM_ATTR[which_item][consts.item_attr.L_USE]
+
+            pos_x           = consts.get_x_pos_chunk(_cursor_pos)
+            pos_y           = consts.get_y_pos_chunk(_cursor_pos)
+
+            which_chunk     = consts.get_curr_chunk(_cursor_pos) - self.entity_buffer.chunk_buffer.get_start_chunk_ind()
+
+            function( pos_x, pos_y, which_chunk, self.entity_buffer.chunk_buffer, self.entity_buffer, _dt )
+
+    def right_click( self, _dt, _cursor_pos ):
 
         if self.inventory.enabled:
             max_down    = 40 * self.inventory.rows
@@ -404,28 +441,10 @@ class Player(Entity):
                         # if self.sel_item[1] < consts.ITEM_ATTR[which_item][consts.item_attr.MAX_STACK]:
                         to_add = 1
                         if self.key_state[pygame.KMOD_CTRL]:
-                            to_add              = self.inventory.quantities[curr_row][curr_col]
+                            to_add              = self.inventory.get_quantity_at( [curr_col, curr_row] )
 
                         self.sel_item[1]    += to_add
                         self.inventory.rem_item_pos( [curr_col, curr_row], to_add )
-
-        else:
-            function = consts.l_use_hand
-            which_item = self.get_held_item()
-            if which_item:
-                function = consts.ITEM_ATTR[which_item][consts.item_attr.L_USE]
-
-            pos_x           = consts.get_x_pos_chunk(_cursor_pos)
-            pos_y           = consts.get_y_pos_chunk(_cursor_pos)
-
-            which_chunk     = consts.get_curr_chunk(_cursor_pos) - self.entity_buffer.chunk_buffer.get_start_chunk_ind()
-
-            function( pos_x, pos_y, which_chunk, self.entity_buffer.chunk_buffer, self.entity_buffer, _dt )
-
-    def right_click( self, _dt, _cursor_pos ):
-
-        if self.inventory.enabled:
-            pass
 
         else:
             function = consts.r_use_hand
@@ -882,7 +901,7 @@ class Inventory:
                 if self.quantities[y][x]:
 
                     quantity_text , quantity_rect = consts.INV_FONT.render( str( self.quantities[y ][x ] ), consts.INV_COLOR )
-                    self.surf.blit( consts.ITEM_TABLE[self.items[y ][x ] ], (coors[0 ] + 4 , coors[1 ] + 4) )
+                    self.surf.blit( consts.ITEM_TABLE[self.items[y][x] ], (coors[0] + 4 , coors[1] + 4) )
                     self.surf.blit( quantity_text , ( coors[0] , coors[1] ) )
 
     def draw_top( self ):
@@ -908,6 +927,9 @@ class Inventory:
 
     def get_item_at( self, _pos ):
         return self.items[_pos[1]][_pos[0]]
+
+    def get_quantity_at( self, _pos ):
+        return self.quantities[_pos[1]][_pos[0]]
 
 
 # Structure to hold all textures of an entity and to abstract animation

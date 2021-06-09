@@ -153,6 +153,17 @@ def main_game_start( _world = 'World1' ):
                     which_chunk = consts.get_curr_chunk( cursor_pos )
                     chunk_buffer.chunks[which_chunk].print_info( x, y )
 
+                elif event.key == pygame.K_1: player.move_held_to( 0 )
+                elif event.key == pygame.K_2: player.move_held_to( 1 )
+                elif event.key == pygame.K_3: player.move_held_to( 2 )
+                elif event.key == pygame.K_4: player.move_held_to( 3 )
+                elif event.key == pygame.K_5: player.move_held_to( 4 )
+                elif event.key == pygame.K_6: player.move_held_to( 5 )
+                elif event.key == pygame.K_7: player.move_held_to( 6 )
+                elif event.key == pygame.K_8: player.move_held_to( 7 )
+                elif event.key == pygame.K_9: player.move_held_to( 8 )
+                elif event.key == pygame.K_0: player.move_held_to( 9 )
+
                 key_states[ event.key ] = True
 
             elif    event.type == pygame.KEYUP:     key_states[event.key] = False
