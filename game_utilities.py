@@ -93,7 +93,6 @@ class Renderer:
 
         if self.player.get_pos()[1] >= consts.SPACE_START:
             bg_txtr = consts.space_background
-
         elif self.player.get_pos()[1] >= consts.OVER_START:
             # fill the sky with the color which is is supposed to be there
 

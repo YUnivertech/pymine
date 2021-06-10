@@ -87,11 +87,6 @@ get_x_pos_chunk     = lambda p: int( p[0] // TILE_WIDTH - get_curr_chunk( p ) * 
 get_y_pos_chunk     = lambda p: int( p[1] // TILE_WIDTH )
 pos_ceil            = lambda x, y : ( x + y - 1 ) // y
 
-def get_pos_triplet( _p ):
-    chunk_ind   = get_curr_chunk( _p )
-
-    return [int( _p[0] / 16 ), int( _p[1] / 16 ), chunk_ind]
-
 # ! ----------------------------------------------------------------
 
 class tile_attr( enum.Enum ):

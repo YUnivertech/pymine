@@ -21,7 +21,6 @@ class ItemEntity:
             _entity_buffer (EntityBuffer): Reference to the EntityBuffer object.
         """
         self.pos            = _pos
-        print(_pos)
         self.get_pos        = lambda : self.pos
 
         self.id             = _id
@@ -113,21 +112,22 @@ class Entity:
     def eject_held_item( self, _pos = None ):
         pass
 
-    def eject_sel_item( self, _pos = None, _quantity = 1 ):
+    def eject_sel_item( self, _pos, _quantity ):
 
-        if self.sel_item[0] is None: return None
+        if self.sel_item[0] is None or self.sel_item[1] <= 0: return None
 
-        if _pos is None:
-            _pos = self.pos
+        x           = consts.get_x_pos_chunk( _pos )
+        y           = consts.get_y_pos_chunk( _pos )
 
-        pos = consts.get_pos_triplet( _pos )
+        ind         = consts.get_curr_chunk( _pos )
+        pos         = x, y, ind
 
         for i in range( _quantity ):
             self.entity_buffer.add_item_entity( self.sel_item[0], pos )
 
-        self.sel_item[1]    -= _quantity
-        if self.sel_item[1] == 0:
-            self.sel_item[0]    = None
+        self.sel_item[1] -= _quantity
+        if self.sel_item[1] <= 0:
+            self.sel_item[0] = None
 
     def calc_friction( self ):
         """Updates the Entity's friction based on the tile in contact with
@@ -428,11 +428,14 @@ class Player(Entity):
                         if self.sel_item[1] == 0: self.sel_item[0] = None
 
             elif self.sel_item[0] is not None:
-                quantity = 1
+                quantity    = 1
                 if self.key_state[pygame.KMOD_CTRL]:
                     quantity = self.sel_item[1]
 
-                self.eject_sel_item( list( map(int, self.cursor_pos) ), quantity )
+                pos         = list( map( int, self.cursor_pos ) )
+                pos[1]      +=consts.TILE_WIDTH
+
+                self.eject_sel_item( pos, quantity )
 
         else:
             function = consts.l_use_hand
