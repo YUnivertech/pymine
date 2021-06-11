@@ -749,7 +749,7 @@ class EntityBuffer:
         pass
 
     def update( self, _dt ):
-        update_index_entites = []
+        update_index_entities = []
         index = 0
         entities_copy = [self.entities[_ind].copy() for _ind in range(self.len)]
         while index < self.len:
@@ -769,11 +769,11 @@ class EntityBuffer:
                 new_index = self.get_curr_chunk_ind(entity.get_pos())
                 if new_index != prev_entity_ind:
                     self.entities[ index ].remove( entity )
-                    update_index_entites.append( entity )
+                    update_index_entities.append( entity )
             index += 1
 
-        for entity in update_index_entites:
-            consts.dbg(1, "UPDATE ENTITY INDEX:", update_index_entites)
+        for entity in update_index_entities:
+            consts.dbg(1, "UPDATE ENTITY INDEX:", update_index_entities)
             index = self.get_curr_chunk_ind(entity.get_pos())
             consts.dbg(1, "NEW INDEX OF ENTITY:", index)
             self.entities[index].append(entity)

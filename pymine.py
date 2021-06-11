@@ -145,7 +145,7 @@ def main_game_start( _world = 'World1' ):
                             which_item = eval( 'consts.items.' + command[1], globals(), locals() )
                             quantity = eval( command[2] )
                             remainder = player.inventory.add_item( which_item, quantity )
-                            print('Added {} items succesfully'.format(quantity - remainder))
+                            print('Added {} items successfully'.format(quantity - remainder))
 
                 elif event.key == pygame.K_p:
                     print('CHUNK INFO')

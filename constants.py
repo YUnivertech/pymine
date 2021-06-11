@@ -68,7 +68,7 @@ HAND_DAMAGE         = 10000
 WATER_FLOW_RATE     = 2
 LAVA_FLOW_RATE      = 1
 
-# Length of hald of an in-game day (in seconds)
+# Length of half of an in-game day (in seconds)
 DAY_DURATION        = 30
 
 ALLOWED_CHARS       = [chr(ord('a') + i) for i in range(26)] + [chr(ord('A') + i) for i in range(26)] + [str(i) for i in range(10)]
@@ -236,7 +236,7 @@ broken_by_axe       = wood_list
 
 class item_attr( enum.Enum ):
 
-    MAX_STACK           = 1     # Maximum Quantity an item can stack upto in an inventory
+    MAX_STACK           = 1     # Maximum Quantity an item can stack in an inventory
     WEIGHT              = 2     # Weight of the item (and corresponding item entity)
     L_USE               = 3     # Function to be called when the left clicked with
     R_USE               = 4     # Function to be called when right clicked with
@@ -960,7 +960,7 @@ ITEM_TABLE = {
 # player = _entity_buffer.player
 # inventory = player.inventory
 
-# Entity hitting behaviour has not been implemented yet
+# Entity hitting behavior has not been implemented yet
 # -1 returned indicates there was nothing to break
 # 0 indicates that nothing has been broken
 # 1 indicates that something has been broken
