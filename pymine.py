@@ -155,6 +155,9 @@ def main_game_start( _world = 'World1' ):
                     which_chunk = consts.get_curr_chunk( cursor_pos )
                     chunk_buffer.chunks[which_chunk].print_info( x, y )
 
+                elif key_states[pygame.KMOD_SHIFT]:
+                    player.interaction_mode = 1 - player.interaction_mode
+
                 elif event.key == pygame.K_1: player.move_held_to( 0 )
                 elif event.key == pygame.K_2: player.move_held_to( 1 )
                 elif event.key == pygame.K_3: player.move_held_to( 2 )

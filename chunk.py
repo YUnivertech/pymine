@@ -148,7 +148,7 @@ class Chunk:
                 del self.local_tile_table[0][key][to_remove_local.get()]
 
             if len( self.local_tile_table[0][key] ) <= 0:
-                to_remove.append( key )
+                to_remove.put( key )
 
             if flag and self.blocks[y][x] == consts.tiles.air:
                 self.draw( [x, y, x + 1, y + 1] )

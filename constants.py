@@ -970,9 +970,10 @@ ITEM_TABLE = {
 # Function only to be called if not colliding with the player or any other entity
 def place_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, _block ):
 
+    player= _entity_buffer.player
+
     chunk = _chunk_buffer.chunks[_chunk]
-    blocks= chunk.blocks
-    walls = chunk.walls
+    blocks= chunk.blocks if player.interaction_mode else chunk.walls
 
     if blocks[_y][_x] != tiles.air: return 0
     blocks[_y][_x] = _block
@@ -990,15 +991,20 @@ def break_block_generic( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt, _da
     # 0 indicates that nothing has been broken
     # 1 indicates that something has been broken
 
-    chunk = _chunk_buffer.chunks[_chunk]
-    layer = chunk.blocks
-    table = chunk.local_tile_table[1]
+    player= _entity_buffer.player
 
-    if chunk.blocks[_y][_x] == tiles.air:
-        if chunk.walls[_y][_x] == tiles.air:
-            return -1
-        layer = chunk.walls
-        table = chunk.local_tile_table[0]
+    chunk = _chunk_buffer.chunks[_chunk]
+
+    layer = chunk.blocks if player.interaction_mode else chunk.walls
+    table = chunk.local_tile_table[player.interaction_mode]
+
+    # if chunk.blocks[_y][_x] == tiles.air:
+    #     if chunk.walls[_y][_x] == tiles.air:
+    #         return -1
+    #     layer = chunk.walls
+    #     table = chunk.local_tile_table[0]
+
+    if layer[_y][_x] == tiles.air: return -1
 
     if (_x, _y) not in table:
         table[(_x, _y)] = {}
