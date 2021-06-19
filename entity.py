@@ -116,14 +116,8 @@ class Entity:
 
         if self.sel_item[0] is None or self.sel_item[1] <= 0: return None
 
-        x           = consts.get_x_pos_chunk( _pos )
-        y           = consts.get_y_pos_chunk( _pos )
-
-        ind         = consts.get_curr_chunk( _pos )
-        pos         = x, y, ind
-
         for i in range( _quantity ):
-            self.entity_buffer.add_item_entity( self.sel_item[0], pos )
+            self.entity_buffer.add_item_entity( self.sel_item[0], _pos )
 
         self.sel_item[1] -= _quantity
         if self.sel_item[1] <= 0:
@@ -432,9 +426,7 @@ class Player(Entity):
                 if self.key_state[pygame.KMOD_CTRL]:
                     quantity = self.sel_item[1]
 
-                pos         = list( map( int, self.cursor_pos ) )
-                pos[1]      +=consts.TILE_WIDTH
-
+                pos         = self.cursor_pos.copy()
                 self.eject_sel_item( pos, quantity )
 
         else:
@@ -667,19 +659,11 @@ class EntityBuffer:
 
         Args:
             _id (int): The type of the ItemEntity to be added.
-            _pos (list): The position including the index at which the ItemEntity is to be added.
+            _pos (list): World position of the surface of the ItemEntity in x-y coordinate system. Also referred to as the position of the ItemEntity.
         """
-        x, y, ind = _pos
-        x += consts.CHUNK_WIDTH * ind
 
-        x *= consts.TILE_WIDTH
-        y *= consts.TILE_WIDTH
-
-        ind -= self.chunk_buffer.get_start_chunk_ind()
-
-        pos = [x, y]
-
-        item_entity = ItemEntity( pos, _id, self )
+        x, y        = _pos
+        item_entity = ItemEntity( _pos, _id, self )
         self.add_entity( item_entity )
 
     def load_player( self ):
