@@ -17,17 +17,118 @@ def generate_chunk_temp( _chunk, noise_gen ):
     # one layer of coal
     # one layer of dirt
     # one layer of grass
+
+    # 1 - 3 blocks of bedrock
+    # 1 - 7 blocks of obsidian
+    # maybe 1 block of hellstone (really low chance)
+
     for i in range( consts.CHUNK_WIDTH ):
-        _chunk.blocks[0][i] = consts.tiles.bedrock
-        _chunk.blocks[1][i] = consts.tiles.obsidian
-        _chunk.blocks[2][i] = consts.tiles.hellstone
-        for j in range(10):
-            _chunk.blocks[j + 3][i] = consts.tiles.greystone
-            _chunk.blocks[j + 13][i] = consts.tiles.limestone
-            _chunk.blocks[j + 23][i] = consts.tiles.sandstone
-        _chunk.blocks[32][i] = consts.tiles.coal
-        _chunk.blocks[33][i] = consts.tiles.browndirt
-        _chunk.blocks[34][i] = consts.tiles.grass
+
+        bedrock_h = noise_gen.noise2( ((_chunk.index * consts.CHUNK_WIDTH) + i) / 4, 0 )
+        bedrock_h = (bedrock_h + 1) / 2
+        bedrock_h = int( bedrock_h * 4 ) + 1
+
+        obsidian_h = noise_gen.noise2( ((_chunk.index * consts.CHUNK_WIDTH) + i) / 4, 10 )
+        obsidian_h = (obsidian_h + 1) / 2
+        obsidian_h = int( obsidian_h * 8 ) + 1
+
+        hellrock_h = noise_gen.noise2( ((_chunk.index * consts.CHUNK_WIDTH) + i) / 16, 20 )
+        hellrock_h = (hellrock_h + 1) / 2
+        hellrock_h = 1 if hellrock_h <= 0.25 else 0
+
+        granite_h = noise_gen.noise2( ((_chunk.index * consts.CHUNK_WIDTH) + i) / 64, 30 )
+        granite_h = (granite_h + 1) / 2
+        granite_h = int(granite_h * 16)
+        granite_h += 10
+
+        greystone_h = noise_gen.noise2( ((_chunk.index * consts.CHUNK_WIDTH) + i) / 64, 40 )
+        greystone_h = (greystone_h + 1) / 2
+        greystone_h = int(greystone_h * 64)
+        greystone_h += granite_h
+
+        limestone_h = noise_gen.noise2( ((_chunk.index * consts.CHUNK_WIDTH) + i) / 64, 50 )
+        limestone_h = (limestone_h + 1) / 2
+        limestone_h = int(limestone_h * 16)
+        limestone_h += max(granite_h, greystone_h)
+
+        sandstone_h = noise_gen.noise2( ((_chunk.index * consts.CHUNK_WIDTH) + i) / 64, 60 )
+        sandstone_h = (sandstone_h + 1) / 2
+        sandstone_h = int(sandstone_h * 16)
+        sandstone_h += limestone_h
+
+        dirt_h = noise_gen.noise2( ((_chunk.index * consts.CHUNK_WIDTH) + i) / 512, 70 )
+        dirt_h = (dirt_h + 1) / 2
+        dirt_h = int(dirt_h * 16)
+        dirt_h += sandstone_h
+
+        base = 0
+
+        for j in range(0, bedrock_h + 1):
+            _chunk.blocks[base + j][i] = consts.tiles.bedrock
+
+        base += bedrock_h + 1
+
+        for j in range(0, obsidian_h + 1):
+            _chunk.blocks[base + j][i] = consts.tiles.obsidian
+
+        base += obsidian_h + 1
+
+        if hellrock_h:
+            _chunk.blocks[base][i] = consts.tiles.hellstone
+
+        base += hellrock_h
+
+        for j in range(base, granite_h + 1):
+            _chunk.blocks[j][i] = consts.tiles.granite
+
+        base = granite_h + 1
+
+        for j in range(base, greystone_h + 1):
+            _chunk.blocks[j][i] = consts.tiles.greystone
+
+        base = greystone_h + 1
+
+        for j in range(base, limestone_h + 1):
+            _chunk.blocks[j][i] = consts.tiles.limestone
+
+        base = limestone_h + 1
+
+        for j in range(base, sandstone_h + 1):
+            _chunk.blocks[j][i] = consts.tiles.sandstone
+
+        base = sandstone_h + 1
+
+        for j in range(base, dirt_h + 1):
+            _chunk.blocks[j][i] = consts.tiles.browndirt
+        _chunk.blocks[dirt_h + 1][i] = consts.tiles.grass
+
+        base = dirt_h + 2
+
+    # for i in range( consts.CHUNK_WIDTH ):
+    #     _chunk.blocks[0][i] = consts.tiles.bedrock
+    #     _chunk.blocks[1][i] = consts.tiles.obsidian
+    #     _chunk.blocks[2][i] = consts.tiles.hellstone
+
+    #     h = noise_gen.noise2( ((_chunk.index * consts.CHUNK_WIDTH) + i) / 1024, 0 )
+    #     h = (h + 1) / 2
+    #     h *= consts.CHUNK_HEIGHT / 2
+    #     h = int( h )
+
+    #     for j in range( h ):
+    #         _chunk.blocks[j][i] = consts.tiles.browndirt
+
+
+    # for i in range( consts.CHUNK_WIDTH ):
+    #     _chunk.blocks[0][i] = consts.tiles.bedrock
+    #     _chunk.blocks[1][i] = consts.tiles.obsidian
+    #     _chunk.blocks[2][i] = consts.tiles.hellstone
+    #     for j in range(10):
+    #         _chunk.blocks[j + 3][i] = consts.tiles.greystone
+    #         _chunk.blocks[j + 13][i] = consts.tiles.limestone
+    #         _chunk.blocks[j + 23][i] = consts.tiles.sandstone
+    #     _chunk.blocks[32][i] = consts.tiles.coal
+    #     _chunk.blocks[33][i] = consts.tiles.browndirt
+    #     _chunk.blocks[34][i] = consts.tiles.grass
 
     # for i in range( CHUNK_WIDTH ):
     #     for j in range( CHUNK_HEIGHT ):
