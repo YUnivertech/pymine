@@ -314,8 +314,8 @@ class Player(Entity):
         self.inventory: Union[None, Inventory] = None
 
         self.tangibility   = False
-        x_off              = 0
-        y_off              = 0
+        x_off              = 3
+        y_off              = -10
         self.up            = [ (x + x_off, y_off) for x in range( 0, consts.PLYR_HITBOX_WIDTH - 1, 16 ) ] + [ (consts.PLYR_HITBOX_WIDTH - 1 + x_off, y_off) ]
         self.left          = [ (x_off, -y + y_off) for y in range( 0, consts.PLYR_HITBOX_HEIGHT - 1, 16 ) ] + [ (x_off, -consts.PLYR_HITBOX_HEIGHT + 1 + y_off) ]
         self.right         = [ (consts.PLYR_HITBOX_WIDTH - 1 + x_off, -y + y_off) for y in range( 0, consts.PLYR_HITBOX_HEIGHT - 1, 16 ) ] + [ (consts.PLYR_HITBOX_WIDTH - 1 + x_off, -consts.PLYR_HITBOX_HEIGHT + 1 + y_off) ]
@@ -960,12 +960,12 @@ class TextureStructEntity:
         self.texture = consts.player_running[self.center_index]
 
     def run_right( self, _dt ):
-        self.running_index += _dt * 3
+        self.running_index += _dt * 30
         if self.running_index > self.frames: self.running_index = 0
         self.texture = consts.player_running[self.center_index + int( self.running_index ) + 1]
 
     def run_left( self, _dt ):
-        self.running_index += _dt * 3
+        self.running_index += _dt * 30
         if self.running_index > self.frames: self.running_index = 0
         self.texture = consts.player_running[self.center_index - int( self.running_index ) - 1]
 

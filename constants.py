@@ -56,10 +56,10 @@ AIR_FRICTION        = 0.2
 DEFAULT_FRICTION    = 0.5
 MAX_ACC             = 1
 MAX_VEL             = 1
-PLYR_HITBOX_WIDTH   = TILE_WIDTH - 2
-PLYR_HITBOX_HEIGHT  = (TILE_WIDTH << 1) - 1
-PLYR_WIDTH          = TILE_WIDTH+2      # 36
-PLYR_HEIGHT         = TILE_WIDTH+14    # 54
+PLYR_HITBOX_WIDTH   = 29
+PLYR_HITBOX_HEIGHT  = 45
+PLYR_WIDTH          = 35      # 36
+PLYR_HEIGHT         = 56    # 54
 PLYR_RANGE          = 4 * TILE_WIDTH
 INV_COLS            = 10
 INV_ROWS            = 3
@@ -496,7 +496,7 @@ TILE_MODIFIERS = {
 # Dictionary consisting of tile as key; surface (image) as value
 inventory_slot      = pygame.image.load("Resources/Default/InventorySpace.png")
 selected_slot       = pygame.image.load("Resources/Default/InventorySpaceSelected.png")
-cave_background     = pygame.image.load("Resources/Default/cave_background.png")
+cave_background     = pygame.transform.scale2x(pygame.image.load("Resources/Default/cave_bg.png"))
 space_background    = pygame.image.load("Resources/Default/space_background.png")
 sky_gradient        = pygame.image.load("Resources/Default/sky_gradient.png")
 
@@ -1186,9 +1186,9 @@ ITEM_ATTR = {
 
 # Textures for entities
 
-player_running = [pygame.image.load("Resources/Default/running{}.png".format(1-i)) for i in range(2)] + [pygame.image.load("Resources/Default/static.png")] + [pygame.image.load("Resources/Default/running{}.png".format(i)) for i in range(2)]
-player_running[0] = pygame.transform.flip(player_running[0], True, False)
-player_running[1] = pygame.transform.flip(player_running[1], True, False)
+player_running = [pygame.transform.flip( pygame.image.load("Resources/Default/running_{}.png".format(i)), True, False ) for i in range(12, -1, -1)] + [pygame.image.load("Resources/Default/static.png")] + [pygame.image.load("Resources/Default/running_{}.png".format(i)) for i in range(13)]
+# player_running[0] = pygame.transform.flip(player_running[0], True, False)
+# player_running[1] = pygame.transform.flip(player_running[1], True, False)
 slime = pygame.image.load("Resources/Default/slime.png")
 
 def l_use_hand( _x, _y, _chunk, _chunk_buffer, _entity_buffer, _dt ):
